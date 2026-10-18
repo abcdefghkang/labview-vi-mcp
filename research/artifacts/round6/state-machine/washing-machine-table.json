@@ -1,0 +1,12 @@
+{
+  "name": "Washing Machine",
+  "vi_name": "Washing Machine.vi",
+  "max_cycles": 2,
+  "description": "Timed cyclic state machine for a washing machine: Soak, Wash, Rinse, Spin.",
+  "states": [
+    {"name": "Soak", "duration": 2},
+    {"name": "Wash", "duration": 3},
+    {"name": "Rinse", "duration": 2},
+    {"name": "Spin", "duration": 4}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Heartbeat",
+  "vi_name": "Heartbeat.vi",
+  "max_cycles": 3,
+  "description": "Degenerate single-state machine: a state that transitions to itself, exercising the wrap-around path.",
+  "states": [
+    {"name": "Only", "duration": 2}
+  ]
+}

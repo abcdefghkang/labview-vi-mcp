@@ -1,0 +1,4 @@
+<VI _name="Cluster Literal Probe.vi" description="Stage 1: cluster constant literal syntax only. Expected: Named Cluster={1,two,3.5}.">
+  <Constant _name="Named Cluster" outputs="value:130.clu" type="cluster{int32.Field A,string.Field B,double.Field C}" uid="130" uid_parent="root" value="[1,&quot;two&quot;,3.5]"/>
+  <Indicator _name="Named Cluster Out" connection="recommended" inputs="value:130.clu" type="cluster{int32.Field A,string.Field B,double.Field C}" uid="200" uid_parent="root" value="[0,&quot;&quot;,0]"/>
+</VI>

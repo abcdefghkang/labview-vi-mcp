@@ -1,0 +1,8 @@
+<VI _name="Bundle Typed Base Probe.vi" description="Stage 2b: Bundle with a TYPED empty cluster constant as base (cluster: terminal) plus 3 element: inputs. Tests whether a typed-empty base (value=&quot;&quot;) allows building a fresh 3-element cluster. Expected: Bundle Out={1,two,3.5}.">
+  <Constant _name="C 1" outputs="value:101.value" type="int32" uid="101" uid_parent="root" value="1"/>
+  <Constant _name="S two" outputs="value:120.two" type="string" uid="120" uid_parent="root" value="two"/>
+  <Constant _name="D 3.5" outputs="value:121.d35" type="double" uid="121" uid_parent="root" value="3.5"/>
+  <Constant _name="Empty Base" outputs="value:140.base" type="cluster{int32,string,double}" uid="140" uid_parent="root" value=""/>
+  <Node _name="Bundle" inputs="element:101.value,element:120.two,element:121.d35,cluster:140.base" outputs="output cluster:150.clu" uid="150" uid_parent="root"/>
+  <Indicator _name="Bundle Out" connection="recommended" inputs="value:150.clu" type="cluster{int32,string,double}" uid="200" uid_parent="root" value="[0,&quot;&quot;,0]"/>
+</VI>

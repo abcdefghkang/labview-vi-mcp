@@ -1,0 +1,27 @@
+<VI _name="Sub Zeta.vi" description="Clamp x into the range [lo, hi]: returns hi when x is above hi, lo when x is below lo, and x otherwise. Two nested Case Structures, primitives only.">
+  <FreeLabel comment="Clamp x into [lo, hi]" uid="100" uid_parent="root"/>
+  <Control _name="x" connection="recommended" description="Value to clamp." outputs="value:10.value" type="double" uid="10" uid_parent="root" value="0"/>
+  <Control _name="lo" connection="recommended" description="Lower bound of the range." outputs="value:11.value" type="double" uid="11" uid_parent="root" value="0"/>
+  <Control _name="hi" connection="recommended" description="Upper bound of the range." outputs="value:12.value" type="double" uid="12" uid_parent="root" value="10"/>
+  <Node _name="Greater?" inputs="x:10.value,y:12.value" outputs="x &gt; y?:26.over_hi" uid="26" uid_parent="root"/>
+  <Node _name="Less?" inputs="x:10.value,y:11.value" outputs="x &lt; y?:27.under_lo" uid="27" uid_parent="root"/>
+  <Structure _name="Case Structure" selectin="26.over_hi" uid="20" uid_parent="root">
+    <CaseFrame label="Above hi" selector="True" selectout="" uid="21" uid_parent="20">
+      <Tunnel _id="Out1" inputs="value:12.value" uid="22" uid_parent="21"/>
+    </CaseFrame>
+    <CaseFrame label="Not above hi" selector="False" selectout="" uid="23" uid_parent="20">
+      <Structure _name="Case Structure" selectin="27.under_lo" uid="30" uid_parent="23">
+        <CaseFrame label="Below lo" selector="True" selectout="" uid="31" uid_parent="30">
+          <Tunnel _id="Out1" inputs="value:11.value" uid="32" uid_parent="31"/>
+        </CaseFrame>
+        <CaseFrame label="In range" selector="False" selectout="" uid="33" uid_parent="30">
+          <Tunnel _id="Out1" inputs="value:10.value" uid="34" uid_parent="33"/>
+        </CaseFrame>
+        <Tunnel _id="Out1" outputs="value:40.inner" uid="35" uid_parent="30"/>
+      </Structure>
+      <Tunnel _id="Out1" inputs="value:40.inner" uid="24" uid_parent="23"/>
+    </CaseFrame>
+    <Tunnel _id="Out1" outputs="value:50.clamped" uid="25" uid_parent="20"/>
+  </Structure>
+  <Indicator _name="clamped" connection="recommended" description="Clamped result." inputs="value:50.clamped" type="double" uid="60" uid_parent="root" value="0"/>
+</VI>

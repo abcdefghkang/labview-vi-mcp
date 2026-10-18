@@ -1,0 +1,19 @@
+<VI _name="Cluster Ops Probe.vi" description="Round6 Task3 probe: cluster operation node coverage in AIXML. Bundle uses the append-only idiom: a TYPED EMPTY cluster constant (value=&quot;&quot;) as the cluster: base plus element: inputs. Expected: Bundle Out={1,two,3.5}, Unbundled A=1, Unbundled B=two, Unbundled C=3.5, ByName A=1, ByName C=3.5, BundleByName Out={1,TWO-REPLACED,3.5}.">
+  <Constant _name="C 1" outputs="value:101.value" type="int32" uid="101" uid_parent="root" value="1"/>
+  <Constant _name="S two" outputs="value:120.two" type="string" uid="120" uid_parent="root" value="two"/>
+  <Constant _name="D 3.5" outputs="value:121.d35" type="double" uid="121" uid_parent="root" value="3.5"/>
+  <Constant _name="S replaced" outputs="value:122.repl" type="string" uid="122" uid_parent="root" value="TWO-REPLACED"/>
+  <Constant _name="Empty Base" outputs="value:140.base" type="cluster{int32,string,double}" uid="140" uid_parent="root" value=""/>
+  <Constant _name="Named Cluster" outputs="value:130.clu" type="cluster{int32.Field A,string.Field B,double.Field C}" uid="130" uid_parent="root" value="[1,&quot;two&quot;,3.5]"/>
+  <Node _name="Bundle" inputs="element:101.value,element:120.two,element:121.d35,cluster:140.base" outputs="output cluster:150.clu" uid="150" uid_parent="root"/>
+  <Node _name="Unbundle" inputs="cluster:150.clu" outputs="element:151.a,element:152.b,element:153.c" uid="151" uid_parent="root"/>
+  <Node _name="Bundle By Name" fields="Field B" inputs="Field B:122.repl,input cluster:130.clu" outputs="output cluster:154.clu2" uid="154" uid_parent="root"/>
+  <Node _name="Unbundle By Name" fields="Field A,Field C" inputs="input cluster:154.clu2" outputs="Field A:155.a,Field C:156.c" uid="155" uid_parent="root"/>
+  <Indicator _name="Bundle Out" connection="recommended" inputs="value:150.clu" type="cluster{int32,string,double}" uid="200" uid_parent="root" value="[0,&quot;&quot;,0]"/>
+  <Indicator _name="Unbundled A" connection="recommended" inputs="value:151.a" type="int32" uid="201" uid_parent="root" value="0"/>
+  <Indicator _name="Unbundled B" connection="recommended" inputs="value:152.b" type="string" uid="202" uid_parent="root" value=""/>
+  <Indicator _name="Unbundled C" connection="recommended" inputs="value:153.c" type="double" uid="203" uid_parent="root" value="0"/>
+  <Indicator _name="BundleByName Out" connection="recommended" inputs="value:154.clu2" type="cluster{int32.Field A,string.Field B,double.Field C}" uid="204" uid_parent="root" value="[0,&quot;&quot;,0]"/>
+  <Indicator _name="ByName A" connection="recommended" inputs="value:155.a" type="int32" uid="205" uid_parent="root" value="0"/>
+  <Indicator _name="ByName C" connection="recommended" inputs="value:156.c" type="double" uid="206" uid_parent="root" value="0"/>
+</VI>

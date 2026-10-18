@@ -1,0 +1,38 @@
+<VI _name="Array Ops Probe.vi" description="Round6 Task3 probe: array operation node coverage in AIXML. Expected: Arr 123=[1,2,3], Concat=[10,20,30], Indexed=20, Size=3, Subset=[20,30], Inserted=[99,10,20,30], Deleted=[10], Deleted Portion=[20,30], Initialized=[7,7,7], Search Found=2.">
+  <Constant _name="C 1" outputs="value:101.value" type="int32" uid="101" uid_parent="root" value="1"/>
+  <Constant _name="C 2" outputs="value:102.value" type="int32" uid="102" uid_parent="root" value="2"/>
+  <Constant _name="C 3" outputs="value:103.value" type="int32" uid="103" uid_parent="root" value="3"/>
+  <Constant _name="C 10" outputs="value:104.value" type="int32" uid="104" uid_parent="root" value="10"/>
+  <Constant _name="C 20" outputs="value:105.value" type="int32" uid="105" uid_parent="root" value="20"/>
+  <Constant _name="C 30" outputs="value:106.value" type="int32" uid="106" uid_parent="root" value="30"/>
+  <Constant _name="C 99" outputs="value:108.value" type="int32" uid="108" uid_parent="root" value="99"/>
+  <Constant _name="C 7" outputs="value:109.value" type="int32" uid="109" uid_parent="root" value="7"/>
+  <Constant _name="Arr A" outputs="value:110.arrA" type="array{int32}" uid="110" uid_parent="root" value="[10,20]"/>
+  <Constant _name="Arr B" outputs="value:111.arrB" type="array{int32}" uid="111" uid_parent="root" value="[30]"/>
+  <Constant _name="Arr 4" outputs="value:112.arr4" type="array{int32}" uid="112" uid_parent="root" value="[10,20,30,40]"/>
+  <Constant _name="Idx 1" outputs="value:113.i1" type="int32" uid="113" uid_parent="root" value="1"/>
+  <Constant _name="Len 2" outputs="value:114.len2" type="int32" uid="114" uid_parent="root" value="2"/>
+  <Constant _name="Idx 0" outputs="value:115.i0" type="int32" uid="115" uid_parent="root" value="0"/>
+  <Constant _name="Size 3" outputs="value:116.sz3" type="int32" uid="116" uid_parent="root" value="3"/>
+  <Constant _name="Target 30" outputs="value:117.thirty" type="int32" uid="117" uid_parent="root" value="30"/>
+  <Constant _name="Start 0" outputs="value:118.i0" type="int32" uid="118" uid_parent="root" value="0"/>
+  <Node _name="Build Array" inputs="element:101.value,element:102.value,element:103.value" outputs="appended array:140.arr123" uid="140" uid_parent="root"/>
+  <Node _name="Build Array" concat="true" inputs="array:110.arrA,array:111.arrB" outputs="appended array:141.cat" uid="141" uid_parent="root"/>
+  <Node _name="Index Array" inputs="array:141.cat,index:113.i1" outputs="element:142.el" uid="142" uid_parent="root"/>
+  <Node _name="Array Size" inputs="array:141.cat" outputs="size(s):143.sz" uid="143" uid_parent="root"/>
+  <Node _name="Array Subset" inputs="array:112.arr4,index:113.i1,length:114.len2" outputs="subarray:144.sub" uid="144" uid_parent="root"/>
+  <Node _name="Insert Into Array" inputs="array:141.cat,index:115.i0,new element/subarray:108.value" outputs="output array:145.ins" uid="145" uid_parent="root"/>
+  <Node _name="Delete From Array" inputs="array:141.cat,length:114.len2,index:113.i1" outputs="array w/ subset deleted:146.del,deleted portion:147.delp" uid="146" uid_parent="root"/>
+  <Node _name="Initialize Array" inputs="element:109.value,dimension size:116.sz3" outputs="initialized array:148.init" uid="148" uid_parent="root"/>
+  <Node _name="Search 1D Array" inputs="1D array:141.cat,element:117.thirty,start index (0):118.i0" outputs="index of element:149.found" uid="149" uid_parent="root"/>
+  <Indicator _name="Arr 123" connection="recommended" inputs="value:140.arr123" type="array{int32}" uid="200" uid_parent="root" value="[]"/>
+  <Indicator _name="Concat" connection="recommended" inputs="value:141.cat" type="array{int32}" uid="201" uid_parent="root" value="[]"/>
+  <Indicator _name="Indexed" connection="recommended" inputs="value:142.el" type="int32" uid="202" uid_parent="root" value="0"/>
+  <Indicator _name="Size" connection="recommended" inputs="value:143.sz" type="int32" uid="203" uid_parent="root" value="0"/>
+  <Indicator _name="Subset" connection="recommended" inputs="value:144.sub" type="array{int32}" uid="204" uid_parent="root" value="[]"/>
+  <Indicator _name="Inserted" connection="recommended" inputs="value:145.ins" type="array{int32}" uid="205" uid_parent="root" value="[]"/>
+  <Indicator _name="Deleted" connection="recommended" inputs="value:146.del" type="array{int32}" uid="206" uid_parent="root" value="[]"/>
+  <Indicator _name="Deleted Portion" connection="recommended" inputs="value:147.delp" type="array{int32}" uid="207" uid_parent="root" value="[]"/>
+  <Indicator _name="Initialized" connection="recommended" inputs="value:148.init" type="array{int32}" uid="208" uid_parent="root" value="[]"/>
+  <Indicator _name="Search Found" connection="recommended" inputs="value:149.found" type="int32" uid="209" uid_parent="root" value="0"/>
+</VI>

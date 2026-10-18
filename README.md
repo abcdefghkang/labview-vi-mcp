@@ -56,6 +56,10 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/08-complex-programs.md` | Round-3: complex programs — ShiftReg seed rule, multi-VI Call, `.lvproj` containers (Chinese) |
 | `research/09-measured-session-2.md` | Round-3 measured session record incl. bisection table (Chinese) |
 | `research/10-state-machine-and-ctl.md` | Round-4: state-machine templating (inline-enum selector, per-frame tunnel duties, SR survival rule), `.ctl` typedefs, VI→AIXML read-back loop (Chinese) |
+| `research/11-pylabview-edit-chain.md` | Round-5: pylabview edit chain — read-side uid coordinates + write-side patch loop (AIXML patch / bundle deep-edit / pylv_apply) (Chinese) |
+| `research/12-retarget-root-cause.md` | Round-6 (1): retarget run-failure root cause — caller link name must match callee's internal Name; openVI:true recipe; ActiveX shares gRPC process (Chinese) |
+| `research/13-state-machine-template-generator.md` | Round-6 (2): state-table → AIXML state-machine generator; single-state blind spot of one-option Case (Chinese) |
+| `research/14-array-cluster-node-coverage.md` | Round-6 (3): array (12 nodes) + cluster node coverage; Bundle is append-only (typed-empty base idiom); Split Array unsupported (Chinese) |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 

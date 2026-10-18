@@ -1,0 +1,14 @@
+<VI _name="Array Extra Probe.vi" description="Round6 Task3 extra array node coverage: Replace Array Subset, Array Max &amp; Min, Reverse 1D Array, Split Array (Split Array terminal names are a guess - undocumented in reference). Expected: Replaced=[10,5,99,3,20], MaxVal=20, MaxIdx=4, MinVal=3, MinIdx=3, Reversed=[20,3,8,5,10], SplitFront=[10,5], SplitRest=[8,3,20].">
+  <Constant _name="Arr A" outputs="value:110.arrA" type="array{int32}" uid="110" uid_parent="root" value="[10,5,8,3,20]"/>
+  <Constant _name="Idx 2" outputs="value:113.i2" type="int32" uid="113" uid_parent="root" value="2"/>
+  <Constant _name="C 99" outputs="value:108.value" type="int32" uid="108" uid_parent="root" value="99"/>
+  <Node _name="Replace Array Subset" inputs="array:110.arrA,index:113.i2,new element/subarray:108.value" outputs="output array:140.rep" uid="140" uid_parent="root"/>
+  <Node _name="Array Max &amp; Min" inputs="array:110.arrA" outputs="max value:141.mv,max index (indices):142.mi,min value:143.mn,min index (indices):144.mni" uid="141" uid_parent="root"/>
+  <Node _name="Reverse 1D Array" inputs="array:110.arrA" outputs="reversed array:145.rev" uid="145" uid_parent="root"/>
+  <Indicator _name="Replaced" connection="recommended" inputs="value:140.rep" type="array{int32}" uid="200" uid_parent="root" value="[]"/>
+  <Indicator _name="MaxVal" connection="recommended" inputs="value:141.mv" type="int32" uid="201" uid_parent="root" value="0"/>
+  <Indicator _name="MaxIdx" connection="recommended" inputs="value:142.mi" type="int32" uid="202" uid_parent="root" value="0"/>
+  <Indicator _name="MinVal" connection="recommended" inputs="value:143.mn" type="int32" uid="203" uid_parent="root" value="0"/>
+  <Indicator _name="MinIdx" connection="recommended" inputs="value:144.mni" type="int32" uid="204" uid_parent="root" value="0"/>
+  <Indicator _name="Reversed" connection="recommended" inputs="value:145.rev" type="array{int32}" uid="205" uid_parent="root" value="[]"/>
+</VI>

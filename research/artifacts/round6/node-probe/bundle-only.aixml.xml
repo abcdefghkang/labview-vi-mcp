@@ -1,0 +1,7 @@
+<VI _name="Bundle Only Probe.vi" description="Stage 2a: Bundle node in new-cluster mode, output straight to a cluster indicator. Expected: Bundle Out={1,two,3.5}.">
+  <Constant _name="C 1" outputs="value:101.value" type="int32" uid="101" uid_parent="root" value="1"/>
+  <Constant _name="S two" outputs="value:120.two" type="string" uid="120" uid_parent="root" value="two"/>
+  <Constant _name="D 3.5" outputs="value:121.d35" type="double" uid="121" uid_parent="root" value="3.5"/>
+  <Node _name="Bundle" inputs="element:101.value,element:120.two,element:121.d35" outputs="output cluster:150.clu" uid="150" uid_parent="root"/>
+  <Indicator _name="Bundle Out" connection="recommended" inputs="value:150.clu" type="cluster{int32,string,double}" uid="200" uid_parent="root" value="[0,&quot;&quot;,0]"/>
+</VI>

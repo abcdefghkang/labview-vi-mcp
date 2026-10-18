@@ -1,0 +1,11 @@
+{
+  "name": "Traffic Light",
+  "vi_name": "Traffic Light.vi",
+  "description": "定时循环状态机：Green 持续 3 tick、Yellow 持续 1 tick、Red 持续 2 tick，循环往复；每完成一个完整循环 Cycles 加 1，满 Max Cycles 个循环后停止。History 收集每次迭代运行的状态。",
+  "max_cycles": 3,
+  "states": [
+    {"name": "Green", "duration": 3},
+    {"name": "Yellow", "duration": 1},
+    {"name": "Red", "duration": 2}
+  ]
+}
