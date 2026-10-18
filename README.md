@@ -44,6 +44,20 @@ Ask your agent, for example:
 
 > Add a row of status LEDs to the LabVIEW panel, render it, and verify the result.
 
+## Research (`research/`)
+
+Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlke/labview-mcp AIXML pipeline), separate from the panel-beautification skill above:
+
+| Doc | Content |
+|---|---|
+| `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
+| `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
+| `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
+| `research/08-complex-programs.md` | Round-3: complex programs — ShiftReg seed rule, multi-VI Call, `.lvproj` containers (Chinese) |
+| `research/09-measured-session-2.md` | Round-3 measured session record incl. bisection table (Chinese) |
+| `research/artifacts/` | Generated VIs + AIXML sources per round |
+| `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
+
 ## Notes
 
 - Paths like `C:\Users\<you>` and `C:\LV_AUTOTEST\...` in the docs and scripts are examples — adapt them to your machine before use.

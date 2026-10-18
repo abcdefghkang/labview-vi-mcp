@@ -1,0 +1,52 @@
+<VI _name="Saturating Accumulator.vi" description="While-loop accumulator: each iteration adds Increment to a running total, saturating the total at Limit; counts iterations, flags whether saturation ever occurred, and records the per-iteration history as an array. The loop stops once the iteration count reaches Max Iterations. Self-contained: primitives, loops, case and shift registers only.">
+  <FreeLabel comment="Saturating accumulator" uid="1000" uid_parent="root"/>
+  <Control _name="Start Value" connection="recommended" description="Initial value of the accumulator before the first iteration." outputs="value:100.value" type="double" uid="100" uid_parent="root" value="0"/>
+  <Control _name="Increment" connection="recommended" description="Amount added to the accumulator on every iteration." outputs="value:101.value" type="double" uid="101" uid_parent="root" value="1.5"/>
+  <Control _name="Limit" connection="recommended" description="Upper saturation bound for the accumulator." outputs="value:102.value" type="double" uid="102" uid_parent="root" value="10"/>
+  <Control _name="Max Iterations" connection="recommended" description="Loop stops once this many iterations have run." outputs="value:103.value" type="int32" uid="103" uid_parent="root" value="8"/>
+  <Structure _name="While Loop" count="" uid="200" uid_parent="root">
+    <Condition inputs="value:254.stop" uid="201" uid_parent="200" value="stop"/>
+    <Tunnel _id="In1" inputs="value:100.value" outputs="value:210.start" uid="210" uid_parent="200"/>
+    <Tunnel _id="In2" inputs="value:101.value" outputs="value:211.inc" uid="211" uid_parent="200"/>
+    <Tunnel _id="In3" inputs="value:102.value" outputs="value:212.limit" uid="212" uid_parent="200"/>
+    <Tunnel _id="In4" inputs="value:103.value" outputs="value:213.max" uid="213" uid_parent="200"/>
+    <Constant _name="Zero" outputs="value:220.zero" type="int32" uid="220" uid_parent="200" value="0"/>
+    <Constant _name="False" outputs="value:221.false" type="bool" uid="221" uid_parent="200" value="false"/>
+    <Constant _name="True" outputs="value:222.true" type="bool" uid="222" uid_parent="200" value="true"/>
+    <Constant _name="Limit Value" outputs="value:223.limitval" type="double" uid="223" uid_parent="200" value="10"/>
+    <Constant _name="One" outputs="value:224.one" type="int32" uid="224" uid_parent="200" value="1"/>
+    <ShiftReg uid="230" uid_parent="200">
+      <Left inputs="value:210.start" outputs="value:240.acc" uid="231" uid_parent="230"/>
+      <Right inputs="value:280.new_acc" outputs="value:290.final_acc" uid="232" uid_parent="230"/>
+    </ShiftReg>
+    <ShiftReg uid="233" uid_parent="200">
+      <Left inputs="value:220.zero" outputs="value:241.iter" uid="234" uid_parent="233"/>
+      <Right inputs="value:253.iter_next" outputs="value:291.final_iter" uid="235" uid_parent="233"/>
+    </ShiftReg>
+    <ShiftReg uid="236" uid_parent="200">
+      <Left inputs="value:221.false" outputs="value:242.prev_sat" uid="237" uid_parent="236"/>
+      <Right inputs="value:281.new_sat" outputs="value:292.final_sat" uid="238" uid_parent="236"/>
+    </ShiftReg>
+    <Node _name="Add" inputs="x:240.acc,y:211.inc" outputs="x+y:250.candidate" uid="250" uid_parent="200"/>
+    <Node _name="Greater?" inputs="x:250.candidate,y:212.limit" outputs="x &gt; y?:252.over" uid="252" uid_parent="200"/>
+    <Node _name="Add" inputs="x:241.iter,y:224.one" outputs="x+y:253.iter_next" uid="253" uid_parent="200"/>
+    <Node _name="Greater Or Equal?" inputs="x:253.iter_next,y:213.max" outputs="x &gt;= y?:254.stop" uid="254" uid_parent="200"/>
+    <Structure _name="Case Structure" selectin="252.over" uid="260" uid_parent="200">
+      <CaseFrame label="Over limit" selector="True" selectout="" uid="261" uid_parent="260">
+        <Tunnel _id="Out1" inputs="value:223.limitval" uid="262" uid_parent="261"/>
+        <Tunnel _id="Out2" inputs="value:222.true" uid="263" uid_parent="261"/>
+      </CaseFrame>
+      <CaseFrame label="Within limit" selector="False" selectout="" uid="264" uid_parent="260">
+        <Tunnel _id="Out1" inputs="value:250.candidate" uid="265" uid_parent="264"/>
+        <Tunnel _id="Out2" inputs="value:242.prev_sat" uid="266" uid_parent="264"/>
+      </CaseFrame>
+      <Tunnel _id="Out1" outputs="value:280.new_acc" uid="267" uid_parent="260"/>
+      <Tunnel _id="Out2" outputs="value:281.new_sat" uid="268" uid_parent="260"/>
+    </Structure>
+    <Tunnel _id="Out3" inputs="value:280.new_acc" mode="index" outputs="value:270.history" uid="270" uid_parent="200"/>
+  </Structure>
+  <Indicator _name="Final Value" connection="recommended" description="Accumulator value after the last iteration." inputs="value:290.final_acc" type="double" uid="300" uid_parent="root" value="0"/>
+  <Indicator _name="Iterations" connection="recommended" description="Number of iterations that ran." inputs="value:291.final_iter" type="int32" uid="301" uid_parent="root" value="0"/>
+  <Indicator _name="Saturated" connection="recommended" description="TRUE once any iteration was clamped to Limit." inputs="value:292.final_sat" type="bool" uid="302" uid_parent="root" value="false"/>
+  <Indicator _name="History" connection="recommended" description="Accumulator value after each iteration." inputs="value:270.history" type="array{double}" uid="303" uid_parent="root" value="[]"/>
+</VI>

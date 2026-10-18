@@ -1,0 +1,11 @@
+<VI _name="Sensor.lvclass:Scaled Value.vi" description="Returns the sensor's Value multiplied by its Gain. Both fields are read through the class's own Read accessors; the object passes through unchanged.">
+  <FreeLabel comment="Scaled Value is Value times Gain" uid="20285" uid_parent="root"/>
+  <Control _name="Sensor in" conIdx="11" connection="dynamic" description="The sensor object." outputs="value:128.value" type="ref{UDClassInst}" uid="128" uid_parent="root" value=""/>
+  <Control _name="error in" conIdx="8" connection="recommended" description="Error input." outputs="value:4201.value" type="cluster{bool.status,int32.code,string.source}" uid="4201" uid_parent="root" value="[false,0,]"/>
+  <Call inputs="Sensor in:128.value,error in (no error):4201.value" outputs="Sensor out:4210.Sensor out,Value:4210.Value,error out:4210.error out" target="Sensor.lvclass\3A\01\0DRead Value.vi" uid="4210" uid_parent="root"/>
+  <Call inputs="Sensor in:4210.Sensor out,error in (no error):4210.error out" outputs="Sensor out:,Gain:4220.Gain,error out:4220.error out" target="Sensor.lvclass\3A\01\0CRead Gain.vi" uid="4220" uid_parent="root"/>
+  <Node _name="Multiply" inputs="x:4210.Value,y:4220.Gain" outputs="x*y:4230.x*y" uid="4230" uid_parent="root"/>
+  <Indicator _name="Sensor out" conIdx="3" connection="dynamic" description="The sensor object\2C unchanged." inputs="value:128.value" type="ref{UDClassInst}" uid="126" uid_parent="root" value=""/>
+  <Indicator _name="Scaled Value" conIdx="2" connection="recommended" description="Value multiplied by Gain." inputs="value:4230.x*y" type="double" uid="4241" uid_parent="root" value="0"/>
+  <Indicator _name="error out" conIdx="0" connection="recommended" description="Error output." inputs="value:4220.error out" type="cluster{bool.status,int32.code,string.source}" uid="4242" uid_parent="root" value="[false,0,]"/>
+</VI>

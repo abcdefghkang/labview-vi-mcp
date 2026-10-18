@@ -1,0 +1,11 @@
+<VI _name="Temperature Monitor.vi" description="Reads a temperature, compares it against an alarm threshold and reports a status string plus a boolean alarm flag. Self-contained: primitives only, no subVI calls, so it passes the generator's self-containment rule.">
+  <FreeLabel comment="Compare temp vs threshold" uid="1000" uid_parent="root"/>
+  <Control _name="Temperature" connection="recommended" description="Current temperature reading in degrees Celsius." outputs="value:100.value" type="double" uid="100" uid_parent="root" value="25"/>
+  <Control _name="Alarm Threshold" connection="recommended" description="Temperature above which the alarm activates, in degrees Celsius." outputs="value:101.value" type="double" uid="101" uid_parent="root" value="80"/>
+  <Constant _name="Alarm Text" outputs="value:110.value" type="string" uid="110" uid_parent="root" value="ALARM: Over Temperature!"/>
+  <Constant _name="Normal Text" outputs="value:111.value" type="string" uid="111" uid_parent="root" value="Normal"/>
+  <Node _name="Greater?" inputs="x:100.value,y:101.value" outputs="x > y?:120.x > y?" uid="120" uid_parent="root"/>
+  <Node _name="Select" inputs="s:120.x > y?,t:110.value,f:111.value" outputs="s? t\3Af:130.s? t\3Af" uid="130" uid_parent="root"/>
+  <Indicator _name="Status" connection="recommended" description="Alarm text when over threshold, otherwise Normal." inputs="value:130.s? t\3Af" type="string" uid="140" uid_parent="root" value="Normal"/>
+  <Indicator _name="Alarm" connection="recommended" description="TRUE when the temperature exceeds the alarm threshold." inputs="value:120.x > y?" type="bool" uid="141" uid_parent="root" value="false"/>
+</VI>
