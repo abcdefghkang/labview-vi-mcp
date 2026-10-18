@@ -1,0 +1,127 @@
+<VI _name="Batch Averager Scaled.vi" description="Round5 edit-loop demo: the round4 Batch Averager state machine patched by adding one Scale control (uid 105) and one Multiply node (uid 610) in the Accumulate frame. Patch applied to the handwritten AIXML source (batch-averager.aixml.xml from round4), then regenerated. Semantics: each item is multiplied by Scale before being added to the sum, so Average = Scale * mean(Items).">
+  <FreeLabel comment="Batch averager state machine" uid="1000" uid_parent="root"/>
+  <Control _name="Initial State" connection="recommended" description="State the machine starts in. Normally Init; any state item may be given to start mid-sequence." outputs="value:100.value" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="100" uid_parent="root" value="0"/>
+  <Control _name="Items" connection="recommended" description="Samples to average, consumed one per Load-Accumulate cycle." outputs="value:101.value" type="array{double}" uid="101" uid_parent="root" value="[1.5,2.5,3.5,4.5]"/>
+  <Control _name="Scale" connection="recommended" description="ROUND5 PATCH: multiplier applied to each item before accumulation. 1 keeps the original behaviour." outputs="value:105.value" type="double" uid="105" uid_parent="root" value="1"/>
+  <Constant _name="Zero" outputs="value:220.zero" type="int32" uid="220" uid_parent="root" value="0"/>
+  <Constant _name="ZeroD" outputs="value:221.zerod" type="double" uid="221" uid_parent="root" value="0"/>
+  <Constant _name="EmptyLog" outputs="value:222.empty" type="string" uid="222" uid_parent="root" value=""/>
+  <Structure _name="While Loop" count="" uid="200" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:101.value" outputs="value:211.items" uid="211" uid_parent="200"/>
+    <Node _name="Array Size" inputs="array:211.items" outputs="size(s):250.size" uid="250" uid_parent="200"/>
+    <ShiftReg uid="230" uid_parent="200">
+      <Left inputs="value:100.value" outputs="value:231.state" uid="231" uid_parent="230"/>
+      <Right inputs="value:290.next_state" outputs="value:232.state_out" uid="232" uid_parent="230"/>
+    </ShiftReg>
+    <ShiftReg uid="236" uid_parent="200">
+      <Left inputs="value:221.zerod" outputs="value:237.sum" uid="237" uid_parent="236"/>
+      <Right inputs="value:262.new_sum" outputs="value:238.final_sum" uid="238" uid_parent="236"/>
+    </ShiftReg>
+    <ShiftReg uid="239" uid_parent="200">
+      <Left inputs="value:220.zero" outputs="value:240.index" uid="240" uid_parent="239"/>
+      <Right inputs="value:263.new_index" outputs="value:241.final_index" uid="241" uid_parent="239"/>
+    </ShiftReg>
+    <ShiftReg uid="242" uid_parent="200">
+      <Left inputs="value:221.zerod" outputs="value:243.item" uid="243" uid_parent="242"/>
+      <Right inputs="value:264.new_item" outputs="value:244.final_item" uid="244" uid_parent="242"/>
+    </ShiftReg>
+    <ShiftReg uid="245" uid_parent="200">
+      <Left inputs="value:222.empty" outputs="value:246.log" uid="246" uid_parent="245"/>
+      <Right inputs="value:265.new_log" outputs="value:247.final_log" uid="247" uid_parent="245"/>
+    </ShiftReg>
+    <ShiftReg uid="248" uid_parent="200">
+      <Left inputs="value:221.zerod" outputs="value:249.avg" uid="249" uid_parent="248"/>
+      <Right inputs="value:307.avg" outputs="value:252.final_avg" uid="252" uid_parent="248"/>
+    </ShiftReg>
+    <Condition inputs="value:302.stop" uid="201" uid_parent="200" value="stop"/>
+    <Structure _name="Case Structure" selectin="231.state" uid="300" uid_parent="200">
+      <Tunnel _id="Out1" outputs="value:290.next_state" uid="301" uid_parent="300"/>
+      <Tunnel _id="Out2" cond="true" outputs="value:302.stop" uid="302" uid_parent="300"/>
+      <Tunnel _id="Out3" outputs="value:262.new_sum" uid="303" uid_parent="300"/>
+      <Tunnel _id="Out4" outputs="value:263.new_index" uid="304" uid_parent="300"/>
+      <Tunnel _id="Out5" outputs="value:264.new_item" uid="305" uid_parent="300"/>
+      <Tunnel _id="Out6" outputs="value:265.new_log" uid="306" uid_parent="300"/>
+      <Tunnel _id="Out7" cond="true" outputs="value:307.avg" uid="307" uid_parent="300"/>
+      <CaseFrame label="Init" selector="&quot;Init&quot;" selectout="" uid="310" uid_parent="300">
+        <Constant _name="ToLoad" outputs="value:311.next" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="311" uid_parent="310" value="1"/>
+        <Tunnel _id="Out1" inputs="value:311.next" uid="312" uid_parent="310"/>
+        <Constant _name="NoStop" outputs="value:322.false" type="bool" uid="322" uid_parent="310" value="false"/>
+        <Tunnel _id="Out2" inputs="value:322.false" uid="313" uid_parent="310"/>
+        <Constant _name="InitEntry" outputs="value:314.entry" type="string" uid="314" uid_parent="310" value="Init; "/>
+        <Node _name="Concatenate Strings" inputs="string:246.log,string:314.entry" outputs="concatenated string:315.new_log" uid="315" uid_parent="310"/>
+        <Tunnel _id="Out6" inputs="value:315.new_log" uid="316" uid_parent="310"/>
+        <Tunnel _id="Out3" inputs="value:221.zerod" uid="317" uid_parent="310"/>
+        <Tunnel _id="Out4" inputs="value:220.zero" uid="318" uid_parent="310"/>
+        <Tunnel _id="Out5" inputs="value:221.zerod" uid="319" uid_parent="310"/>
+        <Constant _name="AvgZero" outputs="value:320.zero" type="double" uid="320" uid_parent="310" value="0"/>
+        <Tunnel _id="Out7" inputs="value:320.zero" uid="321" uid_parent="310"/>
+      </CaseFrame>
+      <CaseFrame label="Load" selector="&quot;Load&quot;" selectout="" uid="330" uid_parent="300">
+        <Node _name="Index Array" inputs="array:211.items,index:240.index" outputs="element:331.item" uid="331" uid_parent="330"/>
+        <Constant _name="ToAccumulate" outputs="value:332.next" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="332" uid_parent="330" value="2"/>
+        <Tunnel _id="Out1" inputs="value:332.next" uid="333" uid_parent="330"/>
+        <Constant _name="NoStop" outputs="value:343.false" type="bool" uid="343" uid_parent="330" value="false"/>
+        <Tunnel _id="Out2" inputs="value:343.false" uid="334" uid_parent="330"/>
+        <Constant _name="LoadEntry" outputs="value:335.entry" type="string" uid="335" uid_parent="330" value="Load; "/>
+        <Node _name="Concatenate Strings" inputs="string:246.log,string:335.entry" outputs="concatenated string:336.new_log" uid="336" uid_parent="330"/>
+        <Tunnel _id="Out6" inputs="value:336.new_log" uid="337" uid_parent="330"/>
+        <Tunnel _id="Out3" inputs="value:237.sum" uid="338" uid_parent="330"/>
+        <Tunnel _id="Out4" inputs="value:240.index" uid="339" uid_parent="330"/>
+        <Tunnel _id="Out5" inputs="value:331.item" uid="340" uid_parent="330"/>
+        <Tunnel _id="Out7" inputs="value:249.avg" uid="342" uid_parent="330"/>
+      </CaseFrame>
+      <CaseFrame label="Accumulate" selector="&quot;Accumulate&quot;" selectout="" uid="350" uid_parent="300">
+        <Constant _name="One" outputs="value:351.one" type="int32" uid="351" uid_parent="350" value="1"/>
+        <Node _name="Multiply" inputs="x:243.item,y:105.value" outputs="x*y:610.scaled" uid="610" uid_parent="350"/>
+        <Node _name="Add" inputs="x:237.sum,y:610.scaled" outputs="x+y:352.new_sum" uid="352" uid_parent="350"/>
+        <Node _name="Add" inputs="x:240.index,y:351.one" outputs="x+y:353.new_index" uid="353" uid_parent="350"/>
+        <Node _name="Less?" inputs="x:353.new_index,y:250.size" outputs="x &lt; y?:354.more" uid="354" uid_parent="350"/>
+        <Constant _name="BackToLoad" outputs="value:355.t" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="355" uid_parent="350" value="1"/>
+        <Constant _name="ToReport" outputs="value:356.f" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="356" uid_parent="350" value="3"/>
+        <Node _name="Select" inputs="t:355.t,s:354.more,f:356.f" outputs="s? t\3Af:357.next" uid="357" uid_parent="350"/>
+        <Tunnel _id="Out1" inputs="value:357.next" uid="358" uid_parent="350"/>
+        <Constant _name="NoStop" outputs="value:368.false" type="bool" uid="368" uid_parent="350" value="false"/>
+        <Tunnel _id="Out2" inputs="value:368.false" uid="359" uid_parent="350"/>
+        <Constant _name="AccEntry" outputs="value:360.entry" type="string" uid="360" uid_parent="350" value="Accumulate; "/>
+        <Node _name="Concatenate Strings" inputs="string:246.log,string:360.entry" outputs="concatenated string:361.new_log" uid="361" uid_parent="350"/>
+        <Tunnel _id="Out6" inputs="value:361.new_log" uid="362" uid_parent="350"/>
+        <Tunnel _id="Out3" inputs="value:352.new_sum" uid="363" uid_parent="350"/>
+        <Tunnel _id="Out4" inputs="value:353.new_index" uid="364" uid_parent="350"/>
+        <Tunnel _id="Out5" inputs="value:243.item" uid="365" uid_parent="350"/>
+        <Tunnel _id="Out7" inputs="value:249.avg" uid="367" uid_parent="350"/>
+      </CaseFrame>
+      <CaseFrame label="Report" selector="&quot;Report&quot;" selectout="" uid="370" uid_parent="300">
+        <Node _name="Divide" inputs="x:237.sum,y:240.index" outputs="x/y:371.avg" uid="371" uid_parent="370"/>
+        <Constant _name="ToStop" outputs="value:372.next" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="372" uid_parent="370" value="4"/>
+        <Tunnel _id="Out1" inputs="value:372.next" uid="373" uid_parent="370"/>
+        <Constant _name="NoStop" outputs="value:382.false" type="bool" uid="382" uid_parent="370" value="false"/>
+        <Tunnel _id="Out2" inputs="value:382.false" uid="374" uid_parent="370"/>
+        <Constant _name="ReportEntry" outputs="value:375.entry" type="string" uid="375" uid_parent="370" value="Report; "/>
+        <Node _name="Concatenate Strings" inputs="string:246.log,string:375.entry" outputs="concatenated string:376.new_log" uid="376" uid_parent="370"/>
+        <Tunnel _id="Out6" inputs="value:376.new_log" uid="377" uid_parent="370"/>
+        <Tunnel _id="Out3" inputs="value:237.sum" uid="378" uid_parent="370"/>
+        <Tunnel _id="Out4" inputs="value:240.index" uid="379" uid_parent="370"/>
+        <Tunnel _id="Out5" inputs="value:243.item" uid="380" uid_parent="370"/>
+        <Tunnel _id="Out7" inputs="value:371.avg" uid="381" uid_parent="370"/>
+      </CaseFrame>
+      <CaseFrame label="Stop" selector="&quot;Stop&quot;" selectout="" uid="400" uid_parent="300">
+        <Constant _name="StayStopped" outputs="value:401.next" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="401" uid_parent="400" value="4"/>
+        <Tunnel _id="Out1" inputs="value:401.next" uid="402" uid_parent="400"/>
+        <Constant _name="StopLoop" outputs="value:403.true" type="bool" uid="403" uid_parent="400" value="true"/>
+        <Tunnel _id="Out2" inputs="value:403.true" uid="404" uid_parent="400"/>
+        <Constant _name="StopEntry" outputs="value:405.entry" type="string" uid="405" uid_parent="400" value="Stop; "/>
+        <Node _name="Concatenate Strings" inputs="string:246.log,string:405.entry" outputs="concatenated string:406.new_log" uid="406" uid_parent="400"/>
+        <Tunnel _id="Out6" inputs="value:406.new_log" uid="407" uid_parent="400"/>
+        <Tunnel _id="Out3" inputs="value:237.sum" uid="408" uid_parent="400"/>
+        <Tunnel _id="Out4" inputs="value:240.index" uid="409" uid_parent="400"/>
+        <Tunnel _id="Out5" inputs="value:243.item" uid="410" uid_parent="400"/>
+        <Tunnel _id="Out7" inputs="value:249.avg" uid="412" uid_parent="400"/>
+      </CaseFrame>
+    </Structure>
+  </Structure>
+  <Indicator _name="Final State" connection="recommended" description="State register value when the loop exited; Stop on every normal path." inputs="value:232.state_out" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="500" uid_parent="root" value="0"/>
+  <Indicator _name="Sum" connection="recommended" description="Sum of all processed items, each multiplied by Scale." inputs="value:238.final_sum" type="double" uid="501" uid_parent="root" value="0"/>
+  <Indicator _name="Items Processed" connection="recommended" description="How many items were accumulated." inputs="value:241.final_index" type="int32" uid="502" uid_parent="root" value="0"/>
+  <Indicator _name="Average" connection="recommended" description="Sum divided by Items Processed, written by the Report state and carried by its own shift register. NaN when nothing was processed." inputs="value:252.final_avg" type="double" uid="503" uid_parent="root" value="0"/>
+  <Indicator _name="Log" connection="recommended" description="Transition log: every state the machine visited, in order, semicolon separated." inputs="value:247.final_log" type="string" uid="504" uid_parent="root" value=""/>
+</VI>

@@ -1,0 +1,551 @@
+<?xml version='1.0' encoding='utf-8'?>
+<RSRC FormatVersion="3" Type="LVIN" Encoding="mac_roman">
+  <LVSR>
+    <!-- LabView Save Record -->
+    <Section Index="0" Name="Batch Averager.vi" Format="inline">
+      <Version Major="26" Minor="0" Bugfix="0" Stage="release" Build="0" />
+      <Library Protected="0" PasswordHash="d41d8cd98f00b204e9800998ecf8427e" HashType="MD5" />
+      <Execution State="1" Priority="1" PrefExecSyst="-1" BadSignal="0" BadNode="0" BadSubVILink="0" BadSubVI="0" NotReservable="0" IsReentrant="0" CloseAfterCall="0" PooledReentrancy="0" LoadFP="0" HasNoBD="0" ShowFPOnLoad="0" DynamicDispatch="0" HasSetBP="0" RunOnOpen="0" ShowFPOnCall="0" BadCompile="0" IsSubroutine="0" DSRecord="0" CompilerBug="0" TypeDefVI="0" StrictTypeDefVI="0" BadDDO="0" CtlChanged="0" SaveParallel="0" LibIssuesNoRun="0" AllowAutoPrealloc="0" EvalWatermark="0" StdntWatermark="0" HasInsaneItems="0" PropTypesIssues="0" BrokenPolyVI="0" />
+      <Execution2 TaggedAndNotEdited="0" HideInstanceVICaption="0" SystemVI="0" VisibleVI="0" XDebugWindowVI="0" TemplateMask="0" SuppressXaction="0" AlwaysCallsParent="0" UndoRedoChangedNoTypes="0" InlinableDiagram="1" SourceOnly="1" InlineIfPossible="0" TransactionFailing="0" SSEOptiMask="0" StudentOnlyMask="0" EvalOnlyMask="0" AllowPolyTypeAdapt="0" ShouldInline="0" RecalcFPDSOs="0" MarkForPolyVI="0" VICanPassLVClassToDLL="0" UndoRedoInProgress="0" DrawInstanceIcon="0" ShowPolySelector="0" ClearIndMask="0" DefaultGrownView="0" DoNotClone="0" IsPrivateDataForUDClass="0" InstanceVI="0" DefaultErrorHandling="1" RemotePanel="0" SuppressInstanceHalo="0" />
+      <ButtonsHidden RunButton="0" ViBhBit1="0" ViBhBit2="0" ViBhBit3="0" ViBhBit4="0" FreeRunButton="0" ViBhBit6="0" AbortButton="0" ViBhBit8="0" ViBhBit9="0" ViBhBit10="0" ViBhBit11="0" ViBhBit12="0" ViBhBit13="0" ViBhBit14="0" ViBhBit15="0" />
+      <Instrument Type="Standard" Signature="9155a35ad652d54a8cf5142c32bd046a" InStBit0="0" InStBit1="0" InStBit2="0" InStBit3="0" InStBit4="1" InStBit5="0" InStBit6="0" InStBit7="0" InStBit8="0" DebugCapable="1" InStBit10="0" InStBit11="0" InStBit12="0" InStBit13="0" InStBit14="0" PrintAfterExec="0" InStBit16="0" InStBit17="0" InStBit18="0" InStBit19="0" InStBit20="0" InStBit21="0" InStBit22="0" InStBit23="1" InStBit24="0" InStBit25="0" InStBit26="0" InStBit27="0" InStBit28="0" InStBit29="0" InStBit30="1" InStBit31="0" />
+      <FrontPanel CtrlIndStyle="0" ShowScrollBar="3" ShowTitleBar="1" ToolBarVisible="1" ShowMenuBar="1" AutoCenter="0" SizeToScreen="0" NoRuntimePopUp="0" MarkReturnBtn="0" ViFpBit9="0" ScaleProportn="0" ViFpBit11="0" ViFpBit12="0" ViFpBit13="0" ViFpBit14="0" ViFpBit15="0" />
+      <Flags0C AutoHndlMenus="1" />
+      <Flags12 WndFloatUnk1="0" WndBit2="1" WndCanClose="1" WndCanResize="1" WndCanMinimize="1" WndTransparent="0" WndFloatUnk9="0" />
+      <Unknown Flags10="3" Field28="0" Field2C="0" Field30="0" AlignGridFP="12" AlignGridBD="16" Field4C="33" Field50Hash="343a0db21f421b459def0aeed14efbb3" Field70="0" Field74="0" Field78Hash="be076bda08c35243bf0f720cffa85acd" InlineStg="1" Field8C="4294967295" />
+      <Field90 Format="bin" File="batch-averager-copy_LVSR_Field90.bin" />
+      </Section>
+    </LVSR>
+  <RTSG>
+    <!-- Runtime Signature Guid -->
+    <Section Index="0" Format="inline">
+      <Guid>14e5e9514c72bdb4054f3640d20ef70a</Guid>
+      </Section>
+    </RTSG>
+  <vers>
+    <!-- Version block -->
+    <Section Index="4" Format="inline">
+      <Version Major="26" Minor="3" Bugfix="1" Stage="release" Build="1" Language="33" Info="26.3.1" Comment="" />
+      </Section>
+    </vers>
+  <CONP>
+    <!-- Connector Pane Type Map -->
+    <Section Index="0" Format="inline">
+      <TypeDesc TypeID="1" />
+      </Section>
+    </CONP>
+  <LIvi>
+    <!-- LinkObj Refs for VI -->
+    <Section Index="0" Format="inline">
+      <LVIN />
+      </Section>
+    </LIvi>
+  <BDPW>
+    <!-- Block Diagram Password -->
+    <Section Index="0" Format="inline">
+      <Password Text="" SaltSource="TD" SaltFlatTypeID="1" />
+      </Section>
+    </BDPW>
+  <STRG>
+    <!-- String description / descriptions list -->
+    <Section Index="0" Format="inline">
+      <String>Classic LabVIEW state machine in the NI canonical form (as exported from examples/Design Patterns/State Machine/State Machine Fundamentals.vi): an inline enum type uint16{Init,Load,Accumulate,Report,Stop} carries the state through a shift register; a Case Structure inside a While loop selects the frame by that state; each frame computes the next state (a constant, or a Select between two state constants when the transition is conditional) and writes every data register through a per-frame case Out tunnel, which is the per-state multiplexer for the register value. The Stop frame is the only one that raises the stop flag through a conditional (cond=true) tunnel wired straight to the loop condition. States: Init resets the registers; Load takes the next item from Items; Accumulate adds it to the sum, advances the index and branches back to Load or on to Report by comparing the index against the item count; Report divides sum by count into the average; Stop ends the loop. Every visited state is appended to a transition Log string register. Initial State accepts any state item so the machine can start mid-sequence.</String>
+      </Section>
+    </STRG>
+  <ICON>
+    <!-- Icon 32x32 1bpp -->
+    <Section Index="0" Format="png" File="batch-averager-copy_ICON.png" />
+    </ICON>
+  <icl8>
+    <!-- Icon Large 32x32 8bpp -->
+    <Section Index="0" Format="png" File="batch-averager-copy_icl8.png" />
+    </icl8>
+  <LIfp>
+    <!-- LinkObj Refs for Front Panel -->
+    <Section Index="0" Format="inline">
+      <FPHP />
+      </Section>
+    </LIfp>
+  <FPEx>
+    <!-- Generic block -->
+    <Section Index="0" Format="bin" File="batch-averager-copy_FPEx.bin" />
+    </FPEx>
+  <FPHb>
+    <!-- Front Panel Heap ver b -->
+    <Section Index="0" Format="xml" File="batch-averager-copy_FPHb.xml" />
+    </FPHb>
+  <FPSE>
+    <!-- Front Panel Size Estimate -->
+    <Section Index="0" Value="115" Format="inline" />
+    </FPSE>
+  <VPDP>
+    <!-- VI Primitive Dependency Flags -->
+    <Section Index="0" Format="bin" File="batch-averager-copy_VPDP.bin" />
+    </VPDP>
+  <LIbd>
+    <!-- LinkObj Refs for Block diagram -->
+    <Section Index="0" Format="inline">
+      <BDHP />
+      </Section>
+    </LIbd>
+  <BDEx>
+    <!-- Generic block -->
+    <Section Index="0" Format="bin" File="batch-averager-copy_BDEx.bin" />
+    </BDEx>
+  <BDHb>
+    <!-- Block Diagram Heap ver b -->
+    <Section Index="0" Format="xml" File="batch-averager-copy_BDHb.xml" />
+    </BDHb>
+  <BDSE>
+    <!-- Block Diagram Size Estimate -->
+    <Section Index="0" Value="1464" Format="inline" />
+    </BDSE>
+  <VITS>
+    <!-- Virtual Instrument Tag Strings -->
+    <Section Index="0" Format="bin" File="batch-averager-copy_VITS.bin" />
+    </VITS>
+  <DTHP>
+    <!-- Data Types for Heap -->
+    <Section Index="0" Format="inline">
+      <!-- Heap TypeID  1 = Consolidated TypeID  2: String -->
+      <!-- Heap TypeID  2 = Consolidated TypeID  3: String -->
+      <!-- Heap TypeID  3 = Consolidated TypeID  4: NumFloat64 -->
+      <!-- Heap TypeID  4 = Consolidated TypeID  5: NumFloat64 -->
+      <!-- Heap TypeID  5 = Consolidated TypeID  6: NumInt32 -->
+      <!-- Heap TypeID  6 = Consolidated TypeID  7: NumInt32 -->
+      <!-- Heap TypeID  7 = Consolidated TypeID  8: NumFloat64 -->
+      <!-- Heap TypeID  8 = Consolidated TypeID  9: NumFloat64 -->
+      <!-- Heap TypeID  9 = Consolidated TypeID 10: UnitUInt16 -->
+      <!-- Heap TypeID 10 = Consolidated TypeID 11: UnitUInt16 -->
+      <!-- Heap TypeID 11 = Consolidated TypeID 12: Array -->
+      <!-- Heap TypeID 12 = Consolidated TypeID 13: NumUInt32 -->
+      <!-- Heap TypeID 13 = Consolidated TypeID 14: Array -->
+      <!-- Heap TypeID 14 = Consolidated TypeID 15: NumFloat64 -->
+      <!-- Heap TypeID 15 = Consolidated TypeID 16: UnitUInt16 -->
+      <!-- Heap TypeID 16 = Consolidated TypeID 17: UnitUInt16 -->
+      <!-- Heap TypeID 17 = Consolidated TypeID 18: Array -->
+      <!-- Heap TypeID 18 = Consolidated TypeID 19: UnitUInt16 -->
+      <!-- Heap TypeID 19 = Consolidated TypeID 20: UnitUInt16 -->
+      <!-- Heap TypeID 20 = Consolidated TypeID 21: NumFloat64 -->
+      <!-- Heap TypeID 21 = Consolidated TypeID 22: NumFloat64 -->
+      <!-- Heap TypeID 22 = Consolidated TypeID 23: NumInt32 -->
+      <!-- Heap TypeID 23 = Consolidated TypeID 24: NumInt32 -->
+      <!-- Heap TypeID 24 = Consolidated TypeID 25: NumFloat64 -->
+      <!-- Heap TypeID 25 = Consolidated TypeID 26: NumFloat64 -->
+      <!-- Heap TypeID 26 = Consolidated TypeID 27: String -->
+      <!-- Heap TypeID 27 = Consolidated TypeID 28: String -->
+      <!-- Heap TypeID 28 = Consolidated TypeID 29: NumFloat64 -->
+      <!-- Heap TypeID 29 = Consolidated TypeID 30: NumFloat64 -->
+      <!-- Heap TypeID 30 = Consolidated TypeID 31: NumFloat64 -->
+      <!-- Heap TypeID 31 = Consolidated TypeID 32: NumInt32 -->
+      <!-- Heap TypeID 32 = Consolidated TypeID 33: NumFloat64 -->
+      <!-- Heap TypeID 33 = Consolidated TypeID 34: UnitUInt16 -->
+      <!-- Heap TypeID 34 = Consolidated TypeID 35: UnitUInt16 -->
+      <!-- Heap TypeID 35 = Consolidated TypeID 36: Boolean -->
+      <!-- Heap TypeID 36 = Consolidated TypeID 37: NumFloat64 -->
+      <!-- Heap TypeID 37 = Consolidated TypeID 38: NumInt32 -->
+      <!-- Heap TypeID 38 = Consolidated TypeID 39: NumFloat64 -->
+      <!-- Heap TypeID 39 = Consolidated TypeID 40: String -->
+      <!-- Heap TypeID 40 = Consolidated TypeID 41: NumFloat64 -->
+      <!-- Heap TypeID 41 = Consolidated TypeID 42: String -->
+      <!-- Heap TypeID 42 = Consolidated TypeID 43: NumFloat64 -->
+      <!-- Heap TypeID 43 = Consolidated TypeID 44: NumInt32 -->
+      <!-- Heap TypeID 44 = Consolidated TypeID 45: NumFloat64 -->
+      <!-- Heap TypeID 45 = Consolidated TypeID 46: Array -->
+      <!-- Heap TypeID 46 = Consolidated TypeID 47: NumInt32 -->
+      <!-- Heap TypeID 47 = Consolidated TypeID 48: String -->
+      <!-- Heap TypeID 48 = Consolidated TypeID 49: NumFloat64 -->
+      <!-- Heap TypeID 49 = Consolidated TypeID 50: NumFloat64 -->
+      <!-- Heap TypeID 50 = Consolidated TypeID 51: NumInt32 -->
+      <!-- Heap TypeID 51 = Consolidated TypeID 52: NumInt32 -->
+      <!-- Heap TypeID 52 = Consolidated TypeID 53: NumFloat64 -->
+      <!-- Heap TypeID 53 = Consolidated TypeID 54: NumInt32 -->
+      <!-- Heap TypeID 54 = Consolidated TypeID 55: String -->
+      <!-- Heap TypeID 55 = Consolidated TypeID 56: NumFloat64 -->
+      <!-- Heap TypeID 56 = Consolidated TypeID 57: NumInt32 -->
+      <!-- Heap TypeID 57 = Consolidated TypeID 58: NumFloat64 -->
+      <!-- Heap TypeID 58 = Consolidated TypeID 59: NumFloat64 -->
+      <!-- Heap TypeID 59 = Consolidated TypeID 60: String -->
+      <!-- Heap TypeID 60 = Consolidated TypeID 61: String -->
+      <!-- Heap TypeID 61 = Consolidated TypeID 62: String -->
+      <!-- Heap TypeID 62 = Consolidated TypeID 63: UnitUInt16 -->
+      <!-- Heap TypeID 63 = Consolidated TypeID 64: UnitUInt16 -->
+      <!-- Heap TypeID 64 = Consolidated TypeID 65: Boolean -->
+      <!-- Heap TypeID 65 = Consolidated TypeID 66: Boolean -->
+      <!-- Heap TypeID 66 = Consolidated TypeID 67: String -->
+      <!-- Heap TypeID 67 = Consolidated TypeID 68: String -->
+      <!-- Heap TypeID 68 = Consolidated TypeID 69: NumFloat64 -->
+      <!-- Heap TypeID 69 = Consolidated TypeID 70: NumFloat64 -->
+      <!-- Heap TypeID 70 = Consolidated TypeID 71: String -->
+      <!-- Heap TypeID 71 = Consolidated TypeID 72: String -->
+      <!-- Heap TypeID 72 = Consolidated TypeID 73: String -->
+      <!-- Heap TypeID 73 = Consolidated TypeID 74: Array -->
+      <!-- Heap TypeID 74 = Consolidated TypeID 75: NumFloat64 -->
+      <!-- Heap TypeID 75 = Consolidated TypeID 76: NumInt32 -->
+      <!-- Heap TypeID 76 = Consolidated TypeID 77: UnitUInt16 -->
+      <!-- Heap TypeID 77 = Consolidated TypeID 78: UnitUInt16 -->
+      <!-- Heap TypeID 78 = Consolidated TypeID 79: Boolean -->
+      <!-- Heap TypeID 79 = Consolidated TypeID 80: Boolean -->
+      <!-- Heap TypeID 80 = Consolidated TypeID 81: String -->
+      <!-- Heap TypeID 81 = Consolidated TypeID 82: String -->
+      <!-- Heap TypeID 82 = Consolidated TypeID 83: String -->
+      <!-- Heap TypeID 83 = Consolidated TypeID 84: String -->
+      <!-- Heap TypeID 84 = Consolidated TypeID 85: String -->
+      <!-- Heap TypeID 85 = Consolidated TypeID 86: UnitUInt16 -->
+      <!-- Heap TypeID 86 = Consolidated TypeID 87: UnitUInt16 -->
+      <!-- Heap TypeID 87 = Consolidated TypeID 88: Boolean -->
+      <!-- Heap TypeID 88 = Consolidated TypeID 89: UnitUInt16 -->
+      <!-- Heap TypeID 89 = Consolidated TypeID 90: Boolean -->
+      <!-- Heap TypeID 90 = Consolidated TypeID 91: NumInt32 -->
+      <!-- Heap TypeID 91 = Consolidated TypeID 92: NumInt32 -->
+      <!-- Heap TypeID 92 = Consolidated TypeID 93: NumInt32 -->
+      <!-- Heap TypeID 93 = Consolidated TypeID 94: NumInt32 -->
+      <!-- Heap TypeID 94 = Consolidated TypeID 95: NumInt32 -->
+      <!-- Heap TypeID 95 = Consolidated TypeID 96: NumFloat64 -->
+      <!-- Heap TypeID 96 = Consolidated TypeID 97: NumFloat64 -->
+      <!-- Heap TypeID 97 = Consolidated TypeID 98: NumFloat64 -->
+      <!-- Heap TypeID 98 = Consolidated TypeID 99: NumInt32 -->
+      <!-- Heap TypeID 99 = Consolidated TypeID 100: NumInt32 -->
+      <!-- Heap TypeID 100 = Consolidated TypeID 101: UnitUInt16 -->
+      <!-- Heap TypeID 101 = Consolidated TypeID 102: UnitUInt16 -->
+      <!-- Heap TypeID 102 = Consolidated TypeID 103: UnitUInt16 -->
+      <!-- Heap TypeID 103 = Consolidated TypeID 104: UnitUInt16 -->
+      <!-- Heap TypeID 104 = Consolidated TypeID 105: Boolean -->
+      <!-- Heap TypeID 105 = Consolidated TypeID 106: Boolean -->
+      <!-- Heap TypeID 106 = Consolidated TypeID 107: String -->
+      <!-- Heap TypeID 107 = Consolidated TypeID 108: String -->
+      <!-- Heap TypeID 108 = Consolidated TypeID 109: String -->
+      <!-- Heap TypeID 109 = Consolidated TypeID 110: String -->
+      <!-- Heap TypeID 110 = Consolidated TypeID 111: String -->
+      <!-- Heap TypeID 111 = Consolidated TypeID 112: NumFloat64 -->
+      <!-- Heap TypeID 112 = Consolidated TypeID 113: NumInt32 -->
+      <!-- Heap TypeID 113 = Consolidated TypeID 114: NumFloat64 -->
+      <!-- Heap TypeID 114 = Consolidated TypeID 115: UnitUInt16 -->
+      <!-- Heap TypeID 115 = Consolidated TypeID 116: UnitUInt16 -->
+      <!-- Heap TypeID 116 = Consolidated TypeID 117: Boolean -->
+      <!-- Heap TypeID 117 = Consolidated TypeID 118: Boolean -->
+      <!-- Heap TypeID 118 = Consolidated TypeID 119: String -->
+      <!-- Heap TypeID 119 = Consolidated TypeID 120: String -->
+      <!-- Heap TypeID 120 = Consolidated TypeID 121: String -->
+      <!-- Heap TypeID 121 = Consolidated TypeID 122: String -->
+      <!-- Heap TypeID 122 = Consolidated TypeID 123: String -->
+      <!-- Heap TypeID 123 = Consolidated TypeID 124: UnitUInt16 -->
+      <!-- Heap TypeID 124 = Consolidated TypeID 125: UnitUInt16 -->
+      <!-- Heap TypeID 125 = Consolidated TypeID 126: Boolean -->
+      <!-- Heap TypeID 126 = Consolidated TypeID 127: Boolean -->
+      <!-- Heap TypeID 127 = Consolidated TypeID 128: String -->
+      <!-- Heap TypeID 128 = Consolidated TypeID 129: String -->
+      <!-- Heap TypeID 129 = Consolidated TypeID 130: NumInt32 -->
+      <!-- Heap TypeID 130 = Consolidated TypeID 131: Array -->
+      <!-- Heap TypeID 131 = Consolidated TypeID 132: NumInt32 -->
+      <!-- Heap TypeID 132 = Consolidated TypeID 133: Boolean -->
+      <!-- Heap TypeID 133 = Consolidated TypeID 134: NumInt32 -->
+      <!-- Heap TypeID 134 = Consolidated TypeID 135: NumInt32 -->
+      <!-- Heap TypeID 135 = Consolidated TypeID 136: NumFloat64 -->
+      <!-- Heap TypeID 136 = Consolidated TypeID 137: NumFloat64 -->
+      <!-- Heap TypeID 137 = Consolidated TypeID 138: String -->
+      <!-- Heap TypeID 138 = Consolidated TypeID 139: String -->
+      <TypeDescSlice IndexShift="2" Count="138" />
+      </Section>
+    </DTHP>
+  <MUID>
+    <!-- Map Unique Identifier -->
+    <Section Index="0" Value="2029" Format="inline" />
+    </MUID>
+  <HIST>
+    <!-- Changes History -->
+    <Section Index="0" Format="bin" File="batch-averager-copy_HIST.bin" />
+    </HIST>
+  <VCTP>
+    <!-- VI Consolidated Data Types -->
+    <Section Index="0" Format="inline">
+      <!-- FlatTypeID 0: Type Descriptor with Void data -->
+      <TypeDesc Type="Void" Format="inline" />
+      <!-- FlatTypeID 1: Type Descriptor with Function data -->
+      <TypeDesc Type="Function" FuncFlags="0x300" Pattern="0x78" HasThrall="0" Format="inline">
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        </TypeDesc>
+      <!-- FlatTypeID 2: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="Log" />
+      <!-- FlatTypeID 3: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumFloat64" Prop1="0" Format="inline" Label="Average" />
+      <!-- FlatTypeID 4: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Items Processed" />
+      <!-- FlatTypeID 5: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumFloat64" Prop1="0" Format="inline" Label="Sum" />
+      <!-- FlatTypeID 6: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="Final State">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 7: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumFloat64" Prop1="0" Format="inline" />
+      <!-- FlatTypeID 8: Type Descriptor with Multidimentional Array data -->
+      <TypeDesc Type="Array" Format="inline" Label="Items">
+        <Dimension Flags="0x00FF" FixedSize="0xFFFFFF" />
+        <TypeDesc TypeID="7" />
+        </TypeDesc>
+      <!-- FlatTypeID 9: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumUInt32" Prop1="0" Format="inline" />
+      <!-- FlatTypeID 10: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="Initial State">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 11: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumFloat64" Prop1="0" Format="inline" Label="ZeroD" />
+      <!-- FlatTypeID 12: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Zero" />
+      <!-- FlatTypeID 13: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="EmptyLog" />
+      <!-- FlatTypeID 14: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="StayStopped">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 15: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="StopLoop" />
+      <!-- FlatTypeID 16: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" />
+      <!-- FlatTypeID 17: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" />
+      <!-- FlatTypeID 18: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="InitEntry" />
+      <!-- FlatTypeID 19: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="ToLoad">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 20: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="NoStop" />
+      <!-- FlatTypeID 21: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumFloat64" Prop1="0" Format="inline" Label="AvgZero" />
+      <!-- FlatTypeID 22: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="LoadEntry" />
+      <!-- FlatTypeID 23: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="ToAccumulate">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 24: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="AccEntry" />
+      <!-- FlatTypeID 25: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="ToReport">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 26: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" />
+      <!-- FlatTypeID 27: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="BackToLoad">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 28: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="One" />
+      <!-- FlatTypeID 29: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="ReportEntry" />
+      <!-- FlatTypeID 30: Type Descriptor with single number as data -->
+      <TypeDesc Type="UnitUInt16" Prop1="0" Format="inline" Label="ToStop">
+        <EnumLabel>Init</EnumLabel>
+        <EnumLabel>Load</EnumLabel>
+        <EnumLabel>Accumulate</EnumLabel>
+        <EnumLabel>Report</EnumLabel>
+        <EnumLabel>Stop</EnumLabel>
+        </TypeDesc>
+      <!-- FlatTypeID 31: Type Descriptor with String data -->
+      <TypeDesc Type="String" Prop1="0xFFFFFFFF" Format="inline" Label="StopEntry" />
+      <TopLevel>
+        <!-- When Consolidated Type is referred to in other blocks, the TypeID is Index from this list -->
+        <TypeDesc Index="1" FlatTypeID="1" />
+        <TypeDesc Index="2" FlatTypeID="2" />
+        <TypeDesc Index="3" FlatTypeID="2" />
+        <TypeDesc Index="4" FlatTypeID="3" />
+        <TypeDesc Index="5" FlatTypeID="3" />
+        <TypeDesc Index="6" FlatTypeID="4" />
+        <TypeDesc Index="7" FlatTypeID="4" />
+        <TypeDesc Index="8" FlatTypeID="5" />
+        <TypeDesc Index="9" FlatTypeID="5" />
+        <TypeDesc Index="10" FlatTypeID="6" />
+        <TypeDesc Index="11" FlatTypeID="6" />
+        <TypeDesc Index="12" FlatTypeID="8" />
+        <TypeDesc Index="13" FlatTypeID="9" />
+        <TypeDesc Index="14" FlatTypeID="8" />
+        <TypeDesc Index="15" FlatTypeID="7" />
+        <TypeDesc Index="16" FlatTypeID="10" />
+        <TypeDesc Index="17" FlatTypeID="10" />
+        <TypeDesc Index="18" FlatTypeID="8" />
+        <TypeDesc Index="19" FlatTypeID="10" />
+        <TypeDesc Index="20" FlatTypeID="10" />
+        <TypeDesc Index="21" FlatTypeID="11" />
+        <TypeDesc Index="22" FlatTypeID="11" />
+        <TypeDesc Index="23" FlatTypeID="12" />
+        <TypeDesc Index="24" FlatTypeID="12" />
+        <TypeDesc Index="25" FlatTypeID="11" />
+        <TypeDesc Index="26" FlatTypeID="11" />
+        <TypeDesc Index="27" FlatTypeID="13" />
+        <TypeDesc Index="28" FlatTypeID="13" />
+        <TypeDesc Index="29" FlatTypeID="11" />
+        <TypeDesc Index="30" FlatTypeID="11" />
+        <TypeDesc Index="31" FlatTypeID="11" />
+        <TypeDesc Index="32" FlatTypeID="12" />
+        <TypeDesc Index="33" FlatTypeID="11" />
+        <TypeDesc Index="34" FlatTypeID="10" />
+        <TypeDesc Index="35" FlatTypeID="14" />
+        <TypeDesc Index="36" FlatTypeID="15" />
+        <TypeDesc Index="37" FlatTypeID="11" />
+        <TypeDesc Index="38" FlatTypeID="12" />
+        <TypeDesc Index="39" FlatTypeID="11" />
+        <TypeDesc Index="40" FlatTypeID="16" />
+        <TypeDesc Index="41" FlatTypeID="11" />
+        <TypeDesc Index="42" FlatTypeID="13" />
+        <TypeDesc Index="43" FlatTypeID="11" />
+        <TypeDesc Index="44" FlatTypeID="12" />
+        <TypeDesc Index="45" FlatTypeID="11" />
+        <TypeDesc Index="46" FlatTypeID="8" />
+        <TypeDesc Index="47" FlatTypeID="12" />
+        <TypeDesc Index="48" FlatTypeID="13" />
+        <TypeDesc Index="49" FlatTypeID="11" />
+        <TypeDesc Index="50" FlatTypeID="11" />
+        <TypeDesc Index="51" FlatTypeID="12" />
+        <TypeDesc Index="52" FlatTypeID="17" />
+        <TypeDesc Index="53" FlatTypeID="11" />
+        <TypeDesc Index="54" FlatTypeID="12" />
+        <TypeDesc Index="55" FlatTypeID="13" />
+        <TypeDesc Index="56" FlatTypeID="11" />
+        <TypeDesc Index="57" FlatTypeID="12" />
+        <TypeDesc Index="58" FlatTypeID="11" />
+        <TypeDesc Index="59" FlatTypeID="11" />
+        <TypeDesc Index="60" FlatTypeID="16" />
+        <TypeDesc Index="61" FlatTypeID="13" />
+        <TypeDesc Index="62" FlatTypeID="18" />
+        <TypeDesc Index="63" FlatTypeID="19" />
+        <TypeDesc Index="64" FlatTypeID="19" />
+        <TypeDesc Index="65" FlatTypeID="20" />
+        <TypeDesc Index="66" FlatTypeID="20" />
+        <TypeDesc Index="67" FlatTypeID="18" />
+        <TypeDesc Index="68" FlatTypeID="18" />
+        <TypeDesc Index="69" FlatTypeID="21" />
+        <TypeDesc Index="70" FlatTypeID="21" />
+        <TypeDesc Index="71" FlatTypeID="16" />
+        <TypeDesc Index="72" FlatTypeID="13" />
+        <TypeDesc Index="73" FlatTypeID="22" />
+        <TypeDesc Index="74" FlatTypeID="8" />
+        <TypeDesc Index="75" FlatTypeID="7" />
+        <TypeDesc Index="76" FlatTypeID="17" />
+        <TypeDesc Index="77" FlatTypeID="23" />
+        <TypeDesc Index="78" FlatTypeID="23" />
+        <TypeDesc Index="79" FlatTypeID="20" />
+        <TypeDesc Index="80" FlatTypeID="20" />
+        <TypeDesc Index="81" FlatTypeID="22" />
+        <TypeDesc Index="82" FlatTypeID="22" />
+        <TypeDesc Index="83" FlatTypeID="16" />
+        <TypeDesc Index="84" FlatTypeID="13" />
+        <TypeDesc Index="85" FlatTypeID="24" />
+        <TypeDesc Index="86" FlatTypeID="25" />
+        <TypeDesc Index="87" FlatTypeID="25" />
+        <TypeDesc Index="88" FlatTypeID="26" />
+        <TypeDesc Index="89" FlatTypeID="27" />
+        <TypeDesc Index="90" FlatTypeID="26" />
+        <TypeDesc Index="91" FlatTypeID="17" />
+        <TypeDesc Index="92" FlatTypeID="17" />
+        <TypeDesc Index="93" FlatTypeID="17" />
+        <TypeDesc Index="94" FlatTypeID="28" />
+        <TypeDesc Index="95" FlatTypeID="12" />
+        <TypeDesc Index="96" FlatTypeID="7" />
+        <TypeDesc Index="97" FlatTypeID="11" />
+        <TypeDesc Index="98" FlatTypeID="11" />
+        <TypeDesc Index="99" FlatTypeID="28" />
+        <TypeDesc Index="100" FlatTypeID="28" />
+        <TypeDesc Index="101" FlatTypeID="27" />
+        <TypeDesc Index="102" FlatTypeID="27" />
+        <TypeDesc Index="103" FlatTypeID="25" />
+        <TypeDesc Index="104" FlatTypeID="25" />
+        <TypeDesc Index="105" FlatTypeID="20" />
+        <TypeDesc Index="106" FlatTypeID="20" />
+        <TypeDesc Index="107" FlatTypeID="24" />
+        <TypeDesc Index="108" FlatTypeID="24" />
+        <TypeDesc Index="109" FlatTypeID="16" />
+        <TypeDesc Index="110" FlatTypeID="13" />
+        <TypeDesc Index="111" FlatTypeID="29" />
+        <TypeDesc Index="112" FlatTypeID="7" />
+        <TypeDesc Index="113" FlatTypeID="12" />
+        <TypeDesc Index="114" FlatTypeID="11" />
+        <TypeDesc Index="115" FlatTypeID="30" />
+        <TypeDesc Index="116" FlatTypeID="30" />
+        <TypeDesc Index="117" FlatTypeID="20" />
+        <TypeDesc Index="118" FlatTypeID="20" />
+        <TypeDesc Index="119" FlatTypeID="29" />
+        <TypeDesc Index="120" FlatTypeID="29" />
+        <TypeDesc Index="121" FlatTypeID="16" />
+        <TypeDesc Index="122" FlatTypeID="13" />
+        <TypeDesc Index="123" FlatTypeID="31" />
+        <TypeDesc Index="124" FlatTypeID="14" />
+        <TypeDesc Index="125" FlatTypeID="14" />
+        <TypeDesc Index="126" FlatTypeID="15" />
+        <TypeDesc Index="127" FlatTypeID="15" />
+        <TypeDesc Index="128" FlatTypeID="31" />
+        <TypeDesc Index="129" FlatTypeID="31" />
+        <TypeDesc Index="130" FlatTypeID="17" />
+        <TypeDesc Index="131" FlatTypeID="8" />
+        <TypeDesc Index="132" FlatTypeID="17" />
+        <TypeDesc Index="133" FlatTypeID="26" />
+        <TypeDesc Index="134" FlatTypeID="12" />
+        <TypeDesc Index="135" FlatTypeID="12" />
+        <TypeDesc Index="136" FlatTypeID="11" />
+        <TypeDesc Index="137" FlatTypeID="11" />
+        <TypeDesc Index="138" FlatTypeID="13" />
+        <TypeDesc Index="139" FlatTypeID="13" />
+        </TopLevel>
+      </Section>
+    </VCTP>
+  <FTAB>
+    <!-- Font Table -->
+    <Section Index="128" Prop1="0x10002" Prop3="3" Format="inline">
+      <Font Prop2="17" Prop3="0" Prop4="0" Prop6="17" Prop7="241" Prop8="229">
+        <Name>Microsoft YaHei UI</Name>
+        </Font>
+      <Font Prop2="17" Prop3="0" Prop4="0" Prop6="17" Prop7="241" Prop8="229">
+        <Name>Microsoft YaHei UI</Name>
+        </Font>
+      <Font Prop2="17" Prop3="0" Prop4="0" Prop6="17" Prop7="241" Prop8="229">
+        <Name>Microsoft YaHei UI</Name>
+        </Font>
+      <Font Prop2="32768" Prop3="32768" Prop4="32768" Prop6="17" Prop7="241" Prop8="229">
+        <Name>0</Name>
+        </Font>
+      </Section>
+    </FTAB>
+  </RSRC>
