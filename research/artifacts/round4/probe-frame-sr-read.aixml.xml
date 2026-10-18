@@ -1,0 +1,38 @@
+<VI _name="Probe Frame SR Read.vi" description="Probe: can a Node inside a Case frame read a shift-register net declared at loop level (net 240.acc), without an explicit case tunnel? Frame True runs Add(SR, Step) and writes the frame-level Out tunnel; frame False passes the SR value straight through (the pattern proven in round3 v2). If this validates and converts, state machines can read data registers directly inside their frames.">
+  <Control _name="Start" connection="recommended" description="Seed of the accumulator shift register (root level, per the round3 seed rule)." outputs="value:100.value" type="double" uid="100" uid_parent="root" value="2"/>
+  <Control _name="Step" connection="recommended" description="Amount added to the accumulator while Mode is TRUE." outputs="value:101.value" type="double" uid="101" uid_parent="root" value="3"/>
+  <Control _name="Mode" connection="recommended" description="TRUE: accumulate. FALSE: pass the value through unchanged." outputs="value:102.value" type="bool" uid="102" uid_parent="root" value="true"/>
+  <Control _name="Max Iterations" connection="recommended" description="Loop stops once this many iterations have run." outputs="value:104.value" type="int32" uid="104" uid_parent="root" value="3"/>
+  <Constant _name="Zero" outputs="value:220.zero" type="int32" uid="220" uid_parent="root" value="0"/>
+  <Constant _name="One" outputs="value:224.one" type="int32" uid="224" uid_parent="root" value="1"/>
+  <Structure _name="While Loop" count="" uid="200" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:101.value" outputs="value:211.step" uid="211" uid_parent="200"/>
+    <Tunnel _id="In2" inputs="value:104.value" outputs="value:213.max" uid="213" uid_parent="200"/>
+    <ShiftReg uid="230" uid_parent="200">
+      <Left inputs="value:100.value" outputs="value:240.acc" uid="231" uid_parent="230"/>
+      <Right inputs="value:280.new_acc" outputs="value:290.final_acc" uid="232" uid_parent="230"/>
+    </ShiftReg>
+    <ShiftReg uid="233" uid_parent="200">
+      <Left inputs="value:220.zero" outputs="value:241.iter" uid="234" uid_parent="233"/>
+      <Right inputs="value:253.iter_next" outputs="value:291.final_iter" uid="235" uid_parent="233"/>
+    </ShiftReg>
+    <Node _name="Add" inputs="x:241.iter,y:224.one" outputs="x+y:253.iter_next" uid="253" uid_parent="200"/>
+    <Node _name="Greater Or Equal?" inputs="x:253.iter_next,y:213.max" outputs="x &gt;= y?:254.stop" uid="254" uid_parent="200"/>
+    <Condition inputs="value:254.stop" uid="201" uid_parent="200" value="stop"/>
+    <Structure _name="Case Structure" selectin="value:102.value" uid="260" uid_parent="200">
+      <Tunnel _id="In1" inputs="value:211.step" uid="267" uid_parent="260"/>
+      <CaseFrame label="Accumulate" selector="True" selectout="" uid="261" uid_parent="260">
+        <Tunnel _id="In1" outputs="value:268.step" uid="268" uid_parent="261"/>
+        <Node _name="Add" inputs="x:240.acc,y:268.step" outputs="x+y:262.new" uid="262" uid_parent="261"/>
+        <Tunnel _id="Out1" inputs="value:262.new" uid="263" uid_parent="261"/>
+      </CaseFrame>
+      <CaseFrame label="Pass through" selector="False" selectout="" uid="264" uid_parent="260">
+        <Tunnel _id="In1" outputs="value:" uid="269" uid_parent="264"/>
+        <Tunnel _id="Out1" inputs="value:240.acc" uid="265" uid_parent="264"/>
+      </CaseFrame>
+      <Tunnel _id="Out1" outputs="value:280.new_acc" uid="266" uid_parent="260"/>
+    </Structure>
+  </Structure>
+  <Indicator _name="Final Value" connection="recommended" description="Accumulator value after the last iteration." inputs="value:290.final_acc" type="double" uid="300" uid_parent="root" value="0"/>
+  <Indicator _name="Iterations" connection="recommended" description="Number of iterations that ran." inputs="value:291.final_iter" type="int32" uid="301" uid_parent="root" value="0"/>
+</VI>

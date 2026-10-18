@@ -1,0 +1,84 @@
+<VI _name="State Machine Fundamentals.vi" description="演示LabVIEW中状态机设计模式的基础。最简单的状态机就是在While循环中中放置一个条件结构，将状态枚举连线至循环的移位寄存器，从而定义循环的不同迭代中执行的条件结构分支（或“状态”）。">
+  <FreeLabel comment="浏览状态机条件结构各个帧可查看该状态机的所有状态。" uid="87" uid_parent="root"/>
+  <FreeLabel comment="状态枚举为自定义类型，表示任何源.ctl自定义类型的改动都将更新至VI每个自定义类型的实例。右键单击下面的状态枚举常量，从快捷菜单中选择打开自定义类型可打开源.ctl文件。" uid="1123" uid_parent="root"/>
+  <FreeLabel comment="移位寄存器通过状态枚举值&quot;Initialize&quot;初始化，该枚举值在While循环的第一个迭代时运行条件结构的&quot;Initialize&quot;分支。" uid="1484" uid_parent="root"/>
+  <FreeLabel comment="LabVIEW状态机包含四个基本执行元素：\0A\0AWhile循环－执行多个迭代直至符合停止条件。\0A条件结构－包含表示状态机每个状态的特殊代码。\0A状态枚举－定义状态机的所有状态。\0A移位寄存器－包含在当前迭代中执行的前一个迭代指定的状态。" uid="1856" uid_parent="root"/>
+  <Constant _name="初始状态" outputs="value:255.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="255" uid_parent="root" value="0"/>
+  <Structure _name="While Loop" count="" label="状态机While循环" uid="96" uid_parent="root">
+    <Structure _name="Case Structure" selectin="202.value" uid="202" uid_parent="96">
+      <CaseFrame label="Initialize－本范例中，唯一的初始化要求就是指定状态机的下一个状态是&quot;Wait for Event&quot;。" selector="&quot;Initialize&quot;" selectout="" uid="210" uid_parent="202">
+        <Constant _name="下一个状态" outputs="value:380.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="380" uid_parent="210" value="1"/>
+        <Tunnel _id="Out1" inputs="value:380.value" uid="415" uid_parent="210"/>
+        <Tunnel _id="Out2" inputs="value:" uid="1762" uid_parent="210"/>
+      </CaseFrame>
+      <CaseFrame label="Wait for Event－事件结构用于监视用户界面事件。事件结构的每个帧中，状态机的下一个状态取决于按下的按钮。" selector="&quot;Wait for Event&quot;" selectout="" uid="216" uid_parent="202">
+        <FreeLabel comment="注：如发生用户界面事件时运行的不是&quot;Wait for Event&quot;状态，则事件将被放入队列并在下次执行该事件结构时运行该事件帧。" uid="513" uid_parent="216"/>
+        <Structure _name="Event Structure" uid="521" uid_parent="216">
+          <CaseFrame selector=" &quot;运行状态1&quot;\3A 值改变 " uid="529" uid_parent="521">
+            <Constant _name="下一个状态" outputs="value:596.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="596" uid_parent="529" value="2"/>
+            <Control _name="运行状态1" outputs="value:" style="latched" type="bool" uid="61" uid_parent="529" value="false"/>
+            <Node _name="Event Data Node" fields="Time" outputs="时间:" uid="550" uid_parent="529"/>
+            <Tunnel _id="Out1" inputs="value:596.value" uid="631" uid_parent="529"/>
+          </CaseFrame>
+          <CaseFrame selector=" &quot;运行状态2&quot;\3A 值改变 " uid="679" uid_parent="521">
+            <Constant _name="下一个状态" outputs="value:713.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="713" uid_parent="679" value="3"/>
+            <Control _name="运行状态2" outputs="value:" style="latched" type="bool" uid="110" uid_parent="679" value="false"/>
+            <Node _name="Event Data Node" fields="Time" outputs="时间:" uid="698" uid_parent="679"/>
+            <Tunnel _id="Out1" inputs="value:713.value" uid="686" uid_parent="679"/>
+          </CaseFrame>
+          <CaseFrame selector=" &quot;停止&quot;\3A 值改变 " uid="739" uid_parent="521">
+            <Constant _name="下一个状态" outputs="value:773.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="773" uid_parent="739" value="5"/>
+            <Control _name="停止" outputs="value:" style="latched" type="bool" uid="147" uid_parent="739" value="false"/>
+            <Node _name="Event Data Node" fields="Time" outputs="时间:" uid="758" uid_parent="739"/>
+            <Tunnel _id="Out1" inputs="value:773.value" uid="746" uid_parent="739"/>
+          </CaseFrame>
+          <Tunnel _id="Out1" cond="true" outputs="value:634.value" uid="634" uid_parent="521"/>
+        </Structure>
+        <Tunnel _id="Out1" inputs="value:634.value" uid="418" uid_parent="216"/>
+        <Tunnel _id="Out2" inputs="value:" uid="1766" uid_parent="216"/>
+      </CaseFrame>
+      <CaseFrame label="State 1－显示状态1消息的对话框，然后返回&quot;Wait for Event&quot;状态。" selector="&quot;State 1&quot;" selectout="" uid="1137" uid_parent="202">
+        <FreeLabel comment="单按钮对话框函数显示状态1的文本。" uid="480" uid_parent="1137"/>
+        <Constant _name="下一个状态" outputs="value:1271.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="1271" uid_parent="1137" value="1"/>
+        <Control _name="状态1文本" outputs="value:150.value" type="string" uid="150" uid_parent="1137" value="状态1正在执行。"/>
+        <Node _name="One Button Dialog" inputs="message:150.value,button name (&quot;OK&quot;):" outputs="true:" uid="436" uid_parent="1137"/>
+        <Tunnel _id="Out1" inputs="value:1271.value" uid="1145" uid_parent="1137"/>
+        <Tunnel _id="Out2" inputs="value:" uid="1770" uid_parent="1137"/>
+      </CaseFrame>
+      <CaseFrame label="State 2－显示状态2消息的对话框，并在单击“是”后返回状态3。注意状态机可包含额外的逻辑，根据用户操作或其他条件决定转移至其他状态。" selector="&quot;State 2&quot;" selectout="" uid="1169" uid_parent="202">
+        <FreeLabel comment="双按钮对话框函数显示状态2的消息，并在单击“是”后返回TRUE。" uid="620" uid_parent="1169"/>
+        <Constant _name="下一个状态" outputs="value:1376.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="1376" uid_parent="1169" value="4"/>
+        <Control _name="状态2文本" outputs="value:231.value" type="string" uid="231" uid_parent="1169" value="状态2正在执行。是否接下来执行状态3？"/>
+        <Constant _name="下一个状态" outputs="value:335.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="335" uid_parent="1169" value="1"/>
+        <Control _name="是" outputs="value:555.value" type="string" uid="555" uid_parent="1169" value="是"/>
+        <Control _name="否" outputs="value:643.value" type="string" uid="643" uid_parent="1169" value="否"/>
+        <Node _name="Two Button Dialog" inputs="message:231.value,T button name (&quot;OK&quot;):555.value,F button name (&quot;Cancel&quot;):643.value" outputs="T button?:1704.T button?" uid="1704" uid_parent="1169"/>
+        <Node _name="Select" inputs="t:1376.value,s:1704.T button?,f:335.value" outputs="s? t\3Af:185.s? t\3Af" uid="185" uid_parent="1169"/>
+        <Tunnel _id="Out1" inputs="value:185.s? t\3Af" uid="1177" uid_parent="1169"/>
+        <Tunnel _id="Out2" inputs="value:" uid="1774" uid_parent="1169"/>
+      </CaseFrame>
+      <CaseFrame label="State 3－显示状态3消息的对话框，然后返回&quot;Wait for Event&quot;状态。" selector="&quot;State 3&quot;" selectout="" uid="1226" uid_parent="202">
+        <FreeLabel comment="单按钮对话框函数显示状态3的文本。" uid="937" uid_parent="1226"/>
+        <Constant _name="下一个状态" outputs="value:1495.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="1495" uid_parent="1226" value="1"/>
+        <Control _name="状态3文本" outputs="value:283.value" type="string" uid="283" uid_parent="1226" value="状态3正在执行。"/>
+        <Node _name="One Button Dialog" inputs="message:283.value,button name (&quot;OK&quot;):" outputs="true:" uid="925" uid_parent="1226"/>
+        <Tunnel _id="Out1" inputs="value:1495.value" uid="1234" uid_parent="1226"/>
+        <Tunnel _id="Out2" inputs="value:" uid="1778" uid_parent="1226"/>
+      </CaseFrame>
+      <CaseFrame label="Stop－停止VI。这是唯一个指定循环条件接线端的值为TRUE的状态。" selector="&quot;Stop&quot;" selectout="" uid="1591" uid_parent="202">
+        <FreeLabel comment="由于该状态循环的最后一个迭代，因此可连线任意状态枚举值至移位寄存器。" uid="1084" uid_parent="1591"/>
+        <Constant _name="（未用值）" outputs="value:1609.value" type="uint16{Initialize,Wait for Event,State 1,State 2,State 3,Stop}" uid="1609" uid_parent="1591" value="5"/>
+        <Constant _name="停止循环" outputs="value:1729.value" type="bool" uid="1729" uid_parent="1591" value="true"/>
+        <Tunnel _id="Out1" inputs="value:1609.value" uid="1599" uid_parent="1591"/>
+        <Tunnel _id="Out2" inputs="value:1729.value" uid="1782" uid_parent="1591"/>
+      </CaseFrame>
+      <Tunnel _id="Out1" outputs="value:422.value" uid="422" uid_parent="202"/>
+      <Tunnel _id="Out2" cond="true" outputs="value:1785.value" uid="1785" uid_parent="202"/>
+    </Structure>
+    <Condition inputs="value:1785.value" uid="122" uid_parent="96" value="stop"/>
+    <ShiftReg uid="236" uid_parent="96">
+      <Left inputs="value:255.value" outputs="value:202.value" uid="243" uid_parent="236"/>
+      <Right inputs="value:422.value" outputs="value:" uid="246" uid_parent="236"/>
+    </ShiftReg>
+  </Structure>
+</VI>

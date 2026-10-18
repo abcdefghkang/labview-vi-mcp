@@ -55,6 +55,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
 | `research/08-complex-programs.md` | Round-3: complex programs — ShiftReg seed rule, multi-VI Call, `.lvproj` containers (Chinese) |
 | `research/09-measured-session-2.md` | Round-3 measured session record incl. bisection table (Chinese) |
+| `research/10-state-machine-and-ctl.md` | Round-4: state-machine templating (inline-enum selector, per-frame tunnel duties, SR survival rule), `.ctl` typedefs, VI→AIXML read-back loop (Chinese) |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 

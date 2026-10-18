@@ -1,0 +1,19 @@
+<VI _name="Probe String Case.vi" description="Probe: minimal string-driven Case Structure with a Default frame, selector fed by a root-level string control. Isolates whether authored AIXML can express a string case with quoted selectors and a Default branch.">
+  <Control _name="Sel" connection="recommended" description="Selector string." outputs="value:100.value" type="string" uid="100" uid_parent="root" value="A"/>
+  <Constant _name="OutA" outputs="value:220.a" type="string" uid="220" uid_parent="root" value="frame A ran"/>
+  <Constant _name="OutB" outputs="value:221.b" type="string" uid="221" uid_parent="root" value="frame B ran"/>
+  <Constant _name="OutD" outputs="value:222.d" type="string" uid="222" uid_parent="root" value="default ran"/>
+  <Structure _name="Case Structure" selectin="100.value" uid="300" uid_parent="root">
+    <Tunnel _id="Out1" outputs="value:310.result" uid="301" uid_parent="300"/>
+    <CaseFrame label="A" selector="&quot;A&quot;" selectout="" uid="310" uid_parent="300">
+      <Tunnel _id="Out1" inputs="value:220.a" uid="311" uid_parent="310"/>
+    </CaseFrame>
+    <CaseFrame label="B" selector="&quot;B&quot;" selectout="" uid="320" uid_parent="300">
+      <Tunnel _id="Out1" inputs="value:221.b" uid="321" uid_parent="320"/>
+    </CaseFrame>
+    <CaseFrame label="Default" selector="&quot;Default&quot;" selectout="" uid="330" uid_parent="300">
+      <Tunnel _id="Out1" inputs="value:222.d" uid="331" uid_parent="330"/>
+    </CaseFrame>
+  </Structure>
+  <Indicator _name="Result" connection="recommended" description="Which frame ran." inputs="value:310.result" type="string" uid="400" uid_parent="root" value=""/>
+</VI>
