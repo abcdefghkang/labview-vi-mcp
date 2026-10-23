@@ -48,8 +48,11 @@ Ask your agent, for example:
 
 Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlke/labview-mcp AIXML pipeline), separate from the panel-beautification skill above:
 
+**Start here:** [`research/00-status.md`](research/00-status.md) — the rolling board: direction (5 lines of work), every round at a glance, what is deliverable vs. conditional vs. impossible today, the numbers, the gates, and the next round's priorities. Updated at the end of every round; the per-round docs below are the evidence behind it.
+
 | Doc | Content |
 |---|---|
+| `research/00-status.md` | **Board** (Round 14): the 5 research lines, rounds 1–14 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P8, current environment and liveness check (Chinese) |
 | `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
 | `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
