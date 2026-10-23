@@ -912,7 +912,131 @@ VI call stack: ConvertAIXMLToVI.vi <- LVAI.lvclass:Start Sync.vi <- ServiceBase:
 
 ---
 
-## 16. 快速参考：一页纸
+## 16. Round14 增补：LVOOP 全链，与一颗装错的螺丝
+
+### 16.1 先查 pylabview 认的是哪个安装
+
+本机装了 LabVIEW 2018（32-bit）和 2026（64-bit）两套。pylabview 解析器的
+`labview_root()` 先遍历 `Program Files (x86)` 并**返回第一个命中**，于是它认的是 2018：
+
+```text
+labview_root() -> C:\Program Files (x86)\National Instruments\LabVIEW 2018
+```
+
+后果是 `resource\Framework\Providers` 下那些 NI 自己的 provider 库全部"不在安装目录里"：
+
+```text
+Call 70: no Add Interface.lvlib in the installation or near the caller   （接口是 LV2020 才有的）
+Call 70: no Add Class.lvlib ...                                          （2018 的 AddClass 也不在这个路径）
+```
+
+**建类、建接口、建访问器在这台机器上一条都走不通，而报错一直在怪路径。**
+
+一句体检（不用 LabVIEW）：
+
+```bash
+python -c "import sys;sys.path.insert(0,r'C:\Users\<you>\labview-mcp\bin\scripts\aixml-pylabview');import resolve;print(resolve.labview_root())"
+```
+
+不是正在运行的那个版本？把 `LABVIEW_ROOT` 指向正确的安装，或改
+`labview_root()` 为"跨两个 base 取版本号最大"，或直接补丁：
+`best_key = int(digits)`、`key > best_key` 才算命中。
+
+> 改脚本**不需要重启 MCP**：pylabview 每一步都是现读磁盘的脚本。改完同秒重跑即生效。
+> 双安装机器上唯一还会错的情形是"跑 2018 而 2026 也在"，此时用 `LABVIEW_ROOT` 钉死。
+
+### 16.2 方法源文件必须带 conIdx —— `panePattern` 救不了
+
+`lvai_add_class_method` 会先盖 `panePattern: 4815`，读起来像"没写 conIdx 也会被分配槽位"。不会。
+同一形状、同一次调用，只差 conIdx：
+
+| 方法 | conIdx | conpane 步骤 |
+|---|---|---|
+| `Scale By.vi` | 0/1/2 | ok：`pattern 4833 -> 4815, 12 slots, no conIdx changed` |
+| `Reset.vi` | 无 | **失败**：`no <cons> array in the front-panel heap` |
+
+**这就是 Round 10 那句"LV2026 FPHb 的 `cons` 数组为空"的机制**：
+`<cons>` 数组只在至少一个端子有 conIdx 时才存在。"空 cons" 与 "没窗格" 是同一件事。
+失败的方法**不会成为类成员**（走不到 `member` 步），文件留在原地。
+
+→ 闸门 **LV015**：有 `obj in`/`obj out` 路径替身 + 有端子缺 conIdx = error。
+
+### 16.3 实现接口却缺 override：整个类坏，而报错不说
+
+```text
+前：execState 0, broken true    linkerErrors："VI 包括一个类型为 8 的错误。必须使用 LabVIEW 完整版…"
+后：execState 1, broken false   （唯一改动：给类补上那个覆盖）
+```
+
+同一个文件、同一个路径，只因为类补了 override 就自己好了 —— 因果坐实。
+但**报错文本一个字都没提接口**，而且这句"类型为 8 / 必须用完整版"
+和 Round 6 retarget 失败时的报错**是同一句**。
+
+诊断顺序：`execState 0` → 先问"实现接口了吗、每个声明方法都覆盖了吗" → 再看链接。
+
+### 16.4 工具写进 .lvproj 的类条目会被 LabVIEW 的保存冲掉
+
+`create_class` / `create_interface` 的条目是**工具自己写文件**的（LabVIEW 不参与）。
+但 LabVIEW 可能仍持有该工程的**内存副本**，那份早于这次写入；下一次保存
+（`close_active_project`、下一个类工具的 prologue、关 IDE）就把内存条目表写回，
+**刚加的条目消失，零报错**。表现却是：
+
+```json
+"classIndex": -1,
+"classPathsSeen": ["...\\Can Scale.lvclass"],     // 磁盘上明明有 4 个类
+"hint": "classIndex -1 with classPathsSeen populated IS a path mismatch"   // ← 往路径上带
+```
+
+正确顺序：**先 `lvai_close_active_project`，再补条目，再调需要"类在工程里"的工具**。
+落成闸门 `tools/lvproj_audit.py`（见 §16.6）。
+
+### 16.5 三条读数坑
+
+1. **`ancestors` 把接口排在真父类前面。**
+   `Temp Sensor` → `ancestors ["Can Scale", "Sensor"]`，`inheritsFrom "Sensor"`。
+   判父子用 `inheritsFrom` 或 `parentLinks[].kind`（`interface` / `class`）。
+2. **访问器名字跟着 IDE 语言走。** 中文版生成 `读取Name.vi` / `写入Name.vi`。
+   硬编码 `Read Name.vi` 的测试在中文版必然失败。名字从 `describe_class.members` 取。
+3. **`vi_terminals` 把中文端子名解成乱码。** `读取` → `∂¡»°`，`输入` → `‰»Î`；
+   同一时刻 `describe_class` 读同一批名字是正确的（它走 `.lvclass`，UTF-8）。
+   它打印的 `<Call>` 片段是给 AI 抄的 —— **非 ASCII 端子名不要照抄**。
+
+### 16.6 工程闸门 `lvproj_audit.py`（唯一读 .lvproj 的）
+
+```bash
+python tools/lvproj_audit.py "path/to/x.lvproj"      # 明细，exit 1 = 有 error
+python tools/lvproj_audit.py --summary research/artifacts
+```
+
+| 级别 | 检查 |
+|---|---|
+| error | 列了条目但文件不在 |
+| error | 条目排在 Dependencies/Build 之后 |
+| warning | 磁盘上有 `.lvclass`/`.lvlib` 但没人列 —— **被冲掉条目的形状** |
+| info | 磁盘上有 `.vi` 但没人列（常见正常态） |
+
+URL 基准是本轮确认的：`/C/Users/...` 是绝对路径；`../lib/X` 相对**工程文件本身当作目录**
+（从 `round14/Lvoop Demo.lvproj` 出发 `../lib` = `round14/lib`，不是 `artifacts/lib`）。
+同一个约定也用于 `.lvclass` 的成员 URL。
+
+### 16.7 建类链的可用配方（pylabview，全部实测通过）
+
+```text
+1  create_interface  Can Scale                                 1411 B, IsInterface true
+2  add_class_method  接口方法 Scale By（conIdx 0/1/2 + path 替身）  terminalsRetyped 2
+3  create_class      Sensor（fields + parentInterfaces）          fieldsAdded 2, interfacesLinked 1
+4  add_class_method  Sensor 的覆盖 Scale By                      dynamicDispatchTerminals [0,2]
+5  create_class      Temp Sensor（parentClassPath=Sensor）        inheritsFrom Sensor
+6  create_accessors  Sensor, R/W, dynamic                        4 VI, members 1 -> 5
+```
+
+规矩：**接口（含全部方法）先完工，再建第一个实现类** —— 接口列表是 `create_class` 的
+创建期输入，而且缺覆盖会打坏整个类（§16.3）。
+
+---
+
+## 17. 快速参考：一页纸
+
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
@@ -924,6 +1048,13 @@ VI call stack: ConvertAIXMLToVI.vi <- LVAI.lvclass:Start Sync.vi <- ServiceBase:
 G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，见 §11.3）
 窗格：   Control/Indicator 一律写 conIdx="0,1,2..."   （不写=不在窗格上=不可被 Call，
          且 Call 它不报错、只是数据线空接，见 §15.1 / §15.4）
+         方法源文件尤其如此：panePattern 4815 不创建 <cons>，缺 conIdx 直接死在
+         conpane 步（"no <cons> array in the front-panel heap"，§16.2，LV015）
+建类前：先确认 pylabview 认对安装 —— resolve.labview_root() 要是正在跑的那个版本，
+         否则 Add Class.lvlib / Add Interface.lvlib 全"不在安装目录里"（§16.1）
+建类序：interface(含全部方法) → class(实现它并覆盖) → child → accessors；
+         条目被 LabVIEW 保存冲掉时先 lvai_close_active_project 再补（§16.4）
+工程：   python tools/lvproj_audit.py <x.lvproj>    （唯一读 .lvproj 的闸门，§16.6）
 预检：   lvai_check_aixml  [fix:true]               （0.4 ms 离线，抓静默错误）
 校验：   lvai_validate_aixml                        （118 ms，失败不烧名）
 生成：   lvai_generate_vi                           （validate+convert+面板测量）

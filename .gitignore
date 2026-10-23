@@ -2,3 +2,4 @@
 # debug/UI state, not project content, and they appear and vanish on their own.
 *.UserState/
 *.aliases
+*.lvlps

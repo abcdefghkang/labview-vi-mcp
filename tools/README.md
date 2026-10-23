@@ -34,10 +34,11 @@ python tools/lvrule_check.py draft.aixml.xml
 | 文件 | 内容 | 能不能改 |
 |---|---|---|
 | `aixml_lint.py` | **vendored** 上游 [Zuehlke/labview-mcp](https://github.com/Zuehlke/labview-mcp) `scripts/aixml_lint.py`，37 条规则 | **不改**。上游更新时整份覆盖，文件头记着来源 commit |
-| `lvrule_check.py` | 我们自己的 13 条铁律（LV001/003–014） | 只往这里加 |
+| `lvrule_check.py` | 我们自己的 14 条铁律（LV001/003–015） | 只往这里加 |
 | `audit_aixml.py` | 跑两个、合并、按文档类型分流、抑制已知误报、出表格 | 门面，逻辑尽量薄 |
 | `cold_build_census.py` | **不是闸门**：把上游 `docs/cold-build-*.md` 变成 CSV/JSON 数据集 | 语料普查 |
 | `lvclass_parent_scan.py` | **不是闸门**：离线解析 `.lvclass` 的父类，判父类到底是类还是接口 | 见下 |
+| `lvproj_audit.py` | **唯一读 `.lvproj` 的闸门**：条目↔文件对账，抓"工具写进去的类条目被 LabVIEW 保存冲掉" | 见下 |
 
 理由来自上游自己踩的坑：同一个规则的第二份实现会漂移，`AixmlCheck.SafeUidBase`=4200 与
 `LOW_UID_CEILING`=5000 曾分歧数日，lint 一直告诉作者"你自己生成的文件违规"。
@@ -67,7 +68,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 
 ---
 
-## `lvrule_check.py` 的 13 条，每条来自一轮实测
+## `lvrule_check.py` 的 14 条，每条来自一轮实测
 
 | 规则 | 断言 | 来源 |
 |---|---|---|
@@ -84,6 +85,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 | `lv012-net-crosses-boundary` | 线不能隐式穿过结构边界：外层结构要外半截隧道，每帧要内半截，按 `_id` 对齐 | Round 12 **真机**：原件 0E/5W 过闸，composer 连拒两次（`net '4203.ms'`、`net '4205.one'`）。**级别按后端**：目标 grpc 时是 warning（NI 转换器自动补隧道，实测 43→154），目标 pylabview 时是 error（直接退件）。`--backend pylabview` 或 `LVRULE_BACKEND=pylabview` |
 | `lv013-event-timeout-unwireable` | 带 ` Timeout ` 帧的 Event Structure 一律报 | Round 12 **真机**：AIXML 没有 `eventTimeOut` 端子的写法，写 `<Tunnel>` 得到普通隧道；运行 2.2 s / 超时 500 ms → `Timeouts=0`，零报错。帧与事件注册本身是好的（3 个 EventSpec 全对） |
 | `lv014-no-connector-pane` / `lv014-terminal-off-the-pane` | 端子没有 `conIdx` = 不在连接器窗格上。全部缺报 info，部分缺报 warning（部分上窗格经实测合法） | Round 13 **真机**：`connection` 只管 required/recommended/optional，**只有 `conIdx` 决定在不在位上**；缺它时 composer 写 `conNum=-1`，并保留骨架的 `objFlags 0x10000`（该标志的注释原话就是 "NO TERMINAL ON THE PANE"）。后果极静：`vi_terminals` 报 0 in/0 out、`generate_test` 停在 `noTerminals`，而 Call 它能成功生成、跑完、**什么也没传**（实测调用方输出 99，来自它自己的常量，零报错）。全库 383 个端子只有 38 个带 conIdx（9.9%）。判力三例：A 全无 → info；B 全有 → 干净；D 部分缺 → 精确点名缺的那个 |
+| `lv015-method-stand-in-without-conidx` | 带 `obj in`/`obj out` 路径替身的方法源，其端子必须都有 `conIdx`（**error**） | Round 14 **真机** A/B：同一次 `lvai_add_class_method` 调用里，`Scale By.vi`（conIdx 0/1/2）的 conpane 步 ok（`pattern 4833 -> 4815, 12 slots, no conIdx changed`），`Reset.vi`（无 conIdx）**硬失败** `no <cons> array in the front-panel heap`，且走不到 `member` 步、压根没成为类成员。机制：`<cons>` 数组只在至少一个端子有 conIdx 时才存在 —— 所以 Round 10 记的"LV2026 FPHb 空 cons 数组"不是 2026 的回归，就是"没窗格"。`panePattern 4815` 不创建它。判力：负例 1 error / 正例 0 / 全库只多这一条 |
 
 **LV009 的范围是刻意窄的**，因为上游已经管了一部分：`conn-required-output` 管任何 Indicator 的
 `required`，`conn-error-in-not-recommended` 管带 `conIdx` 的 `error in`。LV009 只补两处空白 ——
@@ -180,3 +182,49 @@ python tools/lvclass_parent_scan.py <root> --json out.json
 > **为什么要它**：`lvai_describe_class` 本身是对的（`inheritsFrom` 给真基类，
 > `parentLinks[].kind` 标 `interface`），错的用法是拿 `ancestors[0]` 当基类 ——
 > `Box` 和 `Flathead` 的 `ancestors[0]` 都是接口。详见 `research/20-first-online-round.md` §6。
+
+---
+
+## `lvproj_audit.py`：唯一读 `.lvproj` 的闸门
+
+其余闸门都读 AIXML，所以它们永远看不见"工程文件里少了一条类条目"这种事 ——
+而这件事在本轮真机上把 `lvai_create_accessors` 直接打停：
+
+```json
+"classIndex": -1,
+"classPathsSeen": ["...\\round14\\lib\\Can Scale.lvclass"],   // 磁盘上有 4 个类
+"hint": "classIndex -1 with classPathsSeen populated IS a path mismatch"   // 往路径上带
+```
+
+原因不在路径：`create_class`/`create_interface` 的条目是**工具自己写文件**的（LabVIEW 不参与），
+而 LabVIEW 可能还持有同一工程的**内存副本**，那份早于这次写入。下一次保存
+（`close_active_project`、下一个类工具的 prologue、关 IDE）把内存条目表写回，
+刚加的条目就没了，全程零报错。上游 `classEntriesRestored` 的注释承认这件事，但它是事后统计。
+
+```bash
+python tools/lvproj_audit.py "research/artifacts/round14/Lvoop Demo.lvproj"   # 明细
+python tools/lvproj_audit.py --summary research/artifacts                    # 目录下全部工程
+python tools/lvproj_audit.py --json x.lvproj                                 # 机器可读
+```
+
+| 级别 | 检查 | 说明 |
+|---|---|---|
+| error | 列了条目但文件不在 | 目录搬过，或指向旧副本 |
+| error | 条目排在 Dependencies/Build 之后 | 手写工程最容易犯 |
+| warning | 磁盘上有 `.lvclass`/`.lvlib` 但无人列 | **被冲掉条目的形状** |
+| info | 磁盘上有 `.vi` 但无人列 | 常见正常态：工程按绝对路径指向别处的副本 |
+
+exit 1 = 有 error，可直接串进脚本。
+
+**URL 基准**（本轮确认，容易搞错）：
+
+- `URL="/C/Users/..."` 绝对路径。开头的 `/` 是 Windows 根，`C` 是盘符
+- `URL="../lib/X.lvclass"` 相对**工程文件本身当作目录**，所以从
+  `round14/Lvoop Demo.lvproj` 出发 `../lib` = `round14/lib`，**不是** `artifacts/lib`
+
+同一个约定也用于 `.lvclass`/`.lvlib` 的成员 URL（`../Sensor/Scale By.vi` 从
+`lib/Sensor.lvclass` 出发指 `lib/Sensor/Scale By.vi`）—— 工具据此把类的成员也算作"已列出"，
+否则每个方法和访问器都会被误报成 unlisted。
+
+负对照：删掉 `No Override.lvclass` 的条目 → 恰好 1 条 warning 点名它；补回 → clean。
+全库 5 个工程（round3/7/12/13/14）0E/0W。

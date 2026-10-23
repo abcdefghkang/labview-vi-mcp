@@ -573,6 +573,38 @@ def check(path):
             + ". A Call cannot name them, and an unwired Call runs with no error. "
             "Add conIdx to each you mean to expose."))
 
+    # LV015 - a class-method SOURCE must carry conIdx, and this one is an ERROR.
+    # Measured round 14, A/B on one class. `lvai_add_class_method` stamps
+    # panePattern 4815 before the retype ("ConvertAIXMLToVI takes no pattern, so a
+    # new VI otherwise carries the station default"), which sounds like it would
+    # rescue a terminal that has no slot. It cannot, and it fails loudly:
+    #
+    #   Sensor/Scale By.vi  (conIdx 0/1/2) -> conpane ok, "pattern 4833 -> 4815,
+    #                                        12 slots, no conIdx changed"
+    #   Sensor/Reset.vi     (no conIdx)    -> conpane FAILED,
+    #                                        "no <cons> array in the front-panel heap"
+    #
+    # The reason is mechanical and it also closes round 10's open question about
+    # LV2026 FPHb: the <cons> array only EXISTS once at least one terminal has a
+    # conIdx. A VI with none has no pane block for the editor to edit - so
+    # "empty cons array" and "no pane" are the same fact, not a 2026 regression.
+    # The signature below is the documented way a method is authored: path
+    # stand-ins named `obj in` / `obj out`, retyped to the class afterwards.
+    stand_ins = [n for n in paned
+                 if (n.el.get("type") or "") in ("path", "string")
+                 and (n.el.get("_name") or "") in ("obj in", "obj out")]
+    if stand_ins and off:
+        names = ", ".join(repr(n.el.get("_name") or "") for n in off)
+        findings.append(Finding(
+            "error", "lv015-method-stand-in-without-conidx", off[0].uid,
+            off[0].describe(), off[0].path,
+            f"this looks like a CLASS METHOD source (it carries an `obj in`/`obj out` "
+            f"stand-in) and {len(off)} terminal(s) have no conIdx: {names}. "
+            "lvai_add_class_method will pass convert and then DIE at its conpane step "
+            "with `no <cons> array in the front-panel heap`, because that array only "
+            "exists once one terminal has a slot. panePattern 4815 does not create it. "
+            "Give every terminal a conIdx before handing the file to the tool."))
+
     return findings, len(nodes)
 
 
