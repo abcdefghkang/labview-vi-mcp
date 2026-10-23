@@ -62,7 +62,9 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/14-array-cluster-node-coverage.md` | Round-6 (3): array (12 nodes) + cluster node coverage; Bundle is append-only (typed-empty base idiom); Split Array unsupported (Chinese) |
 | `research/15-bind-pane-typedef-race.md` | Round-7: `lvai_bind_pane_typedef` save-chain vs bind-loop race root cause; one-edge ordering fix; file-level verification as the only trusted verdict (Chinese) |
 | `research/16-upstream-tracking-and-event-structures.md` | Round-7 (supplement): upstream v2.0.1→v2.2.0 tracking; cross-validation of our findings vs upstream docs; Event Structure one-call playbook (pylabview); gap census; 5 new iron rules; next-round probes (Chinese) |
+| `research/17-complex-program-playbook.md` | Round-8 (offline synthesis): five-gate model for delivering complex programs; loaded-target Call resolution; class method calling its own accessors without a stub; cross-artifact link law (same law as Round-7's race); testing layer rules; workflow economics; 6 new iron rules (Chinese) |
 | `research/artifacts/round7/next-probes/` | Round-8 prepared probes: user-event / cluster-payload / two-events / static-events+timeout AIXML (UNVERIFIED, to run when LabVIEW is up) |
+| `research/artifacts/round8/probe-recipes.md` | Round-8 probe recipes P6-P9: class-method self-accessor chain / interface override save-order A-B / Caraya minimal suite / cold-start recheck (UNVERIFIED) |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 

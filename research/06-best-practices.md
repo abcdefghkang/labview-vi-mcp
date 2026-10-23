@@ -18,7 +18,8 @@
 7. [常见失败模式与规避方法](#7-常见失败模式与规避方法)
 8. [性能注意点](#8-性能注意点)
 9. [安全注意点](#9-安全注意点)
-10. [快速参考：一页纸](#10-快速参考一页纸)
+10. [Round8 增补：五道闸门与六条新铁律](#10-round8-增补五道闸门与六条新铁律)
+11. [快速参考：一页纸](#11-快速参考一页纸)
 
 ---
 
@@ -391,7 +392,64 @@ LabVIEW 老于 2026"时，才显式指定 `pylabview`。【经验】
 
 ---
 
-## 10. 快速参考：一页纸
+## 10. Round8 增补：五道闸门与六条新铁律
+
+> 来源：`17-complex-program-playbook.md`。全部为【上游】一手测量（Zuehlke/labview-mcp
+> `bin/docs/` 中带日期与环境的文档），本轮本机无新实测。原文档的 9 节结论仍然有效，
+> 本节只增加"复杂程序"必需的验收顺序与被上游实测推翻/补充的操作细节。
+
+### 10.1 五道闸门（按序，不可跳）
+
+| 闸门 | 判据 | 手段 |
+|---|---|---|
+| G1 需求定稿 | 数据模型、端子表、验收用例写死；明确禁止 AI 自行改进 | 提示词模板（§5.1） |
+| G2 分层生成 | 叶子 VI → 类/接口（字段+访问器+方法）→ 编排 VI | `lvai_generate_vi` / `lvai_add_class_method` |
+| G3 结构验证 | validate（仅自包含）→ convert → `exec_state=1` → 回导逐网比对 | `lvai_generate_vi` 内置闸门 |
+| G4 文件级验证 | 脱离 LabVIEW 读盘：typedef 描述符、`udClassDDO`、`.ctl` 引用、链接路径、`stdPath` 残留 | `pylv_extract` + grep `*_FPHb.xml` |
+| G5 运行验证 | 实跑数值 + Caraya 套件（含负对照）+ **冷启动复核** | `lvai_run_vi_and_read_values`、重建后重开 LabVIEW |
+
+**G3 判读**：validate 的拒绝若**只有** `Unsupported SubVI:` 行，是"本地调用未加载"，走 convert；
+出现其他行（类型文法拒 `.ctl`、端子名拼错 `Error 1`）才是真失败。
+**G4 不可省**：Round7 的 typedef 竞态、上游的"一边链接"都只有读盘能抓。
+**G5 不可省**：G4 全绿也不代表能编译（接口方法案例：所有文件自洽，整库仍 `Error 1003`）。
+
+### 10.2 六条新铁律
+
+1. **探针永不用真实文件名。** 一次失败的 convert 会烧掉该 `_name`（之后 `Error 1051`
+   内存中已有同名文件），关项目/驱逐 VI 都清不掉，只有重启 LabVIEW。探针用
+   `LVMCP Convert <hex>.vi` 一类一次性名。
+2. **打开目标的上下文 = 调用方将被生成的上下文。** 项目开着就 `through project` 打开，无项目
+   就 loose 打开；开错上下文照样 `Error 53`。**开一个类成员即可让整个类可解析**（类整体加载）。
+3. **跨工件链接必须双端保存且顺序正确**：`AddItemFromMemory`（先成为成员）→ `Save.Instrument`
+   （VI 落盘时带上 owning-library 记录）→ `{LV.LVClassLibrary} Save`。反序会写出"一边链接"，
+   库会**锁死它的全部成员**（`Error 1003`，`{LV.SubVI} Replace` 报 `1154`），而每个文件单看
+   都完好——读任一文件都验不出来，只能运行。
+4. **测试 = 静态子 VI 调用 + `.xml` 报告 + 负对照 + 重建后跑两次。** 静态调用是默认路线
+   （类代码也一样）；`.txt` 报告什么都不写；`7002` 是"套件失败"不是故障；重建后首跑必报
+   `Error 1` 且不写报告（Caraya 陈旧 refnum），第二次才可信；故意错一条期望必须 FAIL。
+5. **`Call` 的 `inputs` 只能出现连接板（pane）上的端子。** 面板上有但不在 pane 上的对象
+   （事件帧里的锁存按钮等）会让生成器报 `Error 1` 且不点名；看 `refusal.notOnPane`。
+6. **轮次优先。** 延迟占 3.6～9.7 : 1，每轮中位 7.1 s；省一次往返=7 s，省 1 ms 查找=0。
+   批量提交往返；不 fan-out 提吞吐（LabVIEW 串行）；不"保险起见重启"（中位 30.75 s）；
+   欠定需求用轮次付费——把数据模型写死比任何工具优化都省。
+
+### 10.3 能力边界速查
+
+可生成：叶子 VI、状态机、类（字段/访问器/方法）、接口与 override、多 VI 调用、用户事件+事件结构、
+Caraya 单元测试。
+半生成：DQMH 单个 request VI（差两个库限定 SubVI 解析目标）。
+只读/不可生成：DQMH 完整模块、`.ctl` 作为 `type=`（任何拼写都被文法拒绝）、
+malleable VI 凭空创建、Actor Framework（未测）。
+
+### 10.4 本轮复查的版本事实
+
+本机 v2.0.1 已落后上游 5 个 release，最新 **v2.2.0**（2026-10-21）；v2.1.8 起支持
+control references（双后端），v2.2.0 起支持 Network Stream VIs + XControls（**仅 pylabview**）。
+**下轮前置动作：升级 ≥ v2.2.0 后 `lvai_dump_schema` 核对 RPC。**
+
+---
+
+## 11. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
