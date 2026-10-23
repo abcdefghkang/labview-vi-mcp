@@ -54,6 +54,30 @@ The rules, and the round that paid for each one:
   LV008  a Case Structure's frames have distinct selectors . round 4
          Two frames claiming `0` collapse into one on generation and the second
          frame's code disappears without an error.
+
+  LV009  error terminals the vendored lint cannot see .... round 9 + round 10
+         `connection=` is a property of the TERMINAL, and both wrong values cost
+         something invisible at the time:
+           required  - the VI itself validates, compiles and runs, but every
+                       caller that leaves that terminal unwired now breaks with
+                       `Error 1003`. The fault is in the CALLER, from a flag in
+                       the victim.
+           optional  - identical behaviour at the call site, but the flag is
+                       part of PlaceholderTools.Signature, so the same pane
+                       hashes differently and yields a second stub clone.
+         Upstream ALREADY reports part of this, and re-implementing covered
+         ground is the mistake that retired LV002 (see its entry: two
+         implementations drift). Its `conn-required-output` catches any
+         Indicator marked required; its `conn-error-in-not-recommended` catches
+         a Control named exactly `error in` - but ONLY when the terminal carries
+         a conIdx, which is the case its author measured. Two gaps are left, and
+         this rule is scoped to exactly those:
+           a Control whose name starts with `error` and has NO conIdx
+           an `error out` Indicator marked `optional`
+         Anything with a conIdx is upstream's business. If upstream widens its
+         rule, delete this one - do not let both count.
+         Names are matched from the START so a legitimate `Last Error Count`
+         control is not touched.
 """
 
 from __future__ import annotations
@@ -68,6 +92,12 @@ import xml.etree.ElementTree as ET
 UID_FLOOR = 4200          # LV002 - see the header, and docs/labview-crash-signatures.md
 SENTINEL_UID = "0"        # reused freely, LabVIEW assigns its own id
 COMMENT_RE = re.compile(r"<!--")
+# LV009 - "error in", "error out", "error in (no error)", "Error Out 2". Anchored
+# at the start so a legitimate control called "Last Error Count" is left alone.
+ERROR_TERMINAL_RE = re.compile(r"^error\b", re.I)
+# LV009's second half: upstream's `conn-required-output` already covers a required
+# Indicator, so only the `optional` spelling of an output is left to report.
+OUT_TERMINAL_RE = re.compile(r"^error out\b", re.I)
 NUMERIC_RE = re.compile(r"^-?\d+$")
 
 
@@ -271,6 +301,32 @@ def check(path):
                 findings.append(Finding(
                     "error", "lv006-call-without-target", n.uid, n.describe(), n.path,
                     "a <Call> without target has nothing to resolve."))
+
+    # LV009 - the connection flag on the error terminals upstream's rules miss.
+    # Scope is deliberate: see the header. Anything carrying a conIdx belongs to
+    # the vendored lint, and reporting it twice would bury the finding.
+    for n in nodes:
+        conn = n.el.get("connection")
+        if not conn:
+            continue
+        name = n.el.get("_name") or n.el.get("name") or ""
+        if not ERROR_TERMINAL_RE.match(name):
+            continue
+        if n.el.get("conIdx") is not None:
+            continue
+        if conn == "required":
+            findings.append(Finding(
+                "error", "lv009-error-terminal-required", n.uid, n.describe(), n.path,
+                "an error terminal marked `required`: this VI still validates, compiles and "
+                "runs, and every caller that leaves the terminal unwired now fails with "
+                "Error 1003. Write connection=\"recommended\" for error in / error out."))
+        elif conn == "optional" and OUT_TERMINAL_RE.match(name):
+            findings.append(Finding(
+                "warning", "lv009-error-out-optional", n.uid, n.describe(), n.path,
+                "an `error out` terminal marked `optional`. Behaviour at the call site is the "
+                "same as `recommended`, but the flag is part of the placeholder stub's "
+                "signature, so the same pane hashes differently and produces a second clone. "
+                "Normalise on connection=\"recommended\"."))
 
     return findings, len(nodes)
 

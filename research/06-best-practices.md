@@ -20,7 +20,8 @@
 9. [安全注意点](#9-安全注意点)
 10. [Round8 增补：五道闸门与六条新铁律](#10-round8-增补五道闸门与六条新铁律)
 11. [Round9 增补：离线审计闸门、工具面变更与三处修订](#11-round9-增补离线审计闸门工具面变更与三处修订)
-12. [快速参考：一页纸](#12-快速参考一页纸)
+12. [Round10 增补：25 次冷构建语料，与第六道闸门](#12-round10-增补25-次冷构建语料与第六道闸门)
+13. [快速参考：一页纸](#13-快速参考一页纸)
 
 ---
 
@@ -535,7 +536,75 @@ NI 自己的 Clean Up Diagram 会把设计好的图摊开（DQMH `Main.vi` 1344�
 
 ---
 
-## 12. 快速参考：一页纸
+## 12. Round10 增补：25 次冷构建语料，与第六道闸门
+
+上游把每一次"从零建一个完整应用"记录都入库了：`docs/cold-build-*.md` **25 篇、4409 行**，
+覆盖 2026-09-14 → 09-30。逐篇读完能知道一堆坑，**普查之后才知道哪些是系统性的**。
+（数据集与复现命令见 `research/19-cold-build-corpus.md` 与 `tools/cold_build_census.py`。）
+
+### 12.1 硬数字
+
+给出明确终态的 11 篇合计 **57 个 `.lvclass`、193 个 VI、112 个测试**；失败共 **3 个，
+且 3 个全部是刻意的负对照**；25 篇里 **23 篇**跑了负对照、**14 篇**先进 `aixml_lint`
+再进 LabVIEW、**6 篇**全程零重启（最多一篇 19 VI / 16 测试）。
+
+> **这批语料的"绿"是校准过的绿** —— 下面 12.2.1 说明整整一类测试会空转通过，
+> 而语料没被骗，靠的正是每次放一个"必须失败"的对照。
+
+### 12.2 三条最该记住的
+
+**12.2.1 常量先验存活，再放进测试。**
+`timestamp` 字面量被**静默丢弃**（convert 回 `errorCode 0`，回导是空串），于是往返测试两边
+同时变空、比较空与空而**通过**。实测存活表：`string`/`path`/`double`/`int32`/`bool` 保留，
+`timestamp` 丢弃。**一个对着被丢弃值的绿测试，比没有测试更坏。**
+（`docs/cold-build-alarmgate.md` §3，附两臂负对照）
+
+**12.2.2 类阶段占一半成本，且是唯一真失败的那半。**
+一次带时钟的构建：27 步 / 24 次往返 / 30.5 s，**类是 49 %**（typedef 那一半只占 10 % 且一次通过）。
+配套两条：重跑 `lvai_add_class_method` 会**毁掉整个类**（`privateDataBytes` +40 字节，
+所有访问器 `eBad`，重启不恢复，只能重建；症状是测试报 `Broken` 而非 `Failed`）；
+`inheritsFrom` 会把**接口报成父类**（全站 437 个有父链接的类里 **46 个**如此，含 NI 自带范例）。
+（`mixedrig`、`thermostat` §4、`valverig` §3）
+
+**12.2.3 状态码两侧都可能撒谎。**
+我们 Round7 测到"报成功、文件里 0 个 typedef"；语料反过来测到 **`ok:false` + `1055` +
+`nodesSwapped:0`，而 swap 其实已经落地**（同一载荷里 `diagramSubVis` 列的是真目标、`execState 1`）。
+判据只能来自载荷里的证据字段，不能来自 `ok`。
+
+### 12.3 第六道闸门 G3.5，与新增规则 LV009
+
+G0–G6 见 `research/19-cold-build-corpus.md` §7。相对 Round9 的两处变化：
+
+- **G3.5 字面量存活**（插在 G3 与 G4 之间）：要进测试的常量先单独 convert→回导确认回来了。
+  按**类型**付一次，可长期复用；G4 是按**文件**付的。
+- **G5 细分**：套件跑两次（首跑 `Error 1` 是已知）；**`Broken` ≠ `Failed`**（前者意味着断言没跑，
+  诊断方向立刻切到类/结构完整性）；**只读 JUnit 报告，永不读 Caraya 的 `error out.source`**
+  —— 它会指向一个**通过的**套件。
+
+**`LV009`（本轮写进 `tools/lvrule_check.py`）**：error 端子写 `required` 是 error
+（调用方漏接即 `Error 1003`，而本 VI 自己完全正常）；`error out` 写 `optional` 是 warning
+（调用点行为相同，但该标志进占位桩的签名，同一 pane 会克隆两份）。
+**范围只取上游两条规则看不到的两处**（`error in` 无 `conIdx`、`error out` 的 `optional`）——
+上游的 `conn-required-output` 与 `conn-error-in-not-recommended` 已覆盖其余情形，
+重复实现是 LV002 退役时记下的那个错。**类端子与必填输入用 `required` 是正确的，不要笼统禁止。**
+（另修正 Round9 的表述：那 5 个 fixture 的 `required` 落在 `obj in/out`、`Setpoint` 上，
+规则不命中，也不该命中；伤到未接线调用方的是 **error 端子**上的 `required`。）
+
+### 12.4 Round10 铁律速记
+
+```
+R10-1 常量先验存活，再进测试；丢弃型字面量不生成测试
+R10-2 类建成即记 privateDataBytes 基线；重跑成员后必比对，变了就重建
+R10-3 不信任派生摘要字段（inheritsFrom），解析 <Item Type="Parent"> 的 URL + IsInterface
+R10-4 error 端子用 recommended；required 只给调用方必填的输入
+R10-5 状态码是摘要，证据在载荷（回导 / diagramSubVis / callTargets / execState）
+R10-6 样板达"帧×隧道"规模就写生成器（LabVIEW 侧便宜、作者侧贵）
+R10-7 多代理：一代理一输出目录；代理只写 Call 然后停；swap 由编排方集中做；改名单靠重启验收
+```
+
+---
+
+## 13. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
@@ -552,6 +621,8 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
 回读：   lvai_convert_vi_to_aixml / lvai_describe_vi（结构对不对）
 可执行： lvai_exec_state = 1                        （0=坏，-1=引用没开）
 诊断：   lvai_error_list                            （execState 0 时先问它，别猜）
+存活：   常量先 convert→回导再进测试                （timestamp 会被丢弃，见 §12.2.1）
+测试：   套件跑两次 · Broken≠Failed · 只读 JUnit 报告（Caraya 的 source 会指错套件）
 运行：   lvai_run_vi_and_read_values                （backend:"pylabview" 可绕开辅助 VI）
 纪律：   副本上干活 · git 先行 · 写操作每次确认 · 升级后 dump_schema · 手写 uid ≥4200
 ```

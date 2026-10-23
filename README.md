@@ -65,9 +65,12 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/17-complex-program-playbook.md` | Round-8 (offline synthesis): five-gate model for delivering complex programs; loaded-target Call resolution; class method calling its own accessors without a stub; cross-artifact link law (same law as Round-7's race); testing layer rules; workflow economics; 6 new iron rules (Chinese) |
 | `research/artifacts/round7/next-probes/` | Round-8 prepared probes: user-event / cluster-payload / two-events / static-events+timeout AIXML (UNVERIFIED, to run when LabVIEW is up) |
 | `research/18-v220-capability-delta.md` | Round-9: v2.0.1→v2.2.0 tool-surface delta (106→126, 32 added / 12 gone), the layout engine, `lvai_error_list`, AF override tools, offline indexes; three corrections to our own rules (uid ≥4200, bare-net attributes, `cond` literals); the offline gate G0 and its first audit of our own 50 AIXML (Chinese) |
-| `tools/` | Offline gate: vendored upstream linter (37 rules, MIT) + our 7 iron rules as code + merged audit. `python tools/audit_aixml.py --summary <file>`, 2.5 s for 50 files, no LabVIEW |
+| `tools/` | Offline gate: vendored upstream linter (37 rules, MIT) + our 8 iron rules as code (LV009 added in round 10) + merged audit. `python tools/audit_aixml.py --summary <file>`, 2.5 s for 50 files, no LabVIEW |
 | `research/artifacts/round9/tool-delta.csv` | Every tool added / renamed / dropped between v2.0.1 and HEAD, with the area and the consequence |
 | `research/artifacts/round9/lint-sweep-report.md` | First audit of every AIXML this repository ever produced: 21 errors / 92 warnings over 50 documents, with the ledger of which are real, which are negative controls, which are tool blind spots |
+| `research/19-cold-build-corpus.md` | Round-10: census of upstream's 25 cold builds (4409 lines) — 57 classes / 193 VIs / 112 tests, and **all 3 failures are deliberate negative controls**; five laws (constant-survival, the class phase is 49 % of cost, boilerplate → generator, status codes lie in both directions, multi-agent constraints); gate G3.5; rules R10-1..7 (Chinese) |
+| `research/artifacts/round10/cold-build-census.csv` | All 25 builds as data: date, lines, section titles, final state, error numbers, tools, negative control, lint (blank where the doc does not say — 11 of 25 state a final state) |
+| `tools/cold_build_census.py` | The census itself, re-runnable against any upstream checkout; no LabVIEW needed |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 

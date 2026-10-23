@@ -5,6 +5,9 @@
 
 全部只依赖 Python 3 标准库。不需要 MCP，不需要网络，不需要 LabVIEW。
 
+第四个脚本（`cold_build_census.py`）不查文档，查**语料**：把上游 25 篇冷构建记录变成数据集，
+回答"哪类缺陷会复发"。见文末。
+
 ```bash
 # 一份文档（有 error 时退出码 1，可直接挂 CI）
 python tools/audit_aixml.py --summary draft.aixml.xml
@@ -31,8 +34,9 @@ python tools/lvrule_check.py draft.aixml.xml
 | 文件 | 内容 | 能不能改 |
 |---|---|---|
 | `aixml_lint.py` | **vendored** 上游 [Zuehlke/labview-mcp](https://github.com/Zuehlke/labview-mcp) `scripts/aixml_lint.py`，37 条规则 | **不改**。上游更新时整份覆盖，文件头记着来源 commit |
-| `lvrule_check.py` | 我们自己的 7 条铁律（LV001/003/004/005/006/007/008） | 只往这里加 |
+| `lvrule_check.py` | 我们自己的 8 条铁律（LV001/003/004/005/006/007/008/009） | 只往这里加 |
 | `audit_aixml.py` | 跑两个、合并、按文档类型分流、抑制已知误报、出表格 | 门面，逻辑尽量薄 |
+| `cold_build_census.py` | **不是闸门**：把上游 `docs/cold-build-*.md` 变成 CSV/JSON 数据集 | 语料普查 |
 
 理由来自上游自己踩的坑：同一个规则的第二份实现会漂移，`AixmlCheck.SafeUidBase`=4200 与
 `LOW_UID_CEILING`=5000 曾分歧数日，lint 一直告诉作者"你自己生成的文件违规"。
@@ -62,7 +66,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 
 ---
 
-## `lvrule_check.py` 的 7 条，每条来自一轮实测
+## `lvrule_check.py` 的 8 条，每条来自一轮实测
 
 | 规则 | 断言 | 来源 |
 |---|---|---|
@@ -73,6 +77,15 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 | `lv006-call-target-is-path` | `Call` 的 `target` 是名字，不是路径 | Round 6：路径永不解析（`Error 53`） |
 | `lv007-shiftreg-incomplete` | `ShiftReg` 必须同时有 `Left` 和 `Right` | Round 4 |
 | `lv008-duplicate-selector` | 两个 frame 不能同一个 selector | Round 4 |
+| `lv009-error-terminal-required` / `lv009-error-out-optional` | **上游两条规则看不到的** error 端子写法 | Round 9（本机抓到）+ Round 10（补上游空白） |
+
+**LV009 的范围是刻意窄的**，因为上游已经管了一部分：`conn-required-output` 管任何 Indicator 的
+`required`，`conn-error-in-not-recommended` 管带 `conIdx` 的 `error in`。LV009 只补两处空白 ——
+无 `conIdx` 的 error Control、以及 `error out` 的 `optional`。探针
+`research/artifacts/round10/lv009-probe.aixml.xml` 把这条边界钉死：同一台机器上，
+我们的报 `4200`/`4203`，上游报 `4205`，**不重不漏**。上游若放宽，**删掉 LV009**。
+
+这条纪律的由来就是 LV002 的退役：同一条规则的第二个实现会漂移，且每条告警翻倍。
 
 验证锚点：Round 3 的 `saturating-accumulator.aixml.xml`（修复前）报 3 条 `lv003`，
 它的 `-v2`（修复后）与 `variant-d-rootseds`（根级种子）**0 条**。
@@ -102,3 +115,22 @@ cp /tmp/lvmcp-upstream/scripts/aixml_lint.py tools/aixml_lint.py
 
 HTTPS 在这台机器上不可用（schannel 吊销检查失败，`CRYPT_E_REVOCATION_OFFLINE`），用 SSH。
 许可证 MIT，Copyright (c) 2026 Zühlke。
+
+---
+
+## `cold_build_census.py` — 查语料，不查文档
+
+上游把每一次"从零建一个完整应用"的实测记录都入库了（`docs/cold-build-*.md`，25 篇 4409 行）。
+一篇读下来是一个故事，整批读下来才知道**哪些坑是系统性的**。这个脚本只做提取，不做解释：
+
+```bash
+python tools/cold_build_census.py /tmp/lvmcp-upstream/docs \
+       --out research/artifacts/round10
+# -> cold-build-census.csv / .json
+```
+
+它抓的是有固定写法的字段：构建日期、`Final state:` 那一行、章节标题、Error 编号、工具名、
+是否跑了负对照、是否先过 lint。抓不到的**留空**而不是猜 —— 25 篇里只有 11 篇写了明确终态，
+空白本身就是信息。分析结论在 `research/19-cold-build-corpus.md`。
+
+用途：下次上游新增冷构建，重跑一次就能看出"这批准的是同一批坑还是新坑"。
