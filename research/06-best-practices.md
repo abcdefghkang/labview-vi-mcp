@@ -767,9 +767,152 @@ lvai_generate_test → failedAtStep: placeholder, noTerminals
 是"VI 真没窗格"还是"读侧看不见"，**尚未分开**；唯一分法是在 IDE 里打开看一眼。
 在分开之前，Caraya 那条链（`generate_test` → `run_caraya_tests` → JUnit）没有起点。
 
+> **Round 13 已结案：写侧真没设窗格，因为 AIXML 里从没写过 `conIdx`。见 §15。
+> 读侧不瞎——两个后端读数逐字相同。**
+
 ---
 
-## 15. 快速参考：一页纸
+## 15. Round13 增补：连接器窗格 —— 缺的那一格
+
+### 15.1 `connection` 管"必需与否"，`conIdx` 才管"在不在位上"
+
+```xml
+<!-- 只是"若在窗格上则推荐" —— 它一个字都没说"在位" -->
+<Control _name="x" connection="recommended" type="double" uid="4200" .../>
+
+<!-- 这一句才把它放上窗格，0 是槽位号 -->
+<Control _name="x" connection="recommended" conIdx="0" type="double" uid="4200" .../>
+```
+
+composer 侧三行代码就是全部答案（`aixml2vi.py`）：
+
+```python
+con = el.get("conIdx")
+conn.text = con if con is not None else "-1"      # 没有 → conNum=-1 → 不在窗格上
+if con is not None:                               # 有 → 写 cons + pane_terms
+    self.pane_terms.append((int(con), tree, is_ind, el.get("connection") or "required"))
+```
+
+同时骨架的面板根带着 `objFlags 0x10000`，其注释原话是 **"NO TERMINAL ON THE PANE"**，
+且 `every AIXML-generated VI without a pane carries it`。所以"没窗格"是一个显式状态，不是漏了默认值。
+
+### 15.2 四分支实验：conIdx 是槽位，不是顺序号
+
+同一份 `y = x * factor`，只改 conIdx。四份都 `errorCode 0 / execState 1`：
+
+| 变体 | 写法 | 字节 | 窗格 |
+|---|---|---|---|
+| A | 都不写 | 4 407 | **0 in / 0 out**，三个全 off |
+| B | 0 / 1 / 2（文档序） | 4 447 | 2 in / 1 out，槽 0/1/2 |
+| C | 打乱：y=0, x=1, factor=2 | 4 443 | **槽位按 conIdx**（y 在 0） |
+| D | 只有 x 写 0 | 4 423 | **1 in / 0 out**，部分上窗格合法 |
+
+- `conIdx` 决定槽位 → 可以按惯例排布（输出在上、`error out` 贴底），不必按"先控件后指示器"。
+- 部分上窗格是合法的（D 能跑），所以 LV014 对"部分缺"只报 warning。
+- B 组在 grpc 与 pylabview 下读数逐字相同 → **怀疑读侧之前，先用另一个后端问一遍**。
+
+### 15.3 端到端：窗格不是给读侧看的
+
+`Conpane Caller.vi`：常量 3 和 5 + 一个 Call 到 B + Result。
+`composerReport` 里出现 `Call 'Conpane Probe B.vi' <- <TypeDesc ...> (pane 4833, 16 slots)`，
+运行 `Result = 15.00000000000000`。窗格是**可链接的真窗格**。
+
+### 15.4 无窗格 Call 的失败形态：静默，且结果看起来是对的
+
+`Conpane Caller A.vi`（Call 无窗格的 A，`inputs="" outputs=""`）：
+`execState 1`、可运行、**零报错**，输出 `Marker Out = 99` —— 这个 99 来自调用方自己的常量，
+被调的 A 一个字节都没参与。
+
+> **"图上有 Call、跑完无错误、值也读出来了"三件事同时成立，仍可能这个 Call 什么也没做。**
+> 唯一可靠的判据是：让输出依赖它的输入。
+
+### 15.5 `generate_test` 三连，与 Caraya 缺件
+
+| # | 条件 | 结果 |
+|---|---|---|
+| 1 | Round 12，subject 无窗格 | `noTerminals`，连 placeholder stub 都生成不出 |
+| 2 | 本轮 `backend:"grpc"` | 掉到 placeholder；`typedefFlatten` 21.6 s 后 gRPC 服务消失 |
+| 3 | 本轮 `backend:"pylabview"` | **`route:"direct"`**，`subject 2 in/1 out, notOnPane: []`，卡在下一道墙 |
+
+下一道墙是环境缺件，报得很准：`Call 4202: no Test.lvclass in the installation or near the caller`。
+核查：LabVIEW 2026 目录 8 层深内无 `Caraya.lvlib`、无 `Test.lvclass`；`user.lib` 只有 `LV_MCP`；
+VIPM 只有 `*.spec` 下载缓存；`VIPM/error/` 里 10-12 有一条 `HTTP Transport error ... jkisoft.com`
+。**装 Caraya 必须有人在 VIPM 里点（联网），AI 替不了。**
+
+顺带：pylabview 把路线判成 **direct**，grpc 反而掉 placeholder —— grpc 的 `openSubject` 要一个
+本机生成不出的 helper。
+
+### 15.6 绕开框架：纯原生节点的自包含测试
+
+20 个对象 / 19 条线 / 7 061 字节：
+
+```
+3× Call ──> 3× Subtract(expected) ──> 2× Add ──> Equal?(0) ──> AllPass
+                                      └──────────────────────> Total Error
+```
+
+用例 3×5、-2×4、0×7 都在 IEEE754 里精确，残差和严格为 0 当且仅当被测正确。
+
+| 版本 | AllPass | Total Error |
+|---|---|---|
+| 正对照 | **true** | **0.00000000000000** |
+| 负对照（expected -8 → -9） | **false** | **1.00000000000000** |
+
+拼写坑：`Equal?` 的输出端子是 **`x = y?`**（等号两边有空格）。写 `x=y` 会被拒，但拒绝信息
+把全部合法名列出：`(known: ?parm1, ?parm2, ?parmout, x, x = y?, y)`。
+**pylabview 的拒绝信息可以直接当文档用**，比 NI 的 `Error 53` 好太多。
+
+### 15.7 崩溃取证：`fpsane.cpp(1140)`
+
+`generate_test(grpc)` 跑到一半，所有 RPC 转为 `Could not find a port serving lvai.LVAI`。现场：
+
+```
+[::1]:14596 -> [::1]:44136  SYN_SENT      <- 有人连，没人应答
+[::1]:44134 / 44135         LISTENING 2348
+2348 = NI.NigelLocalService.exe            <- 不是 LabVIEW.exe；44136 已不在监听
+```
+
+日志给出死因，**5 次同签名、4 个 minidump**：
+
+```
+DWarn 0x613A5C04: Fatal insanity (0x00000004) detected in 'lvai_typedef_tree.vi'
+source\panel\fpsane.cpp(1140)
+VI call stack: ConvertAIXMLToVI.vi <- LVAI.lvclass:Start Sync.vi <- ServiceBase:Start.vi <- RunService.vi
+```
+
+三条要记：
+
+1. `fpsane.cpp` = front panel **sane** = 连接器窗格检查。这与 Round 5 的 `bind_pane_typedef` 竞态、
+   Round 12 的 `conpane` 不可用是同一片区域：**凡把窗格当工作对象的 helper，在本机都不可靠**；
+   而让它在"没有窗格的 stub"上干活，能把 IDE 打死。
+2. **`dwarnCount: 0` 不是健康证明**。16:52 报 0/`looksDegraded: false`，16:55 就 5 条 Fatal insanity。
+3. **这个日志以实例为生命周期，重启即被重写**（`lvai_ensure_labview` 在 16:59:36 把它冲回 2568 字节的
+   启动态）。崩溃取证必须在重启之前做，否则只剩转录。
+   恢复本身干净：`lvai_ensure_labview` 起新实例，新端口 14868，`state: ready`。
+
+### 15.8 LV014，以及全库只有 9.9%
+
+```
+全无窗格 → INFO    lv014-no-connector-pane        （顶层 UI VI 的正常形态）
+部分缺   → WARNING lv014-terminal-off-the-pane    （疏漏的样子；但 D 证明它合法，故不是 error）
+每份文件只报一条
+```
+
+全库普查（70 份 AIXML / 383 个端子）：**带 conIdx 的只有 38 个 = 9.9%**；
+端子全在窗格的 11 份 = round13 的 6 份 + round7 的 5 个 fixture（那 5 份是 NI 导出件）。
+**这就是"前 12 轮生成的 VI 一个都不可被 Call"的量化版本。**
+
+### 15.9 为什么 12 轮都没写
+
+不是疏忽，是**命名误导**：`connection` 读起来就是"这个端子接不接"，写了它容易以为已经放进窗格；
+真正的归属叫 `conIdx`，语义上没有任何提示，而且**少了不报错、不影响 execState、VI 依然 100% 合法**，
+只让"能被别人调用"这个能力静默消失。
+
+> **一个属性少了不报错、只让能力静默消失，它就不会被写。这类属性必须有闸门。**
+
+---
+
+## 16. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
@@ -779,6 +922,8 @@ lvai_generate_test → failedAtStep: placeholder, noTerminals
 方言：   lvai_aixml_reference node='A,B,C'          （终端名查不猜，逗号批量）
 学样：   lvai_convert_vi_to_aixml <相似VI>          （照抄 NI 的布线）
 G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，见 §11.3）
+窗格：   Control/Indicator 一律写 conIdx="0,1,2..."   （不写=不在窗格上=不可被 Call，
+         且 Call 它不报错、只是数据线空接，见 §15.1 / §15.4）
 预检：   lvai_check_aixml  [fix:true]               （0.4 ms 离线，抓静默错误）
 校验：   lvai_validate_aixml                        （118 ms，失败不烧名）
 生成：   lvai_generate_vi                           （validate+convert+面板测量）

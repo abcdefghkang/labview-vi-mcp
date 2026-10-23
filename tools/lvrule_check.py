@@ -112,6 +112,18 @@ The rules, and the round that paid for each one:
          Timeouts=0 over 2.2 s with a 500 ms timeout - the loop waits forever.
          No error anywhere. The event frames THEMSELVES do survive (3
          EventSpecs, Timeout included) - it is the timeout value that is lost.
+
+  LV014  a terminal with no conIdx is not on the pane ........ round 13 (live)
+         The single reason the whole test layer was dead: `connection` decides
+         required/recommended/optional, but only `conIdx` decides WHICH SLOT -
+         and with no conIdx the composer writes conNum=-1 and leaves the
+         skeleton's root objFlags 0x10000 ("NO TERMINAL ON THE PANE") alone.
+         Then lvai_vi_terminals answers 0 in / 0 out, generate_test stops at
+         `noTerminals`, and a Call to that VI composes and RUNS with nothing
+         wired: measured, a caller whose only indicator came from its own
+         constant answered 99 with no error while the callee did nothing.
+         Sub-case worth knowing: SOME terminals paned is legal (a partial pane
+         ran fine), and slots follow conIdx rather than document order.
 """
 
 from __future__ import annotations
@@ -530,6 +542,36 @@ def check(path):
                 "same as `recommended`, but the flag is part of the placeholder stub's "
                 "signature, so the same pane hashes differently and produces a second clone. "
                 "Normalise on connection=\"recommended\"."))
+
+    # LV014 - a Control/Indicator with no conIdx is NOT on the connector pane.
+    # Measured round 13, four ways. The composer writes conNum=-1 and leaves the
+    # skeleton's root objFlags 0x10000 in place, whose own comment reads "NO
+    # TERMINAL ON THE PANE". Everything downstream is silent: lvai_vi_terminals
+    # answers "0 input(s), 0 output(s)", generate_test stops at `noTerminals`,
+    # and a <Call> to such a VI COMPOSES AND RUNS with nothing wired - a caller
+    # whose only output came from its own constant answered 99, no error, while
+    # the callee did nothing. The A/B/C/D settled the mechanics: no conIdx -> no
+    # pane; conIdx 0/1/2 -> pane; conIdx out of document order -> slots follow
+    # conIdx (y at 0, x at 1, factor at 2), NOT document order; only x carrying
+    # conIdx -> a PARTIAL pane, which is legal (execState 1, runs).
+    # Severity is deliberate. All-off-the-pane is the normal shape of a top-level
+    # UI VI, so it is info. SOME off and some on is what a forgotten conIdx looks
+    # like, so that one is a warning - but legal (D proved it), hence not an error.
+    paned = [n for n in nodes if n.tag in ("Control", "Indicator")]
+    off = [n for n in paned if n.el.get("conIdx") is None]
+    if off and len(off) == len(paned):
+        findings.append(Finding(
+            "info", "lv014-no-connector-pane", paned[0].uid, paned[0].describe(), paned[0].path,
+            f"all {len(paned)} front-panel terminal(s) are off the connector pane, so this VI "
+            "has no pane at all: it cannot be Called and a Caraya/NI test cannot drive it. "
+            "Correct for a top-level UI VI, wrong for anything meant to be a subVI."))
+    elif off:
+        findings.append(Finding(
+            "warning", "lv014-terminal-off-the-pane", off[0].uid, off[0].describe(), off[0].path,
+            f"{len(off)} of {len(paned)} terminal(s) carry no conIdx and are off the pane: "
+            + ", ".join(repr(n.el.get("_name") or "") for n in off)
+            + ". A Call cannot name them, and an unwired Call runs with no error. "
+            "Add conIdx to each you mean to expose."))
 
     return findings, len(nodes)
 

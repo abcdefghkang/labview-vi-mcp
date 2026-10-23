@@ -1,0 +1,65 @@
+# LabVIEW 26.3.1f1 crash record - 2026-10-23 16:55:10, during lvai_generate_test
+#
+# SOURCE
+#   C:\Users\heiyashi\AppData\Local\Temp\LabVIEW_64_26.3.1f1_interactive_heiyashi_cur.txt
+#   (16858 bytes at 16:55; the instance that wrote it exited)
+#
+# THIS FILE IS A TRANSCRIPT, NOT A COPY. The original was read at 16:56, and then
+# lvai_ensure_labview started a new instance at 16:59:36, which REWROTE the file back to
+# its 2568-byte startup state. Lesson worth keeping: this log lives and dies with the
+# instance, so a crash has to be captured BEFORE anything restarts LabVIEW.
+#
+# WHAT IT SHOWS
+#   5 x DWarn 0x613A5C04 "Fatal insanity (0x00000004)" in 'lvai_typedef_tree.vi'
+#   4 x minidump
+#   every one of them inside ConvertAIXMLToVI.vi - that is, inside a convert RPC, not a
+#   standalone call to the helper. fpsane.cpp is the front panel SANE check, i.e. the
+#   connector pane. Fixing conIdx (this round) may have removed the precondition: the
+#   helper was working on a stub whose pane did not exist.
+#
+# ---------------------------------------------------------------------------
+# First record, verbatim (non-ASCII fragments of the VI's own label were mojibake in the
+# console and are marked <mojibake> here rather than guessed at):
+#
+# <DEBUG_OUTPUT>
+# 2026/10/23 16:55:10.983
+# DWarn 0x613A5C04: Fatal insanity (0x00000004) detected in'lvai_typedef_tree.vi: <mojibake>
+# source\panel\fpsane.cpp(1140) : DWarn 0x613A5C04: Fatal insanity (0x00000004) detected in'lvai_typedef_tree.vi: <mojibake>
+# [ExecSys:0; Executing:"[VI "LV AI gRPC Service.lvlibp:gRPC Implementations.lvlib:ConvertAIXMLToVI.vi" (0x000001e0249ef1b0)]"]
+# minidump id: f0db0269-98f7-4503-91c5-5849cd9b50ed
+# </DEBUG_OUTPUT>
+#
+# ---------------------------------------------------------------------------
+# The same signature repeated four more times. minidump ids, in order:
+#
+#   f0db0269-98f7-4503-91c5-5849cd9b50ed
+#   6fb22810-3d3f-4289-33dd-f45b6084a0e4
+#   1f041085-3975-4d6e-b6fb-55f8f304709d
+#   598ef658-9ad6-41ad-27c2-6f8be41d4317
+#
+# The DWarn line, the fpsane.cpp(1140) line and the VI label were identical in all five.
+#
+# ---------------------------------------------------------------------------
+# VI call stack, identical under all five:
+#
+# VI call stack:
+# - LV AI gRPC Service.lvlibp:gRPC Implementations.lvlib:ConvertAIXMLToVI.vi
+# - LV AI gRPC Service.lvlibp:LVAI.lvclass:Start Sync.vi:5930001
+# - LV AI gRPC Service.lvlibp:gRPC-servicer-release.lvlib:ServiceBase.lvclass:Start.vi:1880001
+# - LV AI gRPC Service.lvlibp:gRPC Implementations.lvlib:RunService.vi
+# Last sanity check for the VI took 0ms.
+# ---------------------------------------------------------------------------
+# PROCESS STATE 30 SECONDS LATER (16:56)
+#
+#   netstat -ano | grep 4413
+#   TCP    [::1]:14596   [::1]:44136   SYN_SENT     2348      <- connect attempts, no listener
+#   TCP    [::1]:44134   [::]:0        LISTENING    2348
+#   TCP    [::1]:44135   [::]:0        LISTENING    2348
+#
+#   tasklist | grep -i labview
+#   NI.NigelLocalService.exe   2348        <- alive, but 44136 (the lvai service) is gone
+#   LabVIEWMCP.exe            14112
+#   (no LabVIEW.exe)
+#
+#   lvai_status at 16:52 still answered {port: 44136, dwarnCount: 0, looksDegraded: false}.
+#   Both fields were already wrong when they were reported.

@@ -1,0 +1,23 @@
+<VI _name="Selfcheck Negative Control.vi" description="Round-13 self-contained test, no third-party framework: three static Calls to Conpane Probe B.vi, each result minus its expected value, the three residuals summed, and the sum compared with 0. Every case is exact in IEEE754 (3*5, -2*4, 0*7), so the sum is exactly 0 iff the subject is right. AllPass and Total Error are both on the connector pane, so a runner can read them like any other VI's outputs.">
+  <Constant _name="Three" outputs="value:4200.a" type="double" uid="4200" uid_parent="root" value="3"/>
+  <Constant _name="Five" outputs="value:4201.b" type="double" uid="4201" uid_parent="root" value="5"/>
+  <Call inputs="x:4200.a,factor:4201.b" outputs="y:4210.y" target="Conpane Probe B.vi" uid="4210" uid_parent="root"/>
+  <Constant _name="Expected 15" outputs="value:4202.c" type="double" uid="4202" uid_parent="root" value="15"/>
+  <Node _name="Subtract" inputs="x:4210.y,y:4202.c" outputs="x-y:4220.d" uid="4220" uid_parent="root"/>
+  <Constant _name="Minus Two" outputs="value:4213.a" type="double" uid="4213" uid_parent="root" value="-2"/>
+  <Constant _name="Four" outputs="value:4214.b" type="double" uid="4214" uid_parent="root" value="4"/>
+  <Call inputs="x:4213.a,factor:4214.b" outputs="y:4211.y" target="Conpane Probe B.vi" uid="4211" uid_parent="root"/>
+  <Constant _name="Expected -8" outputs="value:4203.c" type="double" uid="4203" uid_parent="root" value="-9"/>
+  <Node _name="Subtract" inputs="x:4211.y,y:4203.c" outputs="x-y:4221.d" uid="4221" uid_parent="root"/>
+  <Constant _name="Zero In" outputs="value:4215.a" type="double" uid="4215" uid_parent="root" value="0"/>
+  <Constant _name="Seven" outputs="value:4216.b" type="double" uid="4216" uid_parent="root" value="7"/>
+  <Call inputs="x:4215.a,factor:4216.b" outputs="y:4212.y" target="Conpane Probe B.vi" uid="4212" uid_parent="root"/>
+  <Constant _name="Expected 0" outputs="value:4204.c" type="double" uid="4204" uid_parent="root" value="0"/>
+  <Node _name="Subtract" inputs="x:4212.y,y:4204.c" outputs="x-y:4222.d" uid="4222" uid_parent="root"/>
+  <Node _name="Add" inputs="x:4220.d,y:4221.d" outputs="x+y:4230.s" uid="4230" uid_parent="root"/>
+  <Node _name="Add" inputs="x:4230.s,y:4222.d" outputs="x+y:4231.t" uid="4231" uid_parent="root"/>
+  <Constant _name="Zero" outputs="value:4205.z" type="double" uid="4205" uid_parent="root" value="0"/>
+  <Node _name="Equal?" inputs="x:4231.t,y:4205.z" outputs="x = y?:4240.p" uid="4240" uid_parent="root"/>
+  <Indicator _name="AllPass" connection="recommended" conIdx="0" inputs="value:4240.p" type="bool" uid="4250" uid_parent="root" value="false"/>
+  <Indicator _name="Total Error" connection="recommended" conIdx="1" inputs="value:4231.t" type="double" uid="4251" uid_parent="root" value="0"/>
+</VI>

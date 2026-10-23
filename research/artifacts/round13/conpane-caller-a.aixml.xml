@@ -1,0 +1,5 @@
+<VI _name="Conpane Caller A.vi" description="Round-13 counter-probe: calls Conpane Probe A.vi, the variant with NO conIdx and therefore no connector-pane terminals. Whatever this does - refuse to compose, or compose a Call with nothing to wire - is the failure mode of a pane-less subVI.">
+  <Call inputs="" outputs="" target="Conpane Probe A.vi" uid="4210" uid_parent="root"/>
+  <Constant _name="Marker" outputs="value:4201.m" type="double" uid="4201" uid_parent="root" value="99"/>
+  <Indicator _name="Marker Out" connection="recommended" conIdx="0" inputs="value:4201.m" type="double" uid="4250" uid_parent="root" value="0"/>
+</VI>

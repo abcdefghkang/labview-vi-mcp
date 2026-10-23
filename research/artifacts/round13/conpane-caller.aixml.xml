@@ -1,0 +1,6 @@
+<VI _name="Conpane Caller.vi" description="Round-13 end-to-end proof: a static Call to Conpane Probe B.vi, whose terminals exist ONLY because its AIXML carries conIdx. 3 * 5 must come back 15. If the connector pane were decoration, this would fail to link.">
+  <Constant _name="Three" outputs="value:4200.x" type="double" uid="4200" uid_parent="root" value="3"/>
+  <Constant _name="Five" outputs="value:4201.f" type="double" uid="4201" uid_parent="root" value="5"/>
+  <Call inputs="x:4200.x,factor:4201.f" outputs="y:4210.y" target="Conpane Probe B.vi" uid="4211" uid_parent="root"/>
+  <Indicator _name="Result" connection="recommended" conIdx="0" inputs="value:4210.y" type="double" uid="4210" uid_parent="root" value="0"/>
+</VI>

@@ -34,7 +34,7 @@ python tools/lvrule_check.py draft.aixml.xml
 | 文件 | 内容 | 能不能改 |
 |---|---|---|
 | `aixml_lint.py` | **vendored** 上游 [Zuehlke/labview-mcp](https://github.com/Zuehlke/labview-mcp) `scripts/aixml_lint.py`，37 条规则 | **不改**。上游更新时整份覆盖，文件头记着来源 commit |
-| `lvrule_check.py` | 我们自己的 10 条铁律（LV001/003/004/005/006/007/008/009/010/011） | 只往这里加 |
+| `lvrule_check.py` | 我们自己的 13 条铁律（LV001/003–014） | 只往这里加 |
 | `audit_aixml.py` | 跑两个、合并、按文档类型分流、抑制已知误报、出表格 | 门面，逻辑尽量薄 |
 | `cold_build_census.py` | **不是闸门**：把上游 `docs/cold-build-*.md` 变成 CSV/JSON 数据集 | 语料普查 |
 | `lvclass_parent_scan.py` | **不是闸门**：离线解析 `.lvclass` 的父类，判父类到底是类还是接口 | 见下 |
@@ -67,7 +67,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 
 ---
 
-## `lvrule_check.py` 的 12 条，每条来自一轮实测
+## `lvrule_check.py` 的 13 条，每条来自一轮实测
 
 | 规则 | 断言 | 来源 |
 |---|---|---|
@@ -83,6 +83,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 | `lv011-numeric-empty-value` | 数值端子的 `value` 不能是空串 | Round 11 **真机**：Error 53 "Unrecognized or unsupported attribute set" —— 报错不说 value，A/B 才查出是空串而非 `connection` |
 | `lv012-net-crosses-boundary` | 线不能隐式穿过结构边界：外层结构要外半截隧道，每帧要内半截，按 `_id` 对齐 | Round 12 **真机**：原件 0E/5W 过闸，composer 连拒两次（`net '4203.ms'`、`net '4205.one'`）。**级别按后端**：目标 grpc 时是 warning（NI 转换器自动补隧道，实测 43→154），目标 pylabview 时是 error（直接退件）。`--backend pylabview` 或 `LVRULE_BACKEND=pylabview` |
 | `lv013-event-timeout-unwireable` | 带 ` Timeout ` 帧的 Event Structure 一律报 | Round 12 **真机**：AIXML 没有 `eventTimeOut` 端子的写法，写 `<Tunnel>` 得到普通隧道；运行 2.2 s / 超时 500 ms → `Timeouts=0`，零报错。帧与事件注册本身是好的（3 个 EventSpec 全对） |
+| `lv014-no-connector-pane` / `lv014-terminal-off-the-pane` | 端子没有 `conIdx` = 不在连接器窗格上。全部缺报 info，部分缺报 warning（部分上窗格经实测合法） | Round 13 **真机**：`connection` 只管 required/recommended/optional，**只有 `conIdx` 决定在不在位上**；缺它时 composer 写 `conNum=-1`，并保留骨架的 `objFlags 0x10000`（该标志的注释原话就是 "NO TERMINAL ON THE PANE"）。后果极静：`vi_terminals` 报 0 in/0 out、`generate_test` 停在 `noTerminals`，而 Call 它能成功生成、跑完、**什么也没传**（实测调用方输出 99，来自它自己的常量，零报错）。全库 383 个端子只有 38 个带 conIdx（9.9%）。判力三例：A 全无 → info；B 全有 → 干净；D 部分缺 → 精确点名缺的那个 |
 
 **LV009 的范围是刻意窄的**，因为上游已经管了一部分：`conn-required-output` 管任何 Indicator 的
 `required`，`conn-error-in-not-recommended` 管带 `conIdx` 的 `error in`。LV009 只补两处空白 ——

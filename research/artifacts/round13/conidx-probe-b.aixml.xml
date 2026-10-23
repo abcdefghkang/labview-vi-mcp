@@ -1,0 +1,6 @@
+<VI _name="Conpane Probe B.vi" description="Round-13 connector-pane probe: y = x * factor. Identical in all four variants; only conIdx differs, so any difference in the connector pane is caused by conIdx and nothing else.">
+  <Control _name="x" connection="recommended" conIdx="0" outputs="value:4200.value" type="double" uid="4200" uid_parent="root" value="1"/>
+  <Control _name="factor" connection="recommended" conIdx="1" outputs="value:4201.value" type="double" uid="4201" uid_parent="root" value="2"/>
+  <Indicator _name="y" connection="recommended" conIdx="2" inputs="value:4210.out" type="double" uid="4210" uid_parent="root" value="0"/>
+  <Node _name="Multiply" inputs="x:4200.value,y:4201.value" outputs="x*y:4210.out" uid="4211" uid_parent="root"/>
+</VI>
