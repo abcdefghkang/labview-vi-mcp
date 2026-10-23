@@ -1,0 +1,33 @@
+{
+  "experiment": "D - grpc route rejection of the bundled lvai_bind_pane_typedef helper AIXML on this machine",
+  "date": "2026-10-20",
+  "tool": "lvai_bind_pane_typedef (backend omitted -> default grpc)",
+  "inputs": {
+    "viPath": "round7/Monitor.aixml.vi",
+    "lvclassPath": "round7/Profile Gen.lvclass",
+    "projectPath": "round7/Profile Gen.lvproj",
+    "bindings": [
+      {"terminal": "Setpoint", "ctlPath": "round7/Setpoint.ctl"},
+      {"terminal": "Unit", "ctlPath": "round7/Unit.ctl"}
+    ]
+  },
+  "result": {
+    "ok": false,
+    "errorKind": "helperAixmlInvalid",
+    "error": "The helper AIXML at 'C:\\Users\\heiyashi\\labview-mcp\\bin\\scripts\\lvai_bind_pane_typedef.xml' does not validate (NI ValidateAIXML, LabVIEW 2026 26.3.1f1 Chinese)",
+    "errorCode": 1,
+    "backend": "grpc",
+    "validation_errors_zh": [
+      "关闭引用: 包含未连线或错误的接线端",
+      "调用节点: 无效方法",
+      "索引数组: 包含未连线或错误的接线端",
+      "已连接两个不同类型的接线端。(xN)",
+      "已将标量类型连接至同样数据类型的数组。(xN)",
+      "搜索一维数组: 包含未连线或错误的接线端",
+      "属性节点: 包含未连线或错误的接线端 / 无效属性 (xN)",
+      "For循环: N未连接，并且不存在索引输入。",
+      "连线: 类冲突"
+    ]
+  },
+  "interpretation": "The grpc route is BLOCKED for this tool on this machine: NI's own validator refuses the bundled helper AIXML (the known helperAixmlInvalid environment issue, previously observed only on panel-cleanup/connector-pane helpers, now confirmed for the bind helper too). The refusal happens before any work - no project, no VI, no bind. This is why the whole Round 7 line runs on the pylabview route, where the helper is composed by our own composer (no NI validation) and run over ActiveX."
+}

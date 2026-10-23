@@ -1,0 +1,46 @@
+{
+  "experiment": "A - original bundled helper on COLD Monitor.aixml.vi, pylabview backend",
+  "date": "2026-10-20",
+  "tool": "lvai_bind_pane_typedef",
+  "inputs": {
+    "viPath": "round7/Monitor.aixml.vi",
+    "lvclassPath": "round7/Profile Gen.lvclass",
+    "projectPath": "round7/Profile Gen.lvproj",
+    "bindings": [
+      {"terminal": "Setpoint", "ctlPath": "round7/Setpoint.ctl"},
+      {"terminal": "Unit", "ctlPath": "round7/Unit.ctl"}
+    ],
+    "backend": "pylabview",
+    "helperAixmlPath": "default (scripts folder copy of lvai_bind_pane_typedef.xml)",
+    "helperGenerated": false
+  },
+  "result": {
+    "ok": true,
+    "verified": true,
+    "terminalsAsked": 2,
+    "terminalsBound": 2,
+    "retriedAfterEmptyNames": false,
+    "terminalNamesSeen": ["obj in", "Setpoint", "Unit", "obj out"],
+    "typedefsMissingFromSavedFile": [],
+    "terminalsNotOnPanel": [],
+    "bindings": [
+      {"terminal": "Setpoint", "ctl": "Setpoint.ctl", "terminalOnPanel": true, "typedefInSavedFile": true},
+      {"terminal": "Unit", "ctl": "Unit.ctl", "terminalOnPanel": true, "typedefInSavedFile": true}
+    ]
+  },
+  "helper_run": {
+    "runMs": 119,
+    "error_clusters_all_zero": true,
+    "open vi error": "[false,0,]",
+    "replace errors": "[[false,0,],[false,0,]]",
+    "class open error": "[false,0,]",
+    "save vi error": "[false,0,]",
+    "save class error": "[false,0,]",
+    "error out": "[false,0,]"
+  },
+  "steps": [
+    "openProject: errorCode 0 via ActiveX, projectBecameActive true",
+    "bind: ran to end over ActiveX, 119 ms"
+  ],
+  "interpretation": "The ORIGINAL (racy) helper WON the race this time: the bind loop's Replace landed before the save chain wrote the file. The race is PROBABILISTIC, not deterministic - the previous session measured the opposite outcome (terminalsBound=2, all errors 0, ZERO typedefs in file). Cold first open read all four control names correctly on the pylabview route (retriedAfterEmptyNames=false), unlike the grpc-route first-open empty-names defect documented in the tool."
+}

@@ -1,0 +1,71 @@
+<VI _name="User Event Cluster Payload.vi" description="Round8 probe P3 (UNVERIFIED - prepared 2026-10-22, run when LabVIEW is up): a CLUSTER payload user event. The Tick datatype constant is cluster{bool.Last,int32.N}; the source loop Bundles it (typed-empty base + two element: appends, Round6 append-only idiom); the handler names BOTH payload elements on the Event Data Node (fields=&quot;Source,Last,N,Time&quot;) and stops on count OR on Last only. Upstream measured the same shape (suite t120_user_event_cluster_payload): Ticks Received = 3, Last N = 2 for Ticks To Send = 3. Our expected: identical.">
+  <FreeLabel comment="Cluster payload, flattened onto the event data cluster." uid="4200" uid_parent="root"/>
+
+  <Control _name="Ticks To Send" outputs="value:4205.value" type="int32" uid="4205" uid_parent="root" value="3" description="How many Tick user events the source loop fires. The handler loop stops after it has received this many."/>
+
+  <Constant _name="Tick" outputs="value:4201.value" type="cluster{bool.Last,int32.N}" uid="4201" uid_parent="root" value="[false,0]"/>
+
+  <Node _name="Create User Event" inputs="user event datatype:4201.value,error in:" outputs="user event:4202.user event,error out:4202.error out" uid="4202" uid_parent="root"/>
+
+  <Node _name="Register For Events" inputs="event registration refnum:,error in (no error):4202.error out,event source:4202.user event" outputs="event registration refnum:4203.event registration refnum,error out:4203.error out" uid="4203" uid_parent="root"/>
+
+  <Structure _name="For Loop" count="4210.value" maxin="4205.value" maxout="" label="Tick source" uid="4210" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4202.user event" outputs="value:4211.value" uid="4211" uid_parent="4210"/>
+    <Constant outputs="value:4212.value" type="int32" uid="4212" uid_parent="4210" value="100"/>
+    <Node _name="Wait (ms)" inputs="milliseconds to wait:4212.value" outputs="millisecond timer value:" uid="4213" uid_parent="4210"/>
+    <Tunnel _id="In2" inputs="value:4205.value" outputs="value:4216.value" uid="4216" uid_parent="4210"/>
+    <Node _name="Increment" inputs="x:4210.value" outputs="x+1:4217.x+1" uid="4217" uid_parent="4210"/>
+    <Node _name="Greater Or Equal?" inputs="x:4217.x+1,y:4216.value" outputs="x &gt;= y?:4218.last" uid="4218" uid_parent="4210"/>
+    <Constant _name="Empty Tick Payload" outputs="value:4219.base" type="cluster{bool.Last,int32.N}" uid="4219" uid_parent="4210" value=""/>
+    <Node _name="Bundle" inputs="element:4218.last,element:4217.x+1,cluster:4219.base" outputs="output cluster:4220.bundle" uid="4220" uid_parent="4210"/>
+    <Node _name="Generate User Event" inputs="user event:4211.value,event data cluster:4220.bundle,error in:,priority (normal):" outputs="user event out:,error out:" uid="4215" uid_parent="4210"/>
+  </Structure>
+
+  <Structure _name="While Loop" count="4230.value" label="Event handler" uid="4230" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4203.event registration refnum" outputs="value:4231.value" uid="4231" uid_parent="4230"/>
+    <Tunnel _id="In2" inputs="value:4205.value" outputs="value:4232.value" uid="4232" uid_parent="4230"/>
+
+    <Structure _name="Event Structure" uid="4240" uid_parent="4230">
+      <Tunnel _id="In1" inputs="value:4231.value" uid="4241" uid_parent="4240"/>
+      <Tunnel _id="In2" inputs="value:4232.value" uid="4242" uid_parent="4240"/>
+      <Tunnel _id="In3" inputs="value:4230.value" uid="4243" uid_parent="4240"/>
+
+      <CaseFrame selector=" &lt;Tick&gt;\3A User Event " uid="4250" uid_parent="4240">
+        <FreeLabel comment="One handler iteration per Tick." uid="4259" uid_parent="4250"/>
+        <Tunnel _id="In1" outputs="value:" uid="4251" uid_parent="4250"/>
+        <Tunnel _id="In2" outputs="value:4252.value" uid="4252" uid_parent="4250"/>
+        <Tunnel _id="In3" outputs="value:4253.value" uid="4253" uid_parent="4250"/>
+        <Node _name="Event Data Node" fields="Source,Last,N,Time" outputs="Source:,Last:4254.Last,N:4254.N,Time:" uid="4254" uid_parent="4250"/>
+        <Node _name="Increment" inputs="x:4253.value" outputs="x+1:4255.x+1" uid="4255" uid_parent="4250"/>
+        <Indicator _name="Ticks Received" inputs="value:4255.x+1" type="int32" uid="4256" uid_parent="4250" value="0" description="How many Tick user events this handler has taken off the registration so far."/>
+        <Indicator _name="Last N" inputs="value:4254.N" type="int32" uid="4257" uid_parent="4250" value="0" description="The N element of the last cluster payload received."/>
+        <Node _name="Greater Or Equal?" inputs="x:4255.x+1,y:4252.value" outputs="x &gt;= y?:4258.exp" uid="4258" uid_parent="4250"/>
+        <Node _name="Or" inputs="x:4258.exp,y:4254.Last" outputs="x .or. y?:4260.stop" uid="4260" uid_parent="4250"/>
+        <Tunnel _id="Out1" inputs="value:4260.stop" uid="4261" uid_parent="4250"/>
+      </CaseFrame>
+
+      <CaseFrame selector=" &quot;Stop&quot;\3A Value Change " uid="4270" uid_parent="4240">
+        <FreeLabel comment="Static and dynamic events, one structure." uid="4279" uid_parent="4270"/>
+        <Tunnel _id="In1" outputs="value:" uid="4271" uid_parent="4270"/>
+        <Tunnel _id="In2" outputs="value:" uid="4272" uid_parent="4270"/>
+        <Tunnel _id="In3" outputs="value:" uid="4273" uid_parent="4270"/>
+        <Control _name="Stop" outputs="value:" style="latched" type="bool" uid="4274" uid_parent="4270" value="false" description="Ends the handler loop before all the ticks have arrived."/>
+        <Node _name="Event Data Node" fields="Source,Type,Time" outputs="Source:,Type:,Time:" uid="4275" uid_parent="4270"/>
+        <Constant outputs="value:4276.value" type="bool" uid="4276" uid_parent="4270" value="true"/>
+        <Tunnel _id="Out1" inputs="value:4276.value" uid="4277" uid_parent="4270"/>
+      </CaseFrame>
+
+      <Tunnel _id="Out1" outputs="value:4280.value" uid="4280" uid_parent="4240"/>
+    </Structure>
+
+    <Condition inputs="value:4280.value" uid="4281" uid_parent="4230" value="stop"/>
+    <Tunnel _id="Out1" inputs="value:4231.value" outputs="value:4282.value" uid="4282" uid_parent="4230"/>
+  </Structure>
+
+  <Node _name="Unregister For Events" inputs="event registration refnum:4282.value,error in:4203.error out" outputs="error out:4290.error out" uid="4290" uid_parent="root"/>
+
+  <Node _name="Destroy User Event" inputs="user event:4202.user event,error in:4290.error out" outputs="error out:4291.error out" uid="4291" uid_parent="root"/>
+
+  <Indicator _name="Error Out" inputs="value:4291.error out" type="cluster{bool.status,int32.code,string.source}" uid="4292" uid_parent="root" value="[false,0,]" description="The error chain of the whole event lifetime, from Create through Destroy."/>
+
+</VI>

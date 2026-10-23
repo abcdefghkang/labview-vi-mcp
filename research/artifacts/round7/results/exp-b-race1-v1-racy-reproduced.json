@@ -1,0 +1,58 @@
+{
+  "experiment": "B - INSTRUMENTED v1 (racy) helper on FRESH Race1.aixml.vi, pylabview backend - RACE REPRODUCTION",
+  "date": "2026-10-20",
+  "tool": "lvai_bind_pane_typedef",
+  "inputs": {
+    "viPath": "round7/Race1.aixml.vi (created same day via lvai_add_class_method, pylabview route, never loaded before)",
+    "lvclassPath": "round7/Profile Gen.lvclass",
+    "projectPath": "round7/Profile Gen.lvproj",
+    "bindings": [
+      {"terminal": "Setpoint", "ctlPath": "round7/Setpoint.ctl"},
+      {"terminal": "Unit", "ctlPath": "round7/Unit.ctl"}
+    ],
+    "backend": "pylabview",
+    "helperAixmlPath": "round7/lvai_bind_pane_typedef_instr.xml (v1: original racy structure + five-point read-back + Replace liveness probe)",
+    "helperViPath": "round7/bindhelper/round7-race1-v1.vi",
+    "helperGenerated": true
+  },
+  "result": {
+    "ok": false,
+    "verified": false,
+    "terminalsAsked": 2,
+    "terminalsBound": 2,
+    "retriedAfterEmptyNames": false,
+    "terminalNamesSeen": ["obj in", "Setpoint", "Unit", "obj out"],
+    "typedefsMissingFromSavedFile": ["Setpoint.ctl", "Unit.ctl"],
+    "terminalsNotOnPanel": [],
+    "bindings": [
+      {"terminal": "Setpoint", "ctl": "Setpoint.ctl", "terminalOnPanel": true, "typedefInSavedFile": false},
+      {"terminal": "Unit", "ctl": "Unit.ctl", "terminalOnPanel": true, "typedefInSavedFile": false}
+    ]
+  },
+  "helper_run": {
+    "runMs": 128,
+    "open vi error": "[false,0,]",
+    "replace errors": "[[false,0,],[false,0,]]",
+    "replace ref probe errors": "[[true,1055,...],[true,1055,...]] - BOTH probes 1055 = the Replace calls REALLY replaced (refnum consumed)",
+    "class open error": "[false,0,]",
+    "save vi error": "[false,0,]",
+    "save class error": "[false,0,]",
+    "reopen error": "[false,0,]",
+    "reopen2 error": "[false,0,]",
+    "error out": "[false,0,]"
+  },
+  "five_point_read_back": {
+    "before is typedef": "[true,false,false,true] - obj in/out are class-typed (Profile Gen.ctl), Setpoint/Unit plain",
+    "after replace is typedef": "[true,false,false,true] - the second Controls[] read RACED AHEAD of the bind loop (its error input is the FIRST Controls[] read, not the loop's), so it still saw the plain controls",
+    "after save is typedef": "[true,true,true,true] with paths [Profile Gen.ctl, Setpoint.ctl, Unit.ctl, Profile Gen.ctl] - the fresh reopen saw the bindings because LabVIEW served the CACHED in-memory VI (Replaces had landed by then)",
+    "after class save is typedef": "[true,true,true,true] same paths"
+  },
+  "file_ground_truth": {
+    "method": "pylv_extract (no LabVIEW) into extract-race1-after-v1/",
+    "Label Text=\"Setpoint.ctl\" count": 0,
+    "Label Text=\"Unit.ctl\" count": 0,
+    "only TypeDef present": "FlatTypeID 6, the class private-data cluster (Profile Gen.ctl) behind obj in/obj out",
+    "conclusion": "the saved FILE carries NO .ctl binding - the save chain wrote the file before the bind loop's Replace landed"
+  },
+  "interpretation": "RACE LOST, reproduced with today's own measurement. The helper reported complete success (terminalsBound=2, every error cluster 0, both liveness probes 1055) while the file it saved had zero typedefs. The five-point read-back shows the memory-vs-file divergence directly: the post-save reopen (LabVIEW cache) shows the bindings, the pylabview file read does not. The tool's own verified=false verdict caught it, matching the upstream-documented failure mode ('a run reported 1 for a file that ended up with none')."
+}

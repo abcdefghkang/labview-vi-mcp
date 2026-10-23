@@ -1,0 +1,83 @@
+<VI _name="Two User Events One Registration.vi" description="Round8 probe P4 (UNVERIFIED - prepared 2026-10-22, run when LabVIEW is up): TWO user events (Tick bool + Count int32) in ONE Register For Events - the input name repeated as event source:…,event source:…, each with its own frame, each frame's dynIndex being its 1-based position in the registration. The handler keeps Last Count in a shift register (Round4/6 SR idiom: frames read the SR net directly, write back through Out tunnels, every frame assigns every Out tunnel) and stops on Tick. Upstream measured the same shape (suite t121_user_events_two): handler stored Count 0,1,2 and stopped on Tick. Our expected: Last Count = 2 (Ticks To Send = 3), Error Out.status = false.">
+  <FreeLabel comment="Two events, one registration, one handler loop." uid="4200" uid_parent="root"/>
+
+  <Control _name="Ticks To Send" outputs="value:4205.value" type="int32" uid="4205" uid_parent="root" value="3" description="How many iterations the source loop runs, firing both events each time."/>
+
+  <Constant _name="Tick" outputs="value:4201.value" type="bool" uid="4201" uid_parent="root" value="false"/>
+  <Constant _name="Count" outputs="value:4202.value" type="int32" uid="4202" uid_parent="root" value="0"/>
+  <Constant _name="Zero" outputs="value:4203.zero" type="int32" uid="4203" uid_parent="root" value="0"/>
+  <Constant _name="False" outputs="value:4204.f" type="bool" uid="4204" uid_parent="root" value="false"/>
+
+  <Node _name="Create User Event" inputs="user event datatype:4201.value,error in:" outputs="user event:4210.user event,error out:4210.error out" uid="4210" uid_parent="root"/>
+  <Node _name="Create User Event" inputs="user event datatype:4202.value,error in:" outputs="user event:4211.user event,error out:4211.error out" uid="4211" uid_parent="root"/>
+
+  <Node _name="Register For Events" inputs="event registration refnum:,error in (no error):4211.error out,event source:4210.user event,event source:4211.user event" outputs="event registration refnum:4212.event registration refnum,error out:4212.error out" uid="4212" uid_parent="root"/>
+
+  <Structure _name="For Loop" count="4220.value" maxin="4205.value" maxout="" label="Dual source" uid="4220" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4210.user event" outputs="value:4221.value" uid="4221" uid_parent="4220"/>
+    <Tunnel _id="In2" inputs="value:4211.user event" outputs="value:4222.value" uid="4222" uid_parent="4220"/>
+    <Tunnel _id="In3" inputs="value:4205.value" outputs="value:4223.value" uid="4223" uid_parent="4220"/>
+    <Constant outputs="value:4224.value" type="int32" uid="4224" uid_parent="4220" value="100"/>
+    <Node _name="Wait (ms)" inputs="milliseconds to wait:4224.value" outputs="millisecond timer value:" uid="4225" uid_parent="4220"/>
+    <Node _name="Greater Or Equal?" inputs="x:4220.value,y:4223.value" outputs="x &gt;= y?:4226.last" uid="4226" uid_parent="4220"/>
+    <Node _name="Generate User Event" inputs="user event:4221.value,event data cluster:4226.last,error in:,priority (normal):" outputs="user event out:,error out:4227.err" uid="4227" uid_parent="4220"/>
+    <Node _name="Generate User Event" inputs="user event:4222.value,event data cluster:4220.value,error in:4227.err,priority (normal):" outputs="user event out:,error out:" uid="4228" uid_parent="4220"/>
+  </Structure>
+
+  <Structure _name="While Loop" count="4230.value" label="Event handler" uid="4230" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4212.event registration refnum" outputs="value:4231.value" uid="4231" uid_parent="4230"/>
+    <Tunnel _id="In2" inputs="value:4205.value" outputs="value:4232.value" uid="4232" uid_parent="4230"/>
+
+    <ShiftReg uid="4240" uid_parent="4230">
+      <Left inputs="value:4203.zero" outputs="value:4241.lastcount" uid="4241" uid_parent="4240"/>
+      <Right inputs="value:4280.value" outputs="value:4242.final_count" uid="4242" uid_parent="4240"/>
+    </ShiftReg>
+
+    <Structure _name="Event Structure" uid="4250" uid_parent="4230">
+      <Tunnel _id="In1" inputs="value:4231.value" uid="4251" uid_parent="4250"/>
+      <Tunnel _id="In2" inputs="value:4232.value" uid="4252" uid_parent="4250"/>
+      <Tunnel _id="In3" inputs="value:4230.value" uid="4253" uid_parent="4250"/>
+      <Tunnel _id="In4" inputs="value:4241.lastcount" uid="4254" uid_parent="4250"/>
+
+      <CaseFrame selector=" &lt;Tick&gt;\3A User Event " uid="4260" uid_parent="4250">
+        <FreeLabel comment="Stop on Tick. Last Count passes through unchanged." uid="4269" uid_parent="4260"/>
+        <Tunnel _id="In1" outputs="value:" uid="4261" uid_parent="4260"/>
+        <Tunnel _id="In2" outputs="value:" uid="4262" uid_parent="4260"/>
+        <Tunnel _id="In3" outputs="value:4263.value" uid="4263" uid_parent="4260"/>
+        <Tunnel _id="In4" outputs="value:4264.value" uid="4264" uid_parent="4260"/>
+        <Node _name="Event Data Node" fields="Source,Tick,Time" outputs="Source:,Tick:,Time:" uid="4265" uid_parent="4260"/>
+        <Tunnel _id="Out1" inputs="value:4264.value" uid="4266" uid_parent="4260"/>
+        <Constant outputs="value:4267.value" type="bool" uid="4267" uid_parent="4260" value="true"/>
+        <Tunnel _id="Out2" inputs="value:4267.value" uid="4268" uid_parent="4260"/>
+      </CaseFrame>
+
+      <CaseFrame selector=" &lt;Count&gt;\3A User Event " uid="4270" uid_parent="4250">
+        <FreeLabel comment="Store the Count payload into the shift register." uid="4279" uid_parent="4270"/>
+        <Tunnel _id="In1" outputs="value:" uid="4271" uid_parent="4270"/>
+        <Tunnel _id="In2" outputs="value:" uid="4272" uid_parent="4270"/>
+        <Tunnel _id="In3" outputs="value:4273.value" uid="4273" uid_parent="4270"/>
+        <Tunnel _id="In4" outputs="value:" uid="4274" uid_parent="4270"/>
+        <Node _name="Event Data Node" fields="Source,Count,Time" outputs="Source:,Count:4275.count,Time:" uid="4275" uid_parent="4270"/>
+        <Tunnel _id="Out1" inputs="value:4275.count" uid="4276" uid_parent="4270"/>
+        <Constant outputs="value:4277.value" type="bool" uid="4277" uid_parent="4270" value="false"/>
+        <Tunnel _id="Out2" inputs="value:4277.value" uid="4278" uid_parent="4270"/>
+      </CaseFrame>
+
+      <Tunnel _id="Out1" outputs="value:4280.value" uid="4280" uid_parent="4250"/>
+      <Tunnel _id="Out2" outputs="value:4281.value" uid="4281" uid_parent="4250"/>
+    </Structure>
+
+    <Condition inputs="value:4281.value" uid="4282" uid_parent="4230" value="stop"/>
+    <Tunnel _id="Out1" inputs="value:4251.value" outputs="value:4283.value" uid="4283" uid_parent="4230"/>
+  </Structure>
+
+  <Node _name="Unregister For Events" inputs="event registration refnum:4283.value,error in:4212.error out" outputs="error out:4290.error out" uid="4290" uid_parent="root"/>
+
+  <Node _name="Destroy User Event" inputs="user event:4210.user event,error in:4290.error out" outputs="error out:4291.error out" uid="4291" uid_parent="root"/>
+  <Node _name="Destroy User Event" inputs="user event:4211.user event,error in:4291.error out" outputs="error out:4292.error out" uid="4292" uid_parent="root"/>
+
+  <Indicator _name="Last Count" connection="recommended" inputs="value:4242.final_count" type="int32" uid="4300" uid_parent="root" value="0" description="The Count payload of the last Count event handled."/>
+
+  <Indicator _name="Error Out" connection="recommended" inputs="value:4292.error out" type="cluster{bool.status,int32.code,string.source}" uid="4301" uid_parent="root" value="[false,0,]" description="The error chain of the whole event lifetime, from Create through Destroy."/>
+
+</VI>

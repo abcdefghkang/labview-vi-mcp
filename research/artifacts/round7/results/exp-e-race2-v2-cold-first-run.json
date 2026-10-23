@@ -1,0 +1,45 @@
+{
+  "experiment": "E - INSTRUMENTED v2 (ORDERING-FIXED) helper on FRESH COLD Race2.aixml.vi, pylabview backend - CLEAN FIRST RUN",
+  "date": "2026-10-20",
+  "tool": "lvai_bind_pane_typedef",
+  "inputs": {
+    "viPath": "round7/Race2.aixml.vi (created same day via lvai_add_class_method, never loaded, no LabVIEW cache)",
+    "lvclassPath": "round7/Profile Gen.lvclass",
+    "projectPath": "round7/Profile Gen.lvproj",
+    "bindings": [
+      {"terminal": "Setpoint", "ctlPath": "round7/Setpoint.ctl"},
+      {"terminal": "Unit", "ctlPath": "round7/Unit.ctl"}
+    ],
+    "backend": "pylabview",
+    "helperAixmlPath": "round7/lvai_bind_pane_typedef_instr_v2.xml",
+    "helperViPath": "round7/bindhelper/round7-race2-v2.vi",
+    "helperGenerated": true
+  },
+  "result": {
+    "ok": true,
+    "verified": true,
+    "terminalsAsked": 2,
+    "terminalsBound": 2,
+    "retriedAfterEmptyNames": false,
+    "terminalNamesSeen": ["obj in", "Setpoint", "Unit", "obj out"],
+    "typedefsMissingFromSavedFile": [],
+    "terminalsNotOnPanel": [],
+    "bindings": [
+      {"terminal": "Setpoint", "ctl": "Setpoint.ctl", "terminalOnPanel": true, "typedefInSavedFile": true},
+      {"terminal": "Unit", "ctl": "Unit.ctl", "terminalOnPanel": true, "typedefInSavedFile": true}
+    ]
+  },
+  "helper_run": {
+    "runMs": 115,
+    "replace errors": "[[false,0,],[false,0,]]",
+    "replace ref probe errors": "[[true,1055,...],[true,1055,...]]",
+    "all error clusters zero": true
+  },
+  "five_point_read_back": {
+    "before is typedef": "[true,false,false,true] - genuinely plain: obj in/out class-typed (Profile Gen.ctl), Setpoint/Unit plain",
+    "after replace is typedef": "[true,true,true,true] paths [Profile Gen.ctl, Setpoint.ctl, Unit.ctl, Profile Gen.ctl] - the read is now GUARANTEED after the loop (the ordering edge)",
+    "after save is typedef": "[true,true,true,true] same paths - persisted to file",
+    "after class save is typedef": "[true,true,true,true] same paths - committed by the class save"
+  },
+  "interpretation": "CLEAN FIRST RUN WITH THE FIX. The five-point read-back is fully coherent on a never-loaded VI: plain -> typedef after Replace -> typedef after Save.Instrument -> typedef after class Save, and the tool's independent file-level check (pylabview, no LabVIEW) confirms both .ctls in the saved file. Combined with exp B (same route, same tool, racy helper -> file without bindings) and exp C (racy-damaged fixture repaired by v2), the ordering edge is proven to be the difference between a bind that lands in the file and one that only lands in memory."
+}

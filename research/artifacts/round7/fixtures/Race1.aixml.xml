@@ -1,0 +1,6 @@
+<VI _name="Race1" description="Round7 race-reproduction fixture: a fresh dynamic-dispatch class member with the same pane shape as Configure/Monitor/Tune (obj in, Setpoint, Unit, obj out), created 2026-10-20 to reproduce the SAVE-CHAIN-vs-BIND-LOOP race in the ORIGINAL lvai_bind_pane_typedef helper with the instrumented five-point read-back. obj in/obj out are path stand-ins retyped to the class by lvai_add_class_method.">
+  <Control _name="obj in" conIdx="0" connection="required" type="path" uid="100" uid_parent="root" value="" outputs="value:100.value"/>
+  <Control _name="Setpoint" conIdx="2" connection="required" type="double" uid="102" uid_parent="root" value="20" outputs="value:102.value"/>
+  <Control _name="Unit" conIdx="3" connection="required" type="string" uid="103" uid_parent="root" value="degC" outputs="value:103.value"/>
+  <Indicator _name="obj out" conIdx="1" connection="required" type="path" uid="101" uid_parent="root" value="" inputs="value:100.value"/>
+</VI>

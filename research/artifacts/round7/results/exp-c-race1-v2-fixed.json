@@ -1,0 +1,45 @@
+{
+  "experiment": "C - INSTRUMENTED v2 (ORDERING-FIXED) helper on the SAME Race1.aixml.vi the race just damaged, pylabview backend - FIX VALIDATION",
+  "date": "2026-10-20",
+  "tool": "lvai_bind_pane_typedef",
+  "inputs": {
+    "viPath": "round7/Race1.aixml.vi (state after exp B: memory bound, file NOT bound)",
+    "lvclassPath": "round7/Profile Gen.lvclass",
+    "projectPath": "round7/Profile Gen.lvproj",
+    "bindings": [
+      {"terminal": "Setpoint", "ctlPath": "round7/Setpoint.ctl"},
+      {"terminal": "Unit", "ctlPath": "round7/Unit.ctl"}
+    ],
+    "backend": "pylabview",
+    "helperAixmlPath": "round7/lvai_bind_pane_typedef_instr_v2.xml (v1 + ONE dataflow edge: Index Array over the bind loop's replace-errors output, chained into LVClass.Open's error in and the post-Replace Controls[] read)",
+    "helperViPath": "round7/bindhelper/round7-race1-v2.vi",
+    "helperGenerated": true
+  },
+  "result": {
+    "ok": true,
+    "verified": true,
+    "terminalsAsked": 2,
+    "terminalsBound": 2,
+    "retriedAfterEmptyNames": false,
+    "terminalNamesSeen": ["obj in", "Setpoint", "Unit", "obj out"],
+    "typedefsMissingFromSavedFile": [],
+    "terminalsNotOnPanel": [],
+    "bindings": [
+      {"terminal": "Setpoint", "ctl": "Setpoint.ctl", "terminalOnPanel": true, "typedefInSavedFile": true},
+      {"terminal": "Unit", "ctl": "Unit.ctl", "terminalOnPanel": true, "typedefInSavedFile": true}
+    ]
+  },
+  "helper_run": {
+    "runMs": 120,
+    "replace errors": "[[false,0,],[false,0,]]",
+    "replace ref probe errors": "[[true,1055,...],[true,1055,...]]",
+    "all error clusters zero": true
+  },
+  "five_point_read_back": {
+    "before is typedef": "[true,true,true,true] - the VI was still in LabVIEW's memory from exp B with the Replaces applied (the cache shows the race-damaged in-memory state)",
+    "after replace is typedef": "[true,true,true,true] - now the read is guaranteed after the loop (the edge orders it)",
+    "after save is typedef": "[true,true,true,true] paths [Profile Gen.ctl, Setpoint.ctl, Unit.ctl, Profile Gen.ctl]",
+    "after class save is typedef": "[true,true,true,true] same paths"
+  },
+  "interpretation": "FIX WORKS. The one added dataflow edge (bind loop's error array -> Index Array -> LVClass.Open error in) makes the save chain wait for the bind loop, so the file now carries what the memory had. On the race-damaged fixture the run REPAIRED the file: verified=true with both .ctls in the saved file's type descriptors. Same fixture, same bindings, same route as exp B - the only difference is the ordering edge."
+}

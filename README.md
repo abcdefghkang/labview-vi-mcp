@@ -60,6 +60,9 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/12-retarget-root-cause.md` | Round-6 (1): retarget run-failure root cause — caller link name must match callee's internal Name; openVI:true recipe; ActiveX shares gRPC process (Chinese) |
 | `research/13-state-machine-template-generator.md` | Round-6 (2): state-table → AIXML state-machine generator; single-state blind spot of one-option Case (Chinese) |
 | `research/14-array-cluster-node-coverage.md` | Round-6 (3): array (12 nodes) + cluster node coverage; Bundle is append-only (typed-empty base idiom); Split Array unsupported (Chinese) |
+| `research/15-bind-pane-typedef-race.md` | Round-7: `lvai_bind_pane_typedef` save-chain vs bind-loop race root cause; one-edge ordering fix; file-level verification as the only trusted verdict (Chinese) |
+| `research/16-upstream-tracking-and-event-structures.md` | Round-7 (supplement): upstream v2.0.1→v2.2.0 tracking; cross-validation of our findings vs upstream docs; Event Structure one-call playbook (pylabview); gap census; 5 new iron rules; next-round probes (Chinese) |
+| `research/artifacts/round7/next-probes/` | Round-8 prepared probes: user-event / cluster-payload / two-events / static-events+timeout AIXML (UNVERIFIED, to run when LabVIEW is up) |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 
