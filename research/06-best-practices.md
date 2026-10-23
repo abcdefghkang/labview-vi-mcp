@@ -21,7 +21,8 @@
 10. [Round8 增补：五道闸门与六条新铁律](#10-round8-增补五道闸门与六条新铁律)
 11. [Round9 增补：离线审计闸门、工具面变更与三处修订](#11-round9-增补离线审计闸门工具面变更与三处修订)
 12. [Round10 增补：25 次冷构建语料，与第六道闸门](#12-round10-增补25-次冷构建语料与第六道闸门)
-13. [快速参考：一页纸](#13-快速参考一页纸)
+13. [Round11 增补：首次在线实测与四条硬规则](#13-round11-增补首次在线实测与四条硬规则)
+14. [快速参考：一页纸](#14-快速参考一页纸)
 
 ---
 
@@ -604,7 +605,81 @@ R10-7 多代理：一代理一输出目录；代理只写 Call 然后停；swap 
 
 ---
 
-## 13. 快速参考：一页纸
+## 13. Round11 增补：首次在线实测与四条硬规则
+
+前十个轮次全部离线。Round11 第一次在真机（LabVIEW 2026 26.3.1f1 + LabVIEWMCP 2.0.1）上跑通全链，
+得到四条会立刻改变写法的规则，外加两处对前轮结论的修正。详细数据见 `research/20-first-online-round.md`。
+
+### 13.1 工具面：99 个工具，架在 23 个 RPC 上
+
+| 来源 | 数 | 用法 |
+|---|---|---|
+| `tools/list`（stdio 握手） | **94 个 `lvai_*` + 5 个 `pylv_*` = 99** | **判"有没有这个工具"只认它** |
+| `lvai_dump_schema` | **23 个 rpc** | 判"NI 到底给了什么原语"只认它 |
+
+**别再用 `grep` exe 里的 `lvai_` 字符串来数工具**：二进制里混着旧名、别名和文档片段。
+Round9 那份"106→126、12 个消失"就是那么来的，实测 2.0.1 里 `lvai_cleanup_diagram`、
+`lvai_run_and_read`、`lvai_discuss` 从来就不在工具面上。
+
+> 方向仍然可靠的部分：`lvai_layout_diagram`、`lvai_error_list`、`labview_state` 在 2.0.1 里
+> **确实不存在**——"不存在"这个方向的证据不受字符串噪声影响。
+
+### 13.2 四条硬规则（都是真机拒绝出来的）
+
+| 规则 | 现象 | 正确做法 |
+|---|---|---|
+| `<Constant>` 没有 `description` | Error **-2628**，解析期，整篇拒收 | 说明写到 `FreeLabel` 或 VI 的 `description`；`Control`/`Indicator` 才有 |
+| 数值端子 `value` 不能是 `""` | Error 53 "Unrecognized or unsupported attribute set in **Indicator** with UID n"——**不说是 value** | string / timestamp 允许空串，数值必须给 `0` 这类可解析字面量 |
+| `connection="recommended"` 合法 | 变体 C 通过 errorCode 0 | 新生成一律 recommended；只有 error 端子上的 `required` 是陷阱（LV009） |
+| 导出会转义 `,` `:` `+` | 变成 `\2C` `\3A` `\2B`，再喂回不累积 | 文本级 diff 前先归一；导出文档本身是可再写回的合法输入 |
+
+两条可离线判定的已写进闸门：`LV010`（Constant 的 description）、`LV011`（数值空 value）。
+它们上线当天就抓到 `round7/next-probes/p5-*.aixml.xml` 的真缺陷——那份探针因为一直离线，
+**从未被执行过**，错误潜伏了四轮。
+
+### 13.3 `timestamp` 丢弃：三处一致（G3.5 强制）
+
+| 阶段 | timestamp | string | double |
+|---|---|---|---|
+| AIXML | `3800000000` | `marker-r11` | `3.25` |
+| 导出 | **`""`** | `marker-r11` | `3.25` |
+| 运行时 | **`01/01/1904 08:00:00`**（LabVIEW 纪元零点） | `marker-r11` | `3.25000000000000` |
+
+运行时的读数才是关键：**常量真的变成 0 了**，不是显示问题。所以带 timestamp 期望值的
+往返测试必然"空对空通过"。
+
+### 13.4 本机 `helperAixmlInvalid`：一个文件，一条绕行
+
+坏的是服务器自带的 `bin/scripts/lvai_run_and_read_typed.xml`，本机验证器拒收它。连锁后果：
+`lvai_exec_state` 报 `helperUnavailable`，`convert` 的 `executable` 恒为 `null`，
+`lvai_run_vi_and_read_values` 默认路线直接失败。
+
+**绕行（实测通过）**：
+
+```
+lvai_run_vi_and_read_values(viPath=..., backend="pylabview")
+→ ok:true  via:"ActiveX"  ran:true  finished:true
+```
+
+代价：`xml` 恒 null（值以 AIXML 字面量给）、`signalsJson` 被拒（驱动事件仍需 grpc）。
+**本机一切"跑一下"的验证，显式带 `backend:"pylabview"`**，G5 从"不可做"变成"可做"。
+
+### 13.5 继承：读 `inheritsFrom`，永远别读 `ancestors[0]`
+
+`describe_class` 的报告是**对的**（Round10 的"接口被报成父类 46/437"在 2.0.1 上不成立）：
+
+| 类 | `inheritsFrom` | `ancestors` | `parentLinks[].kind` |
+|---|---|---|---|
+| `Box`（父是接口 `Pryable`） | `LabVIEW Object` | `[Pryable]` | `interface` |
+| `Flathead`（接口 + 真类） | `Rotating Tool.lvclass` | `[Lever, Rotating Tool]` | `interface` / `class` |
+
+**`ancestors` 是全集、顺序不代表优先级**——`Box` 和 `Flathead` 的 `ancestors[0]` 都是接口。
+判基类只读 `inheritsFrom`；说接口只读 `parentLinks[].kind == "interface"`。
+离线真相可用 `tools/lvclass_parent_scan.py`（本机 655 类 / 468 有父 / **13 个父是接口**）。
+
+---
+
+## 14. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
@@ -619,9 +694,11 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
 生成：   lvai_generate_vi                           （validate+convert+面板测量）
 布局：   lvai_layout_diagram                        （整图重排，规则见 §11.4）
 回读：   lvai_convert_vi_to_aixml / lvai_describe_vi（结构对不对）
-可执行： lvai_exec_state = 1                        （0=坏，-1=引用没开）
+可执行： 本机 exec_state 不可用（helper 坏）→ 用 backend:"pylabview" 跑
 诊断：   lvai_error_list                            （execState 0 时先问它，别猜）
 存活：   常量先 convert→回导再进测试                （timestamp 会被丢弃，见 §12.2.1）
+属性：   Constant 无 description · 数值 value 不能空（Error -2628 / 53，见 §13.2）
+继承：   只读 inheritsFrom，别读 ancestors[0]       （Box/Flathead 的 ancestors[0] 是接口）
 测试：   套件跑两次 · Broken≠Failed · 只读 JUnit 报告（Caraya 的 source 会指错套件）
 运行：   lvai_run_vi_and_read_values                （backend:"pylabview" 可绕开辅助 VI）
 纪律：   副本上干活 · git 先行 · 写操作每次确认 · 升级后 dump_schema · 手写 uid ≥4200

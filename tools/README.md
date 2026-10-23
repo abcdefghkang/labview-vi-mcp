@@ -34,9 +34,10 @@ python tools/lvrule_check.py draft.aixml.xml
 | 文件 | 内容 | 能不能改 |
 |---|---|---|
 | `aixml_lint.py` | **vendored** 上游 [Zuehlke/labview-mcp](https://github.com/Zuehlke/labview-mcp) `scripts/aixml_lint.py`，37 条规则 | **不改**。上游更新时整份覆盖，文件头记着来源 commit |
-| `lvrule_check.py` | 我们自己的 8 条铁律（LV001/003/004/005/006/007/008/009） | 只往这里加 |
+| `lvrule_check.py` | 我们自己的 10 条铁律（LV001/003/004/005/006/007/008/009/010/011） | 只往这里加 |
 | `audit_aixml.py` | 跑两个、合并、按文档类型分流、抑制已知误报、出表格 | 门面，逻辑尽量薄 |
 | `cold_build_census.py` | **不是闸门**：把上游 `docs/cold-build-*.md` 变成 CSV/JSON 数据集 | 语料普查 |
+| `lvclass_parent_scan.py` | **不是闸门**：离线解析 `.lvclass` 的父类，判父类到底是类还是接口 | 见下 |
 
 理由来自上游自己踩的坑：同一个规则的第二份实现会漂移，`AixmlCheck.SafeUidBase`=4200 与
 `LOW_UID_CEILING`=5000 曾分歧数日，lint 一直告诉作者"你自己生成的文件违规"。
@@ -66,7 +67,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 
 ---
 
-## `lvrule_check.py` 的 8 条，每条来自一轮实测
+## `lvrule_check.py` 的 10 条，每条来自一轮实测
 
 | 规则 | 断言 | 来源 |
 |---|---|---|
@@ -78,6 +79,8 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 | `lv007-shiftreg-incomplete` | `ShiftReg` 必须同时有 `Left` 和 `Right` | Round 4 |
 | `lv008-duplicate-selector` | 两个 frame 不能同一个 selector | Round 4 |
 | `lv009-error-terminal-required` / `lv009-error-out-optional` | **上游两条规则看不到的** error 端子写法 | Round 9（本机抓到）+ Round 10（补上游空白） |
+| `lv010-constant-description` | `<Constant>` 上不允许 `description` | Round 11 **真机**：Error **-2628**，解析期整篇拒收（`Control`/`Indicator` 才有这个属性） |
+| `lv011-numeric-empty-value` | 数值端子的 `value` 不能是空串 | Round 11 **真机**：Error 53 "Unrecognized or unsupported attribute set" —— 报错不说 value，A/B 才查出是空串而非 `connection` |
 
 **LV009 的范围是刻意窄的**，因为上游已经管了一部分：`conn-required-output` 管任何 Indicator 的
 `required`，`conn-error-in-not-recommended` 管带 `conIdx` 的 `error in`。LV009 只补两处空白 ——
@@ -134,3 +137,33 @@ python tools/cold_build_census.py /tmp/lvmcp-upstream/docs \
 空白本身就是信息。分析结论在 `research/19-cold-build-corpus.md`。
 
 用途：下次上游新增冷构建，重跑一次就能看出"这批准的是同一批坑还是新坑"。
+
+---
+
+## `lvclass_parent_scan.py` —— 父类到底是不是接口
+
+`.lvclass` 里没有 `inheritsFrom` 这个字符串，继承是两处信息拼出来的：
+
+```
+<Item Name="Pryable.lvclass" Type="Parent" URL="../../Pryable/Pryable.lvclass"/>
+<Property Name="NI.LVClass.IsInterface" Type="Bool">true</Property>   ← 在父类的文件里
+```
+
+所以"这个类继承自谁"要读两个文件。本机实测（LabVIEW 2026）：**655 个类，468 个有父类，
+其中 13 个的父类其实是接口**（2.8%）。
+
+```bash
+python tools/lvclass_parent_scan.py "C:/Program Files/National Instruments/LabVIEW 2026"
+python tools/lvclass_parent_scan.py <root> --json out.json
+```
+
+写这个脚本踩到的三个坑，都留在代码注释里：
+
+1. 接口标记叫 **`NI.LVClass.IsInterface`**，只读 `IsInterface` 会 13 个全漏；
+2. 相对 URL **会多退一级**（`Circle Message` 写 `../../Draw Message/`，实际只需 `../`），
+   所以要"直接 → 上退一级 → 唯一同名"三级解析，并在每行记 `resolvedBy`；
+3. 别名有三类：`<vilib>` / `<resource>` / `<userlib>`。
+
+> **为什么要它**：`lvai_describe_class` 本身是对的（`inheritsFrom` 给真基类，
+> `parentLinks[].kind` 标 `interface`），错的用法是拿 `ancestors[0]` 当基类 ——
+> `Box` 和 `Flathead` 的 `ancestors[0]` 都是接口。详见 `research/20-first-online-round.md` §6。

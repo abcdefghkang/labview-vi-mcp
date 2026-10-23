@@ -1,0 +1,1450 @@
+{
+ "summary": {
+  "files": 60,
+  "withFindings": 55,
+  "skippedNonAixml": 9,
+  "suppressed": 6,
+  "error": 26,
+  "warning": 100,
+  "info": 0
+ },
+ "byCode": {
+  "uid-low": 45,
+  "net-unconsumed": 39,
+  "lv003-sr-seed-inside-loop": 14,
+  "comment-may-be-clipped": 10,
+  "conn-required-output": 6,
+  "timestamp-value-discarded": 5,
+  "lv011-numeric-empty-value": 2,
+  "lv009-error-terminal-required": 1,
+  "lv009-error-out-optional": 1,
+  "lv010-constant-description": 1,
+  "net-unproduced": 1,
+  "net-typo": 1
+ },
+ "files": [
+  {
+   "file": "round10/lv009-probe.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "4205",
+     "element": "Indicator 'error out 3'",
+     "path": "VI/Indicator[uid=4205]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "error",
+     "check": "lv009-error-terminal-required",
+     "uid": "4200",
+     "element": "Control 'error in'",
+     "path": "VI/Control[uid=4200]",
+     "message": "an error terminal marked `required`: this VI still validates, compiles and runs, and every caller that leaves the terminal unwired now fails with Error 1003. Write connection=\"recommended\" for error in / error out."
+    },
+    {
+     "severity": "warning",
+     "check": "lv009-error-out-optional",
+     "uid": "4203",
+     "element": "Indicator 'error out'",
+     "path": "VI/Indicator[uid=4203]",
+     "message": "an `error out` terminal marked `optional`. Behaviour at the call site is the same as `recommended`, but the flag is part of the placeholder stub's signature, so the same pane hashes differently and produces a second clone. Normalise on connection=\"recommended\"."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4200",
+     "element": "Control 'error in'",
+     "path": "VI/Control[uid=4200]",
+     "message": "net \"4200.value\" is written by Control 'error in' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4201",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=4201]",
+     "message": "net \"4201.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/lv010-fixture.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv010-constant-description",
+     "uid": "4700",
+     "element": "Constant 'K'",
+     "path": "research/artifacts\\round11\\lv010-fixture.aixml.xml",
+     "message": "`description` is not declared on <Constant> and ConvertAIXMLToVI refuses the whole document with Error -2628. Control and Indicator take it; Constant does not. Move the note to a FreeLabel or drop it."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/out/p10-exported.aixml.xml",
+   "findings": [],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/out/p10-roundtrip-in.xml",
+   "findings": [],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/out/p10-roundtrip-out.aixml.xml",
+   "findings": [],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/p10-final.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "timestamp-value-discarded",
+     "uid": "4201",
+     "element": "Constant 'Stamp'",
+     "path": "VI/Constant[uid=4201]",
+     "message": "this timestamp carries value=\"3800000000\" and ConvertAIXMLToVI discards it - the export reads back value=\"\" with errorCode 0 throughout. There is no non-empty timestamp literal AIXML can express, so there is nothing to correct it to. It matters because a generated round-trip test authors the written value and the expected value in the same document: both vanish, and the assertion then compares empty with empty and PASSES while pinning nothing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/p10-timestamp-probe.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv011-numeric-empty-value",
+     "uid": "4206",
+     "element": "Indicator 'Num Out'",
+     "path": "research/artifacts\\round11\\p10-timestamp-probe.aixml.xml",
+     "message": "a numeric terminal with value=\"\" - LabVIEW refuses it with \"Unrecognized or unsupported attribute set\", which does not name the attribute. Only string and timestamp accept an empty value; give numbers a parseable literal such as 0."
+    },
+    {
+     "severity": "warning",
+     "check": "timestamp-value-discarded",
+     "uid": "4201",
+     "element": "Constant 'Stamp'",
+     "path": "VI/Constant[uid=4201]",
+     "message": "this timestamp carries value=\"3800000000\" and ConvertAIXMLToVI discards it - the export reads back value=\"\" with errorCode 0 throughout. There is no non-empty timestamp literal AIXML can express, so there is nothing to correct it to. It matters because a generated round-trip test authors the written value and the expected value in the same document: both vanish, and the assertion then compares empty with empty and PASSES while pinning nothing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/p10-variant-a.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv011-numeric-empty-value",
+     "uid": "4206",
+     "element": "Indicator 'Num Out'",
+     "path": "research/artifacts\\round11\\p10-variant-a.xml",
+     "message": "a numeric terminal with value=\"\" - LabVIEW refuses it with \"Unrecognized or unsupported attribute set\", which does not name the attribute. Only string and timestamp accept an empty value; give numbers a parseable literal such as 0."
+    },
+    {
+     "severity": "warning",
+     "check": "timestamp-value-discarded",
+     "uid": "4201",
+     "element": "Constant 'Stamp'",
+     "path": "VI/Constant[uid=4201]",
+     "message": "this timestamp carries value=\"3800000000\" and ConvertAIXMLToVI discards it - the export reads back value=\"\" with errorCode 0 throughout. There is no non-empty timestamp literal AIXML can express, so there is nothing to correct it to. It matters because a generated round-trip test authors the written value and the expected value in the same document: both vanish, and the assertion then compares empty with empty and PASSES while pinning nothing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/p10-variant-b.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "timestamp-value-discarded",
+     "uid": "4201",
+     "element": "Constant 'Stamp'",
+     "path": "VI/Constant[uid=4201]",
+     "message": "this timestamp carries value=\"3800000000\" and ConvertAIXMLToVI discards it - the export reads back value=\"\" with errorCode 0 throughout. There is no non-empty timestamp literal AIXML can express, so there is nothing to correct it to. It matters because a generated round-trip test authors the written value and the expected value in the same document: both vanish, and the assertion then compares empty with empty and PASSES while pinning nothing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round11/p10-variant-c-recommended.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "timestamp-value-discarded",
+     "uid": "4201",
+     "element": "Constant 'Stamp'",
+     "path": "VI/Constant[uid=4201]",
+     "message": "this timestamp carries value=\"3800000000\" and ConvertAIXMLToVI discards it - the export reads back value=\"\" with errorCode 0 throughout. There is no non-empty timestamp literal AIXML can express, so there is nothing to correct it to. It matters because a generated round-trip test authors the written value and the expected value in the same document: both vanish, and the assertion then compares empty with empty and PASSES while pinning nothing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/clamp-demo.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/clamp-value.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "10",
+     "element": "19 element(s), first Control 'x'",
+     "path": "VI/Control[uid=10]",
+     "message": "19 uid(s) between 10 and 100 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/saturating-accumulator-v2.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "42 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "42 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/saturating-accumulator.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "230",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=230]",
+     "message": "the seed net '210.start' is produced by Tunnel 'In1' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "233",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=233]",
+     "message": "the seed net '220.zero' is produced by Constant 'Zero' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "236",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=236]",
+     "message": "the seed net '221.false' is produced by Constant 'False' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "43 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "43 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/variant-a-nocase.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "230",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=230]",
+     "message": "the seed net '210.start' is produced by Tunnel 'In1' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "233",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=233]",
+     "message": "the seed net '220.zero' is produced by Constant 'Zero' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "236",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=236]",
+     "message": "the seed net '221.false' is produced by Constant 'False' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Limit'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Limit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "30 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "30 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/variant-b-noindex.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "230",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=230]",
+     "message": "the seed net '210.start' is produced by Tunnel 'In1' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "233",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=233]",
+     "message": "the seed net '220.zero' is produced by Constant 'Zero' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "236",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=236]",
+     "message": "the seed net '221.false' is produced by Constant 'False' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "41 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "41 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/variant-c-panelstop.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "230",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=230]",
+     "message": "the seed net '210.start' is produced by Tunnel 'In1' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "233",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=233]",
+     "message": "the seed net '220.zero' is produced by Constant 'Zero' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "236",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=236]",
+     "message": "the seed net '221.false' is produced by Constant 'False' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "1000",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=1000]",
+     "message": "this diagram comment is 48 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "254",
+     "element": "Node 'Greater Or Equal?'",
+     "path": "VI/Structure[uid=200]/Node[uid=254]",
+     "message": "net \"254.stop\" is written by Node 'Greater Or Equal?' outputs:x >= y? but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "45 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "45 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/variant-d-rootseds.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "28 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "28 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round3/variant-e-mixedseeds.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "233",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=233]",
+     "message": "the seed net '220.zero' is produced by Constant 'Zero' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "error",
+     "check": "lv003-sr-seed-inside-loop",
+     "uid": "236",
+     "element": "ShiftReg",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=236]",
+     "message": "the seed net '221.false' is produced by Constant 'False' INSIDE the same loop. The seed must be a root-level value carried across the border; read inside, the composer reports a wire cycle that is not there. (Rounds 3-4: two of five experiment arms failed exactly here.)"
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "28 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "28 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round4/batch-averager-empty-exported.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "221 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "221 uid(s) between 100 and 1944 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round4/batch-averager-empty.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "244",
+     "element": "Right",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=242]/Right[uid=244]",
+     "message": "net \"244.final_item\" is written by Right outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "110 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "110 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round4/batch-averager-exported.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "221 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "221 uid(s) between 100 and 1944 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round4/batch-averager.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "244",
+     "element": "Right",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=242]/Right[uid=244]",
+     "message": "net \"244.final_item\" is written by Right outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "110 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "110 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round4/probe-frame-sr-read.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "net-unproduced",
+     "uid": "260",
+     "element": "Structure 'Case Structure'",
+     "path": "VI/Structure[uid=200]/Structure[uid=260]",
+     "message": "net \"value:102.value\" is read by Structure 'Case Structure' selectin:selectin but no element writes it. LabVIEW reports this as \"Contains unwired or bad terminal\" against the reader, which points away from the cause."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Mode'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Mode' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "30 element(s), first Control 'Start'",
+     "path": "VI/Control[uid=100]",
+     "message": "30 uid(s) between 100 and 301 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round4/probe-string-case.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "13 element(s), first Control 'Sel'",
+     "path": "VI/Control[uid=100]",
+     "message": "13 uid(s) between 100 and 400 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round4/ref-state-machine-fundamentals.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "1123",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=1123]",
+     "message": "this diagram comment is 86 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "1484",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=1484]",
+     "message": "this diagram comment is 69 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "1856",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=1856]",
+     "message": "this diagram comment is 115 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "513",
+     "element": "FreeLabel",
+     "path": "VI/Structure[uid=96]/Structure[uid=202]/CaseFrame[uid=216]/FreeLabel[uid=513]",
+     "message": "this diagram comment is 64 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "61",
+     "element": "69 element(s), first Control '运行状态1'",
+     "path": "VI/Structure[uid=96]/Structure[uid=202]/CaseFrame[uid=216]/Structure[uid=521]/CaseFrame[uid=529]/Control[uid=61]",
+     "message": "69 uid(s) between 61 and 1856 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round5/batch-averager-scaled.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "244",
+     "element": "Right",
+     "path": "VI/Structure[uid=200]/ShiftReg[uid=242]/Right[uid=244]",
+     "message": "net \"244.final_item\" is written by Right outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "112 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "112 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round5/clamp-demo.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round5/clamp-value.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "10",
+     "element": "19 element(s), first Control 'x'",
+     "path": "VI/Control[uid=10]",
+     "message": "19 uid(s) between 10 and 100 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round5/deep-export.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "221 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "221 uid(s) between 100 and 1944 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round5/scaled-export.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "230 element(s), first Control 'Initial State'",
+     "path": "VI/Control[uid=100]",
+     "message": "230 uid(s) between 100 and 1991 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/array-extra.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "108",
+     "element": "12 element(s), first Constant 'C 99'",
+     "path": "VI/Constant[uid=108]",
+     "message": "12 uid(s) between 108 and 205 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/array-ops.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "104",
+     "element": "Constant 'C 10'",
+     "path": "VI/Constant[uid=104]",
+     "message": "net \"104.value\" is written by Constant 'C 10' outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "105",
+     "element": "Constant 'C 20'",
+     "path": "VI/Constant[uid=105]",
+     "message": "net \"105.value\" is written by Constant 'C 20' outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "106",
+     "element": "Constant 'C 30'",
+     "path": "VI/Constant[uid=106]",
+     "message": "net \"106.value\" is written by Constant 'C 30' outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "101",
+     "element": "36 element(s), first Constant 'C 1'",
+     "path": "VI/Constant[uid=101]",
+     "message": "36 uid(s) between 101 and 209 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/bundle-empty.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "101",
+     "element": "6 element(s), first Constant 'C 1'",
+     "path": "VI/Constant[uid=101]",
+     "message": "6 uid(s) between 101 and 200 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/bundle-only.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "101",
+     "element": "5 element(s), first Constant 'C 1'",
+     "path": "VI/Constant[uid=101]",
+     "message": "5 uid(s) between 101 and 200 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/bundle-typed-base.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "101",
+     "element": "6 element(s), first Constant 'C 1'",
+     "path": "VI/Constant[uid=101]",
+     "message": "6 uid(s) between 101 and 200 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/cluster-literal.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "130",
+     "element": "2 element(s), first Constant 'Named Cluster'",
+     "path": "VI/Constant[uid=130]",
+     "message": "2 uid(s) between 130 and 200 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/node-probe/cluster-ops.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "101",
+     "element": "17 element(s), first Constant 'C 1'",
+     "path": "VI/Constant[uid=101]",
+     "message": "17 uid(s) between 101 and 206 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/caller-n.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/caller-p2.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/caller-z.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/export-callerF.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/export-swapped.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "37 element(s), first Control 'Start Value'",
+     "path": "VI/Control[uid=100]",
+     "message": "37 uid(s) between 100 and 1000 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/kappa.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "10",
+     "element": "19 element(s), first Control 'x'",
+     "path": "VI/Control[uid=10]",
+     "message": "19 uid(s) between 10 and 100 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/retarget-evidence/zeta.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "10",
+     "element": "19 element(s), first Control 'x'",
+     "path": "VI/Control[uid=10]",
+     "message": "19 uid(s) between 10 and 100 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/state-machine/heartbeat.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "30 element(s), first Control 'Max Cycles'",
+     "path": "VI/Control[uid=100]",
+     "message": "30 uid(s) between 100 and 1500 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round6/state-machine/traffic-light.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "58 element(s), first Control 'Max Cycles'",
+     "path": "VI/Control[uid=100]",
+     "message": "58 uid(s) between 100 and 1500 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round6/state-machine/washing-machine.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "67 element(s), first Control 'Max Cycles'",
+     "path": "VI/Control[uid=100]",
+     "message": "67 uid(s) between 100 and 1500 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 1
+  },
+  {
+   "file": "round7/bind-helper/bind-helper-instr-v1.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4150",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4260]/Structure[uid=4270]/CaseFrame[uid=4280]/Node[uid=4150]",
+     "message": "net \"4150.kind\" is written by Node 'Property Node' outputs:Is Typedef? but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4401",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4250]/Node[uid=4401]",
+     "message": "net \"4401.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4425",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4415]/Node[uid=4425]",
+     "message": "net \"4425.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4455",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4450]/Node[uid=4455]",
+     "message": "net \"4455.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4485",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4480]/Node[uid=4485]",
+     "message": "net \"4485.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "4150",
+     "element": "5 element(s), first Node 'Property Node'",
+     "path": "VI/Structure[uid=4260]/Structure[uid=4270]/CaseFrame[uid=4280]/Node[uid=4150]",
+     "message": "5 uid(s) between 4150 and 4154 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/bind-helper/bind-helper-instr-v2.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4150",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4260]/Structure[uid=4270]/CaseFrame[uid=4280]/Node[uid=4150]",
+     "message": "net \"4150.kind\" is written by Node 'Property Node' outputs:Is Typedef? but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4245",
+     "element": "Node 'Property Node'",
+     "path": "VI/Node[uid=4245]",
+     "message": "net \"4245.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4401",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4250]/Node[uid=4401]",
+     "message": "net \"4401.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4410",
+     "element": "Node 'Property Node'",
+     "path": "VI/Node[uid=4410]",
+     "message": "net \"4410.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4425",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4415]/Node[uid=4425]",
+     "message": "net \"4425.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4455",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4450]/Node[uid=4455]",
+     "message": "net \"4455.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4485",
+     "element": "Node 'Property Node'",
+     "path": "VI/Structure[uid=4480]/Node[uid=4485]",
+     "message": "net \"4485.err\" is written by Node 'Property Node' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "4150",
+     "element": "7 element(s), first Node 'Property Node'",
+     "path": "VI/Structure[uid=4260]/Structure[uid=4270]/CaseFrame[uid=4280]/Node[uid=4150]",
+     "message": "7 uid(s) between 4150 and 4161 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/fixtures/Configure.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "101",
+     "element": "Indicator 'obj out'",
+     "path": "VI/Indicator[uid=101]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "103",
+     "element": "Control 'Unit'",
+     "path": "VI/Control[uid=103]",
+     "message": "net \"103.value\" is written by Control 'Unit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "4 element(s), first Control 'obj in'",
+     "path": "VI/Control[uid=100]",
+     "message": "4 uid(s) between 100 and 103 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/fixtures/Monitor.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "101",
+     "element": "Indicator 'obj out'",
+     "path": "VI/Indicator[uid=101]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "103",
+     "element": "Control 'Unit'",
+     "path": "VI/Control[uid=103]",
+     "message": "net \"103.value\" is written by Control 'Unit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "4 element(s), first Control 'obj in'",
+     "path": "VI/Control[uid=100]",
+     "message": "4 uid(s) between 100 and 103 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/fixtures/Race1.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "101",
+     "element": "Indicator 'obj out'",
+     "path": "VI/Indicator[uid=101]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "103",
+     "element": "Control 'Unit'",
+     "path": "VI/Control[uid=103]",
+     "message": "net \"103.value\" is written by Control 'Unit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "4 element(s), first Control 'obj in'",
+     "path": "VI/Control[uid=100]",
+     "message": "4 uid(s) between 100 and 103 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/fixtures/Race2.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "101",
+     "element": "Indicator 'obj out'",
+     "path": "VI/Indicator[uid=101]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "103",
+     "element": "Control 'Unit'",
+     "path": "VI/Control[uid=103]",
+     "message": "net \"103.value\" is written by Control 'Unit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "4 element(s), first Control 'obj in'",
+     "path": "VI/Control[uid=100]",
+     "message": "4 uid(s) between 100 and 103 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/fixtures/Tune.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "conn-required-output",
+     "uid": "101",
+     "element": "Indicator 'obj out'",
+     "path": "VI/Indicator[uid=101]",
+     "message": "connection=\"required\" on an Indicator makes every CALLER that leaves the terminal unwired non-executable with Error 1003, while this VI itself validates, compiles, runs and exports perfectly. Write \"recommended\". On a VI that already exists the fix is {LV.ConnectorPane} SetWireRule(conIdx, 2), not a regeneration - that moves no terminal, so no caller changes."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "102",
+     "element": "Control 'Setpoint'",
+     "path": "VI/Control[uid=102]",
+     "message": "net \"102.value\" is written by Control 'Setpoint' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "103",
+     "element": "Control 'Unit'",
+     "path": "VI/Control[uid=103]",
+     "message": "net \"103.value\" is written by Control 'Unit' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "uid-low",
+     "uid": "100",
+     "element": "4 element(s), first Control 'obj in'",
+     "path": "VI/Control[uid=100]",
+     "message": "4 uid(s) between 100 and 103 are inside the range LabVIEW reserves for its own panel heap. If you AUTHORED this, each one logs \"trying to override with non-reserved UID\" at VALIDATE time, before anything is written, and LabVIEW assigns its own id anyway - number from 4200, which a whole ten-VI build measured silent. It matters because that log saturates at 100 events and lvai_status reports the count as a health signal. If this is an EXPORT, the uids are LabVIEW's own and there is nothing to do."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/next-probes/p1-user-event-two-loops.aixml.xml",
+   "findings": [],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/next-probes/p2-payload-direct-form.aixml.xml",
+   "findings": [],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/next-probes/p3-cluster-payload.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "4200",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=4200]",
+     "message": "this diagram comment is 55 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/next-probes/p4-two-events-one-registration.aixml.xml",
+   "findings": [
+    {
+     "severity": "error",
+     "check": "net-typo",
+     "uid": "4283",
+     "element": "Tunnel 'Out1'",
+     "path": "VI/Structure[uid=4230]/Tunnel[uid=4283]",
+     "message": "net \"4251.value\" is read by Tunnel 'Out1' inputs:value but nothing writes it, while \"4273.value\" is written by Tunnel 'In3' outputs and nothing reads it. One name is mistyped - the two differ by very little."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "4200",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=4200]",
+     "message": "this diagram comment is 47 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "4269",
+     "element": "FreeLabel",
+     "path": "VI/Structure[uid=4230]/Structure[uid=4250]/CaseFrame[uid=4260]/FreeLabel[uid=4269]",
+     "message": "this diagram comment is 50 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "4279",
+     "element": "FreeLabel",
+     "path": "VI/Structure[uid=4230]/Structure[uid=4250]/CaseFrame[uid=4270]/FreeLabel[uid=4279]",
+     "message": "this diagram comment is 48 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4204",
+     "element": "Constant 'False'",
+     "path": "VI/Constant[uid=4204]",
+     "message": "net \"4204.f\" is written by Constant 'False' outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4210",
+     "element": "Node 'Create User Event'",
+     "path": "VI/Node[uid=4210]",
+     "message": "net \"4210.error out\" is written by Node 'Create User Event' outputs:error out but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  },
+  {
+   "file": "round7/next-probes/p5-valuechange-timeout-frames.aixml.xml",
+   "findings": [
+    {
+     "severity": "warning",
+     "check": "comment-may-be-clipped",
+     "uid": "4200",
+     "element": "FreeLabel",
+     "path": "VI/FreeLabel[uid=4200]",
+     "message": "this diagram comment is 49 characters. LabVIEW sizes the box from the space it finds, not from the text, so a comment over about 45 characters is cut off in silence - only a render shows it. Shorten it; put the long explanation in the VI description."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4201",
+     "element": "Control 'Go'",
+     "path": "VI/Control[uid=4201]",
+     "message": "net \"4201.value\" is written by Control 'Go' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4202",
+     "element": "Control 'Stop'",
+     "path": "VI/Control[uid=4202]",
+     "message": "net \"4202.value\" is written by Control 'Stop' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4321",
+     "element": "Tunnel 'In1'",
+     "path": "VI/Structure[uid=4310]/Structure[uid=4320]/Tunnel[uid=4321]",
+     "message": "net \"4321.ms\" is written by Tunnel 'In1' outputs:value but nothing reads it. Legitimate for an output nobody needs; suspicious if you meant to wire it somewhere."
+    },
+    {
+     "severity": "warning",
+     "check": "net-unconsumed",
+     "uid": "4355",
+     "element": "Control 'Go'",
+     "path": "VI/Structure[uid=4310]/Structure[uid=4320]/CaseFrame[uid=4350]/Control[uid=4355]",
+     "message": "net \"4355.value\" is written by Control 'Go' outputs:value but nothing reads it. so the VI accepts this input and never uses it. Deliberate for a panel-only control; otherwise a wire is missing."
+    }
+   ],
+   "kind": "aixml",
+   "suppressed": 0
+  }
+ ]
+}

@@ -78,6 +78,19 @@ The rules, and the round that paid for each one:
          rule, delete this one - do not let both count.
          Names are matched from the START so a legitimate `Last Error Count`
          control is not touched.
+
+  LV010  <Constant> does not declare `description` ......... round 11 (live)
+         LabVIEW refuses the WHOLE document at parse time with Error -2628:
+         "attribute 'description' is not declared for element 'Constant'".
+         Control and Indicator take it; Constant has a narrower whitelist. Round
+         11 lost a round trip to this on a three-constant probe.
+
+  LV011  a numeric terminal cannot have value="" ........... round 11 (live)
+         The answer is "Unrecognized or unsupported attribute set in Indicator
+         with UID n" - it names NEITHER attribute. Measured by A/B: removing
+         `connection` changes nothing, setting value="0" fixes it. string and
+         timestamp legitimately accept "", so the check is scoped by type;
+         deleting `connection` first is the wrong instinct and costs an hour.
 """
 
 from __future__ import annotations
@@ -229,6 +242,7 @@ def check(path):
         return findings, 0
 
     nodes = walk(root)
+    findings.extend(check_attributes(root, path))
     by_uid = {n.uid: n for n in nodes if n.uid}
     prod = producers(nodes)
     is_export = "exported" in os.path.basename(path).lower()   # kept for LV002's history
@@ -329,6 +343,56 @@ def check(path):
                 "Normalise on connection=\"recommended\"."))
 
     return findings, len(nodes)
+
+
+# LV010 / LV011 - the two attribute faults round 11 hit on a live LabVIEW, both of
+# which are decidable from the document alone. Kept as a small separate pass so the
+# element walk above stays readable.
+NUMERIC_TYPES = {
+    "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64",
+    "double", "single", "ext", "cplx", "fixed-point",
+}
+
+
+def check_attributes(root, path):
+    """LV010: attributes an element does not declare. LV011: empty numeric value."""
+    findings = []
+
+    def walk(el):
+        yield el
+        for child in el:
+            yield from walk(child)
+
+    for el in walk(root):
+        uid = el.get("uid") or "-"
+        name = el.get("_name") or el.get("name") or el.tag
+
+        # LV010 - <Constant> has a fixed attribute whitelist that does NOT include
+        # description. LabVIEW answers Error -2628 at PARSE time ("attribute
+        # 'description' is not declared for element 'Constant'"), so the whole
+        # document is refused, not just the attribute ignored.
+        if el.tag == "Constant" and el.get("description") is not None:
+            findings.append(Finding(
+                "error", "lv010-constant-description", uid, f"Constant '{name}'", path,
+                "`description` is not declared on <Constant> and ConvertAIXMLToVI refuses the "
+                "whole document with Error -2628. Control and Indicator take it; Constant does "
+                "not. Move the note to a FreeLabel or drop it."))
+
+        # LV011 - a numeric terminal cannot carry value="". The answer is
+        # "Unrecognized or unsupported attribute set in Indicator with UID n", which
+        # names NEITHER attribute, so the natural next move is to delete `connection`
+        # and lose an hour. string and timestamp legitimately take "".
+        if el.tag in ("Constant", "Control", "Indicator"):
+            typ = (el.get("type") or "").strip().lower()
+            if typ in NUMERIC_TYPES and el.get("value") == "":
+                findings.append(Finding(
+                    "error", "lv011-numeric-empty-value", uid, f"{el.tag} '{name}'", path,
+                    "a numeric terminal with value=\"\" - LabVIEW refuses it with "
+                    "\"Unrecognized or unsupported attribute set\", which does not name the "
+                    "attribute. Only string and timestamp accept an empty value; give numbers "
+                    "a parseable literal such as 0."))
+
+    return findings
 
 
 SEV_ORDER = {"error": 0, "warning": 1, "info": 2}

@@ -1,0 +1,4 @@
+<VI _name="LV010 Fixture.vi" description="Calibration fixture for LV010 only. The Constant carries a description, which LabVIEW refuses with Error -2628 at parse time. Never convert this file.">
+  <Constant _name="K" description="this attribute is not declared on Constant" outputs="value:4700.value" type="double" uid="4700" uid_parent="root" value="1"/>
+  <Indicator _name="Out" inputs="value:4700.value" type="double" uid="4701" uid_parent="root" value="0"/>
+</VI>

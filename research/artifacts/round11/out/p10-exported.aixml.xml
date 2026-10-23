@@ -1,0 +1,8 @@
+<VI _name="P10 Timestamp Survival.vi" description="Round 11 probe. Three constants of three types wired straight to three indicators\2C so one convert+export answers two questions at once\3A (a) is a non-empty timestamp literal discarded\2C (b) does the same document keep its string and double literals. Every literal is unique so a stale file cannot fake a pass.">
+  <Constant _name="Stamp" outputs="value:4201.value" type="timestamp" uid="4201" uid_parent="root" value=""/>
+  <Constant _name="Text" outputs="value:4202.value" type="string" uid="4202" uid_parent="root" value="marker-r11"/>
+  <Constant _name="Num" outputs="value:4203.value" type="double" uid="4203" uid_parent="root" value="3.25"/>
+  <Indicator _name="Ts Out" description="reads the timestamp constant" inputs="value:4201.value" type="timestamp" uid="4204" uid_parent="root" value=""/>
+  <Indicator _name="Str Out" description="reads the string constant" inputs="value:4202.value" type="string" uid="4205" uid_parent="root" value=""/>
+  <Indicator _name="Num Out" description="reads the double constant" inputs="value:4203.value" type="double" uid="4206" uid_parent="root" value="0"/>
+</VI>
