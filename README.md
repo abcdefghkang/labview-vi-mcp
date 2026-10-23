@@ -64,7 +64,10 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/16-upstream-tracking-and-event-structures.md` | Round-7 (supplement): upstream v2.0.1→v2.2.0 tracking; cross-validation of our findings vs upstream docs; Event Structure one-call playbook (pylabview); gap census; 5 new iron rules; next-round probes (Chinese) |
 | `research/17-complex-program-playbook.md` | Round-8 (offline synthesis): five-gate model for delivering complex programs; loaded-target Call resolution; class method calling its own accessors without a stub; cross-artifact link law (same law as Round-7's race); testing layer rules; workflow economics; 6 new iron rules (Chinese) |
 | `research/artifacts/round7/next-probes/` | Round-8 prepared probes: user-event / cluster-payload / two-events / static-events+timeout AIXML (UNVERIFIED, to run when LabVIEW is up) |
-| `research/artifacts/round8/probe-recipes.md` | Round-8 probe recipes P6-P9: class-method self-accessor chain / interface override save-order A-B / Caraya minimal suite / cold-start recheck (UNVERIFIED) |
+| `research/18-v220-capability-delta.md` | Round-9: v2.0.1→v2.2.0 tool-surface delta (106→126, 32 added / 12 gone), the layout engine, `lvai_error_list`, AF override tools, offline indexes; three corrections to our own rules (uid ≥4200, bare-net attributes, `cond` literals); the offline gate G0 and its first audit of our own 50 AIXML (Chinese) |
+| `tools/` | Offline gate: vendored upstream linter (37 rules, MIT) + our 7 iron rules as code + merged audit. `python tools/audit_aixml.py --summary <file>`, 2.5 s for 50 files, no LabVIEW |
+| `research/artifacts/round9/tool-delta.csv` | Every tool added / renamed / dropped between v2.0.1 and HEAD, with the area and the consequence |
+| `research/artifacts/round9/lint-sweep-report.md` | First audit of every AIXML this repository ever produced: 21 errors / 92 warnings over 50 documents, with the ledger of which are real, which are negative controls, which are tool blind spots |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 

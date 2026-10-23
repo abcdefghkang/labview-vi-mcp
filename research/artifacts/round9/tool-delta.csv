@@ -1,0 +1,45 @@
+﻿change,tool,successor,area,note
+added,lvai_layout_diagram,,layout,"whole-diagram layout + save in place; replaces NI Clean Up Diagram, which spreads a designed VI 1344x805 -> 3805x1692"
+added,lvai_layout_diagrams,,layout,"parallel layout of many VIs in one process"
+added,lvai_error_list,,diagnostics,"LabVIEW's Error List lines WITH explanations; closes execState 0 = no cause"
+added,lvai_labview_state,,diagnostics,"service/installation state without a gRPC call"
+added,lvai_vis_in_memory,,diagnostics,"what LabVIEW holds, instead of guessing"
+added,lvai_save_modified_vis,,artifact,"save dirty VIs deliberately"
+added,lvai_member_callers,,refactor,"who calls this member - the safe rename/retarget check"
+added,lvai_create_override,,actor-framework,"NI provider CLSUIP_CreateOverride; AIXML cannot author Call Parent Class Method"
+added,lvai_af_add_hook,,actor-framework,"place and wire the hook VI onto an override; shapes branch/series/seriesAfter/branchFromNode"
+added,lvai_af_remove_hook,,actor-framework,"v2.2.0 BYPASSES a series hook; the earlier version saved a broken override and answered ok:true"
+added,lvai_af_hook_read,,actor-framework,"read back which hook is where"
+added,lvai_af_modified_members,,actor-framework,
+added,lvai_af_save_members,,actor-framework,
+added,lvai_create_library,,library,".lvlib creation"
+added,lvai_add_to_class,,class,
+added,lvai_move_to_folder,,library,
+added,lvai_move_to_folder_class,,library,
+added,lvai_move_to_folder_library,,library,
+added,lvai_set_vi_description,,docs,
+added,lvai_set_vi_descriptions,,docs,"batch"
+added,lvai_set_class_description,,docs,
+added,lvai_set_library_description,,docs,
+added,lvai_set_owner_icon,,icons,
+added,lvai_read_icons,,icons,
+added,lvai_icon_carrier,,icons,
+added,lvai_icon_apply_and_save_n,,icons,
+added,lvai_icon_apply_and_save_n_file,,icons,
+added,lvai_icon_get_vi_icons_n_file,,icons,
+added,lvai_icon_get_class_icon,,icons,
+added,lvai_icon_set_class_icon,,icons,
+added,lvai_icon_get_library_icon,,icons,
+added,lvai_icon_set_library_icon,,icons,
+renamed,lvai_cleanup_diagram,lvai_layout_diagram,layout,"NI's cleanup now runs inside the layout pipeline, not as the answer"
+renamed,lvai_run_and_read,lvai_run_vi_and_read_values,run,
+renamed,lvai_run_and_read_typed,lvai_run_vi_and_read_values,run,
+renamed,lvai_discuss,lvai_discuss_file,docs,
+renamed,lvai_wire_dyn_events,lvai_wire_dynamic_events,events,
+renamed,lvai_add_one_to_library,lvai_add_to_library,library,
+dropped,lvai_cleanup_panel,,panel,"no successor in HEAD; front-panel cleanup is now measured, see docs/aixml-frontpanel-extension.md"
+dropped,lvai_class_names,,class,"no successor confirmed; use lvai_describe_class"
+dropped,lvai_inventory,,project,"no successor confirmed; use lvai_describe_project"
+dropped,lvai_probe_relative,,diagnostics,"no successor; use lvai_aixml_reference"
+dropped,lvai_run_for_ms,,run,"no successor confirmed; lvai_run_vi_and_read_values carries the timeout"
+dropped,lvai_unload_vi,,memory,"no successor confirmed; lvai_vis_in_memory reads, lvai_close_vi closes"

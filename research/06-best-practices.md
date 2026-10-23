@@ -19,7 +19,8 @@
 8. [性能注意点](#8-性能注意点)
 9. [安全注意点](#9-安全注意点)
 10. [Round8 增补：五道闸门与六条新铁律](#10-round8-增补五道闸门与六条新铁律)
-11. [快速参考：一页纸](#11-快速参考一页纸)
+11. [Round9 增补：离线审计闸门、工具面变更与三处修订](#11-round9-增补离线审计闸门工具面变更与三处修订)
+12. [快速参考：一页纸](#12-快速参考一页纸)
 
 ---
 
@@ -449,21 +450,110 @@ control references（双后端），v2.2.0 起支持 Network Stream VIs + XContr
 
 ---
 
-## 11. 快速参考：一页纸
+## 11. Round9 增补：离线审计闸门、工具面变更与三处修订
+
+> 来源：`18-v220-capability-delta.md`。本轮为**离线轮**（LabVIEW 未运行），但拿到了上游 HEAD
+> 源码（`git clone` SSH，commit `2c9f37d`），并把本文前 10 节的规则**写成了可执行检查**。
+> 前 10 节结论继续有效，本节只做三件事：报告工具面变更、修订三条被推翻的写法、新增 G0 闸门。
+
+### 11.1 工具面：106 → 126，新增 32、消失 12
+
+**按老名字调用的工具，在 v2.2.0 上不存在了**（对照表：`research/artifacts/round9/tool-delta.csv`）：
+
+| 旧名 | 新名 | 备注 |
+|---|---|---|
+| `lvai_run_and_read` / `_typed` | `lvai_run_vi_and_read_values` | 运行取值 |
+| `lvai_cleanup_diagram` | `lvai_layout_diagram` | 不是改名，是换布局引擎（§11.4） |
+| `lvai_wire_dyn_events` | `lvai_wire_dynamic_events` | 事件接线 |
+| `lvai_discuss` | `lvai_discuss_file` | 文档生成 |
+| `lvai_add_one_to_library` | `lvai_add_to_library` | 库成员 |
+| `lvai_unload_vi` / `lvai_class_names` / `lvai_inventory` / `lvai_probe_relative` / `lvai_run_for_ms` / `lvai_cleanup_panel` | 无确认后继 | 升级后 `lvai_dump_schema` 现查 |
+
+值得注意的新增（不止是"多了几个工具"）：
+
+- `lvai_error_list` / `lvai_labview_state` / `lvai_vis_in_memory` —— 诊断（§11.5）
+- `lvai_create_override` + `lvai_af_add_hook` / `_remove_hook` / `_read` —— **Actor Framework 覆盖**
+  （AIXML 写不了 `Call Parent Class Method`，所以 override 必须由 NI 的 `CLSUIP_CreateOverride`
+  产出，hook VI 再用 VI Server 摆上去接线）
+- `lvai_create_library` / `lvai_move_to_folder*` / `lvai_member_callers` / `lvai_icon_*`（9 个）/
+  `lvai_set_vi_description(s)` —— 交付物工程化
+- `lvai_layout_diagram(s)` —— 整图布局
+
+### 11.2 三处修订（推翻本文早先的写法）
+
+1. **uid 不是 ≥100，是 ≥4200。** 面板堆上限随会话增长（132 个 block 观测 42…163，76% 高于 42），
+   对照实验：4200–4230 → `dwarnCount` 7→7；10–13 → 7→11（每元素一个事件）。
+   被改写的 uid 意味着**读侧坐标与写侧身份对不上**（Round 5 整条链的前提），
+   而且只在长会话里复现——**这解释了我们此前没解释过的那类不稳定**。
+   规则：手写 uid 从 4200 起；LabVIEW 导出件不动。
+2. **裸网属性只写网名。** `count` / `maxin` / `maxout` / `selectin` / `selectout` / `cond`
+   是裸网；只有 `inputs`/`outputs` 是 `terminal:net`。写成 `selectin="value:102.value"`
+   不报错，但线找不到源头，LabVIEW 会指着**读端**说「Contains unwired or bad terminal」。
+3. **`cond="true"` 是字面量。** 停止隧道的 `cond` 可以写字面 true/false（Round 4/6 的状态机
+   就是这么写并被 NI 转换器接受、导出、运行的）。离线检查器目前把 `cond` 一律当网，
+   会对它误报 `net-unproduced`——已知误报，已在 `tools/audit_aixml.py` 里按名字抑制并单独计数。
+
+### 11.3 G0：生成前的离线审计闸门（新增，在 G1 之前）
+
+Round 8 的 G1–G5 全部要 LabVIEW。本轮补一道**不需要 LabVIEW** 的：
+
+```bash
+python tools/audit_aixml.py --summary draft.aixml.xml   # 2.5 s / 50 文件，0 次 RPC
+```
+
+三脚本分工（`tools/README.md`）：`aixml_lint.py` 是 vendored 的上游 37 条规则（MIT，**不改**）；
+`lvrule_check.py` 是我们自己的 7 条铁律（LV001 注释 / LV003 移位寄存器种子 / LV004 单框 Case /
+LV005 While 无停止 / LV006 Call 目标非路径 / LV007 寄存器半对 / LV008 selector 重复）；
+`audit_aixml.py` 合并、按文档类型分流、抑制已知误报、出表。
+
+**首轮审的就是我们自己**：50 份 AIXML → 21 error / 92 warning。其中
+`saturating-accumulator`（修复前）3 error，它的 `-v2`（修复后）0 error；Round 3 的
+A/B/C/E 四个负对照全红、D（根级种子）全绿——**规则把"修好的"和"没修的"精确分开了**。
+顺带抓到 Round 7 的 5 个 fixture 写了 `connection="required"`（自己不坏，但每个不接该端子的
+调用方都变 `Error 1003`；新生成一律 `recommended`）。
+
+### 11.4 布局：`lvai_layout_diagram` 的规则可以直接当写法用
+
+NI 自己的 Clean Up Diagram 会把设计好的图摊开（DQMH `Main.vi` 1344×805 → **3805×1692**），
+因为它只按全局数据流分列、不认识人给的形状。新引擎的规则值得在**写 AIXML 时就遵守**：
+
+- 并行循环（生产者/消费者，彼此无连线）**同列上下叠放**，不要左右摊开；
+- 一条直的 error 轨贴底，轨上节点的 error 端口对齐同一水平线；
+- 同一节点的多个常量**上下堆叠**（并排会把整列推宽）；链上的常量最多上抬 120 px；
+- 隧道/移位寄存器/case selector 与内侧接的那根线齐平；Event Structure 动态事件端子放顶部；
+- While Loop 的 stop 与 `i` 必须在 `Frame Size` 写完之后、用 `Position`（不是 `Move`）放到右下/左下；
+- 结构尺寸只能靠 `Frame Size` 改（`Bounds` 只读，`Auto Size` 只会变大）。
+
+代价参考：45 个 VI 全量布局 62 s，单个应用 VI 中位 0.39 s。
+
+### 11.5 诊断顺序改了：先读 `errors`，不要猜
+
+`execState 0` 只说明坏，`lvai_error_list` 才给 Error List 那几行 + 解释。三条坑：
+**实例不对等于没查**（ActiveX 是 IDE 主实例；`RunVIAsTopLevel` 是 addon 自己的实例，
+同一个坏 VI 后者回空列表）；**读内存不读盘**（先 `lvai_open_file`）；**`errors: null` ≠ 无错**
+（看 `errorsNotReadBecause`，并行调用下 `Get Errors` 偶发 `1026`）。
+
+---
+
+## 12. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
 选型：   settings.json "aixmlBackend": "auto"   （LV<2026 自动切 pylabview）
 查重：   lvai_example_index / lvai_palette_index   （先查 NI 有没有写过）
+                                            离线等价：LabVIEWMCP --examples / --palette
 方言：   lvai_aixml_reference node='A,B,C'          （终端名查不猜，逗号批量）
 学样：   lvai_convert_vi_to_aixml <相似VI>          （照抄 NI 的布线）
+G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，见 §11.3）
 预检：   lvai_check_aixml  [fix:true]               （0.4 ms 离线，抓静默错误）
 校验：   lvai_validate_aixml                        （118 ms，失败不烧名）
 生成：   lvai_generate_vi                           （validate+convert+面板测量）
+布局：   lvai_layout_diagram                        （整图重排，规则见 §11.4）
 回读：   lvai_convert_vi_to_aixml / lvai_describe_vi（结构对不对）
 可执行： lvai_exec_state = 1                        （0=坏，-1=引用没开）
+诊断：   lvai_error_list                            （execState 0 时先问它，别猜）
 运行：   lvai_run_vi_and_read_values                （backend:"pylabview" 可绕开辅助 VI）
-纪律：   副本上干活 · git 先行 · 写操作每次确认 · 升级后 dump_schema
+纪律：   副本上干活 · git 先行 · 写操作每次确认 · 升级后 dump_schema · 手写 uid ≥4200
 ```
 
 ---
