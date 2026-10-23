@@ -679,7 +679,97 @@ lvai_run_vi_and_read_values(viPath=..., backend="pylabview")
 
 ---
 
-## 14. 快速参考：一页纸
+## 14. Round12 增补：边界、事件超时、面板保留移植
+
+这一节的三条都只在真机上才能看见，离线阅档看不出任何一条。
+
+### 14.1 一根线不能隐式穿过结构边界（LV012）
+
+```text
+根级 Constant ────┐            ← 线直接从根级进到循环/帧里
+   While Loop     │
+     Event Struct │
+       CaseFrame ◄┘             composer: net '4203.ms' crosses a diagram boundary without a tunnel
+```
+
+规则：**外层结构要有"外半截"隧道，每个帧要有"内半截"，两半按 `_id` 对齐、各自单向**
+（外半截 `inputs`、内半截 `outputs`）。帧不用这个值也必须写 `outputs="value:"`——空网，但半截要在。
+常量被帧消费，就把常量搬进帧（本轮 `One`/`False` 各复制一份，uid 必须不同）。
+
+- 例外：**ShiftReg 的 `<Left>` / `<Right>` 不算跨边界**，左端种子本来就必须来自循环外（LV003 的另一面）。
+- 检查器 `tools/lvrule_check.py` LV012 的容器判定**不能照抄 `uid_parent`**：Tunnel 的两个半截分属两个容器。
+
+### 14.2 两个 composer 的边界语义相反——选后端前先知道这件事
+
+同一份 `round4/batch-averager.aixml.xml`：
+
+| composer | 结果 | 隧道数 |
+|---|---|---|
+| grpc（NI `ConvertAIXMLToVI`） | `errorCode 0`，13,800 字节 VI | 源 43 → **成品 154**（缺的全补上） |
+| pylabview（本项目） | `composerRefused`，一次点一根网 | 43（一个不补） |
+
+所以"历史产物能跑"不代表"它对 pylabview 成立"。全库 64 份：grpc 口径 26E/269W，pylabview 口径 **187E/108W**。
+闸门按目标后端切口径：
+
+```bash
+python tools/audit_aixml.py --summary <file>                          # 目标 grpc：LV012 只是 warning
+LVRULE_BACKEND=pylabview python tools/audit_aixml.py --summary <file> # 目标 pylabview：LV012 是 error
+```
+
+好处是**离线一次列全**，而 composer 每次只报一根（P5 花了 2 个往返）。
+
+### 14.3 事件结构：帧活着，超时端子死了（LV013）
+
+pylabview composer 写的 Event Structure，回导 BDHb 里 `EventNodeEvents elements="3"`，
+两个静态 Value Change 各自绑对了控件 ddoUID（`4201` / `4202`），` Timeout ` 帧也在。
+**但 `eventTimeOut` 端子（dco 20069）没有被任何 signal 引用**——AIXML 里没有这个端子的写法，
+写 `<Tunnel _id="In1" inputs="value:500">` 得到的是**普通隧道**。
+
+后果是静默的：`runForMs=2200`、超时 500 ms → `Timeouts = 0`，零报错，程序就停在那里。
+→ LV013 直接报 error；出路只有 IDE 手接，或换 `Wait (ms)` / `Wait on Notification` 配轮询。
+
+### 14.4 面板保留移植 `lvai_graft_diagram`：本机只能 pylabview
+
+```text
+grpc      → helperAixmlInvalid（helper 文档在本机过不了 ValidateAIXML）
+pylabview → ok:true  execState:1  controlsGrafted:7  newControls:["Scale"]
+            leftoverDuplicates:[]  wiringMatchesScaffold:true  nodeCountsMatch:true
+```
+
+再跑一遍验收（`Initial State=Init, Items=[2,4,6], Scale=1`）：`Sum=12 / Items Processed=3 /
+Average=4 / Final State=Stop`，日志 `Init; Load; Accumulate; … ; Stop`。
+
+两条前置条件：面板 VI 图上**不能有节点**（`panelDiagramNotEmpty`，报的是元素个数）；
+`replaceDiagram=true` 这条路走 helper，本机不可用。真·空面板要自己造（端子声明 + 零节点即可）。
+
+### 14.5 本机上限清单（累计四条，都是 helper 类）
+
+`bin/scripts` 下 78 个 helper XML，本轮又点名三个失效文档：
+
+| helper | 挂掉谁 |
+|---|---|
+| `lvai_run_and_read_typed.xml`（R11） | `run_vi_and_read_values`（grpc） |
+| `lvai_run_for_ms.xml` | `runForMs` / **`signalsJson`**（唯一能给运行中的 VI 打信号的路径） |
+| `lvpane_probe.xml` | `connector_pane`（grpc） |
+| graft 核心 helper | `graft_diagram`（grpc，含 `replaceDiagram`） |
+
+共同写法特征：`For循环`（N 未接）、`属性节点`（"无效属性"）、`调用节点`（"无效方法"）。
+**pylabview 路线现场合成自己的 helper，所以同一能力往往只剩这条路。**
+
+### 14.6 测试层仍卡在连接器窗格
+
+```
+Scale Double.vi（2 double 入 / 1 出）→ lvai_vi_terminals: 0 input / 0 output on the connector pane
+lvai_generate_test → failedAtStep: placeholder, noTerminals
+```
+
+与 Round 7/10 同源（LV2026 FPHb 的 `cons` 数组为空，NI 自带范例同样）。
+是"VI 真没窗格"还是"读侧看不见"，**尚未分开**；唯一分法是在 IDE 里打开看一眼。
+在分开之前，Caraya 那条链（`generate_test` → `run_caraya_tests` → JUnit）没有起点。
+
+---
+
+## 15. 快速参考：一页纸
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）

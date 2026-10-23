@@ -1,0 +1,460 @@
+<?xml version='1.0' encoding='utf-8'?>
+<RSRC FormatVersion="3" Type="LVIN" Encoding="mac_roman">
+  <LVSR>
+    <!-- LabView Save Record -->
+    <Section Index="0" Name="Static Events And Timeout.vi" Format="inline">
+      <Version Major="26" Minor="0" Bugfix="0" Stage="release" Build="0" />
+      <Library Protected="0" PasswordHash="d41d8cd98f00b204e9800998ecf8427e" HashType="MD5" />
+      <Execution State="1" Priority="1" PrefExecSyst="-1" BadSignal="0" BadNode="0" BadSubVILink="0" BadSubVI="0" NotReservable="0" IsReentrant="0" CloseAfterCall="0" PooledReentrancy="0" LoadFP="0" HasNoBD="0" ShowFPOnLoad="0" DynamicDispatch="0" HasSetBP="0" RunOnOpen="0" ShowFPOnCall="0" BadCompile="0" IsSubroutine="0" DSRecord="0" CompilerBug="0" TypeDefVI="0" StrictTypeDefVI="0" BadDDO="0" CtlChanged="0" SaveParallel="0" LibIssuesNoRun="0" AllowAutoPrealloc="0" EvalWatermark="0" StdntWatermark="0" HasInsaneItems="0" PropTypesIssues="0" BrokenPolyVI="0" />
+      <Execution2 TaggedAndNotEdited="0" HideInstanceVICaption="0" SystemVI="0" VisibleVI="0" XDebugWindowVI="0" TemplateMask="0" SuppressXaction="0" AlwaysCallsParent="0" UndoRedoChangedNoTypes="0" InlinableDiagram="1" SourceOnly="1" InlineIfPossible="0" TransactionFailing="0" SSEOptiMask="0" StudentOnlyMask="0" EvalOnlyMask="0" AllowPolyTypeAdapt="0" ShouldInline="0" RecalcFPDSOs="0" MarkForPolyVI="0" VICanPassLVClassToDLL="0" UndoRedoInProgress="0" DrawInstanceIcon="0" ShowPolySelector="0" ClearIndMask="0" DefaultGrownView="0" DoNotClone="0" IsPrivateDataForUDClass="0" InstanceVI="0" DefaultErrorHandling="0" RemotePanel="0" SuppressInstanceHalo="0" />
+      <ButtonsHidden RunButton="0" ViBhBit1="0" ViBhBit2="0" ViBhBit3="0" ViBhBit4="0" FreeRunButton="0" ViBhBit6="0" AbortButton="0" ViBhBit8="0" ViBhBit9="0" ViBhBit10="0" ViBhBit11="0" ViBhBit12="0" ViBhBit13="0" ViBhBit14="0" ViBhBit15="0" />
+      <Instrument Type="Standard" Signature="d919c97b583a0b43869368ce140ff59b" InStBit0="0" InStBit1="0" InStBit2="0" InStBit3="0" InStBit4="0" InStBit5="0" InStBit6="0" InStBit7="0" InStBit8="0" DebugCapable="1" InStBit10="0" InStBit11="0" InStBit12="0" InStBit13="0" InStBit14="0" PrintAfterExec="0" InStBit16="0" InStBit17="0" InStBit18="0" InStBit19="0" InStBit20="0" InStBit21="0" InStBit22="0" InStBit23="1" InStBit24="0" InStBit25="0" InStBit26="0" InStBit27="0" InStBit28="0" InStBit29="0" InStBit30="1" InStBit31="0" />
+      <FrontPanel CtrlIndStyle="0" ShowScrollBar="3" ShowTitleBar="1" ToolBarVisible="1" ShowMenuBar="1" AutoCenter="0" SizeToScreen="0" NoRuntimePopUp="0" MarkReturnBtn="0" ViFpBit9="0" ScaleProportn="0" ViFpBit11="0" ViFpBit12="0" ViFpBit13="0" ViFpBit14="0" ViFpBit15="0" />
+      <Flags0C AutoHndlMenus="1" />
+      <Flags12 WndFloatUnk1="0" WndBit2="1" WndCanClose="1" WndCanResize="1" WndCanMinimize="1" WndTransparent="0" WndFloatUnk9="0" />
+      <Unknown Flags10="3" Field28="0" Field2C="0" Field30="0" AlignGridFP="12" AlignGridBD="16" Field4C="0" Field50Hash="0d064eb1b4b39a4ea46c01d9cda9c8d5" Field70="0" Field74="0" Field78Hash="8ed86faa405d9b45a0c9d9fd44e16f52" InlineStg="1" Field8C="4294967295" />
+      <Field90 Format="bin" File="P5StaticEventsAndTimeout_LVSR_Field90.bin" />
+      </Section>
+    </LVSR>
+  <RTSG>
+    <!-- Runtime Signature Guid -->
+    <Section Index="0" Format="inline">
+      <Guid>d36bd6fd648f253ef6fe302d5026de11</Guid>
+      </Section>
+    </RTSG>
+  <vers>
+    <!-- Version block -->
+    <Section Index="4" Format="inline">
+      <Version Major="26" Minor="3" Bugfix="1" Stage="release" Build="1" Language="0" Info="26.3.1" Comment="" />
+      </Section>
+    </vers>
+  <CONP>
+    <!-- Connector Pane Type Map -->
+    <Section Index="0" Format="inline">
+      <TypeDesc TypeID="1" />
+      </Section>
+    </CONP>
+  <LIvi>
+    <!-- LinkObj Refs for VI -->
+    <Section Index="0" Format="inline">
+      <LVIN />
+      </Section>
+    </LIvi>
+  <BDPW>
+    <!-- Block Diagram Password -->
+    <Section Index="0" Format="inline">
+      <Password Text="" SaltSource="CPC2" SaltFlatTypeID="23" />
+      </Section>
+    </BDPW>
+  <STRG>
+    <!-- String description / descriptions list -->
+    <Section Index="0" Format="inline">
+      <String>Round8 probe P5 (UNVERIFIED - prepared 2026-10-22, run when LabVIEW is up): the STATIC-event shape of upstream suite test t88 - a While Loop + Event Structure with two panel Value Change frames ("Go" and latched "Stop") plus a Timeout frame fed 500 ms through a structure tunnel. No user event, no registration: the interactive-HMI minimal piece. Go Presses and Timeouts are shift registers (Round4/6 idiom: frames read the SR nets directly, every frame assigns every Out tunnel); Stop writes the loop's stop tunnel. Expected on a run that sets Go=true then Stop=true: execState 1, Go Presses &gt;= 1, Timeouts &gt;= 0, Error-free. THE TIMEOUT TUNNEL WIRING IS THE LEAST-CERTAIN PART of this document - if the composer refuses or the VI is broken, inspect how the eventTimeOut terminal is fed before rewriting the frames.</String>
+      </Section>
+    </STRG>
+  <ICON>
+    <!-- Icon 32x32 1bpp -->
+    <Section Index="0" Format="png" File="P5StaticEventsAndTimeout_ICON.png" />
+    </ICON>
+  <icl8>
+    <!-- Icon Large 32x32 8bpp -->
+    <Section Index="0" Format="png" File="P5StaticEventsAndTimeout_icl8.png" />
+    </icl8>
+  <CPC2>
+    <!-- Connector Pane Content Type v2 -->
+    <Section Index="0" Format="inline">
+      <TypeDesc TypeID="2" />
+      </Section>
+    </CPC2>
+  <LIfp>
+    <!-- LinkObj Refs for Front Panel -->
+    <Section Index="0" Format="inline">
+      <FPHP />
+      </Section>
+    </LIfp>
+  <FPEx>
+    <!-- Generic block -->
+    <Section Index="0" Format="bin" File="P5StaticEventsAndTimeout_FPEx.bin" />
+    </FPEx>
+  <FPHb>
+    <!-- Front Panel Heap ver b -->
+    <Section Index="0" Format="xml" File="P5StaticEventsAndTimeout_FPHb.xml" />
+    </FPHb>
+  <FPSE>
+    <!-- Front Panel Size Estimate -->
+    <Section Index="0" Value="39" Format="inline" />
+    </FPSE>
+  <VPDP>
+    <!-- VI Primitive Dependency Flags -->
+    <Section Index="0" Format="bin" File="P5StaticEventsAndTimeout_VPDP.bin" />
+    </VPDP>
+  <LIbd>
+    <!-- LinkObj Refs for Block diagram -->
+    <Section Index="0" Format="inline">
+      <BDHP />
+      </Section>
+    </LIbd>
+  <BDEx>
+    <!-- Generic block -->
+    <Section Index="0" Format="bin" File="P5StaticEventsAndTimeout_BDEx.bin" />
+    </BDEx>
+  <BDHb>
+    <!-- Block Diagram Heap ver b -->
+    <Section Index="0" Format="xml" File="P5StaticEventsAndTimeout_BDHb.xml" />
+    </BDHb>
+  <BDSE>
+    <!-- Block Diagram Size Estimate -->
+    <Section Index="0" Value="19" Format="inline" />
+    </BDSE>
+  <VITS>
+    <!-- Virtual Instrument Tag Strings -->
+    <Section Index="0" Format="bin" File="P5StaticEventsAndTimeout_VITS.bin" />
+    </VITS>
+  <DTHP>
+    <!-- Data Types for Heap -->
+    <Section Index="0" Format="inline">
+      <!-- Heap TypeID  1 = Consolidated TypeID  3: NumInt32 -->
+      <!-- Heap TypeID  2 = Consolidated TypeID  4: Boolean -->
+      <!-- Heap TypeID  3 = Consolidated TypeID  5: Refnum -->
+      <!-- Heap TypeID  4 = Consolidated TypeID  6: Refnum -->
+      <!-- Heap TypeID  5 = Consolidated TypeID  7: NumInt32 -->
+      <!-- Heap TypeID  6 = Consolidated TypeID  8: Boolean -->
+      <!-- Heap TypeID  7 = Consolidated TypeID  9: Boolean -->
+      <!-- Heap TypeID  8 = Consolidated TypeID 10: Boolean -->
+      <!-- Heap TypeID  9 = Consolidated TypeID 11: Boolean -->
+      <!-- Heap TypeID 10 = Consolidated TypeID 12: Boolean -->
+      <!-- Heap TypeID 11 = Consolidated TypeID 13: Boolean -->
+      <!-- Heap TypeID 12 = Consolidated TypeID 14: Boolean -->
+      <!-- Heap TypeID 13 = Consolidated TypeID 15: Boolean -->
+      <!-- Heap TypeID 14 = Consolidated TypeID 16: NumInt32 -->
+      <!-- Heap TypeID 15 = Consolidated TypeID 17: NumInt32 -->
+      <!-- Heap TypeID 16 = Consolidated TypeID 18: NumInt32 -->
+      <!-- Heap TypeID 17 = Consolidated TypeID 19: NumInt32 -->
+      <!-- Heap TypeID 18 = Consolidated TypeID 20: NumInt32 -->
+      <!-- Heap TypeID 19 = Consolidated TypeID 21: NumInt32 -->
+      <!-- Heap TypeID 20 = Consolidated TypeID 22: NumInt32 -->
+      <!-- Heap TypeID 21 = Consolidated TypeID 23: NumInt32 -->
+      <!-- Heap TypeID 22 = Consolidated TypeID 24: NumInt32 -->
+      <!-- Heap TypeID 23 = Consolidated TypeID 25: NumInt32 -->
+      <!-- Heap TypeID 24 = Consolidated TypeID 26: Boolean -->
+      <!-- Heap TypeID 25 = Consolidated TypeID 27: Boolean -->
+      <!-- Heap TypeID 26 = Consolidated TypeID 28: NumInt32 -->
+      <!-- Heap TypeID 27 = Consolidated TypeID 29: NumInt32 -->
+      <!-- Heap TypeID 28 = Consolidated TypeID 30: Boolean -->
+      <!-- Heap TypeID 29 = Consolidated TypeID 31: Boolean -->
+      <!-- Heap TypeID 30 = Consolidated TypeID 32: Boolean -->
+      <!-- Heap TypeID 31 = Consolidated TypeID 33: Boolean -->
+      <!-- Heap TypeID 32 = Consolidated TypeID 34: NumInt32 -->
+      <!-- Heap TypeID 33 = Consolidated TypeID 35: NumInt32 -->
+      <!-- Heap TypeID 34 = Consolidated TypeID 36: NumInt32 -->
+      <!-- Heap TypeID 35 = Consolidated TypeID 37: NumInt32 -->
+      <!-- Heap TypeID 36 = Consolidated TypeID 38: NumInt32 -->
+      <!-- Heap TypeID 37 = Consolidated TypeID 39: NumInt32 -->
+      <!-- Heap TypeID 38 = Consolidated TypeID 40: Cluster -->
+      <!-- Heap TypeID 39 = Consolidated TypeID 41: TypeDef -->
+      <!-- Heap TypeID 40 = Consolidated TypeID 42: TypeDef -->
+      <!-- Heap TypeID 41 = Consolidated TypeID 43: NumUInt32 -->
+      <!-- Heap TypeID 42 = Consolidated TypeID 44: Cluster -->
+      <!-- Heap TypeID 43 = Consolidated TypeID 45: TypeDef -->
+      <!-- Heap TypeID 44 = Consolidated TypeID 46: TypeDef -->
+      <!-- Heap TypeID 45 = Consolidated TypeID 47: NumUInt32 -->
+      <!-- Heap TypeID 46 = Consolidated TypeID 48: Cluster -->
+      <!-- Heap TypeID 47 = Consolidated TypeID 49: TypeDef -->
+      <!-- Heap TypeID 48 = Consolidated TypeID 50: TypeDef -->
+      <!-- Heap TypeID 49 = Consolidated TypeID 51: NumUInt32 -->
+      <!-- Heap TypeID 50 = Consolidated TypeID 52: Boolean -->
+      <!-- Heap TypeID 51 = Consolidated TypeID 53: NumInt32 -->
+      <!-- Heap TypeID 52 = Consolidated TypeID 54: NumInt32 -->
+      <!-- Heap TypeID 53 = Consolidated TypeID 55: NumInt32 -->
+      <!-- Heap TypeID 54 = Consolidated TypeID 56: NumInt32 -->
+      <!-- Heap TypeID 55 = Consolidated TypeID 57: NumInt32 -->
+      <!-- Heap TypeID 56 = Consolidated TypeID 58: NumInt32 -->
+      <!-- Heap TypeID 57 = Consolidated TypeID 59: NumInt32 -->
+      <!-- Heap TypeID 58 = Consolidated TypeID 60: NumInt32 -->
+      <!-- Heap TypeID 59 = Consolidated TypeID 61: NumInt32 -->
+      <!-- Heap TypeID 60 = Consolidated TypeID 62: NumInt32 -->
+      <TypeDescSlice IndexShift="3" Count="60" />
+      </Section>
+    </DTHP>
+  <MUID>
+    <!-- Map Unique Identifier -->
+    <Section Index="0" Value="20390" Format="inline" />
+    </MUID>
+  <HIST>
+    <!-- Changes History -->
+    <Section Index="0" Format="bin" File="P5StaticEventsAndTimeout_HIST.bin" />
+    </HIST>
+  <VCTP>
+    <!-- VI Consolidated Data Types -->
+    <Section Index="0" Format="inline">
+      <!-- FlatTypeID 0: Type Descriptor with Void data -->
+      <TypeDesc Type="Void" Format="inline" />
+      <!-- FlatTypeID 1: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" />
+      <!-- FlatTypeID 2: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" />
+      <!-- FlatTypeID 3: Type Descriptor with Reference data -->
+      <TypeDesc Type="Refnum" RefType="EventReg" Field0="0x0000" Format="inline" />
+      <!-- FlatTypeID 4: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="Go" />
+      <!-- FlatTypeID 5: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="Stop" />
+      <!-- FlatTypeID 6: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Go Presses" />
+      <!-- FlatTypeID 7: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Timeouts" />
+      <!-- FlatTypeID 8: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Zero" />
+      <!-- FlatTypeID 9: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="Timeout ms" />
+      <!-- FlatTypeID 10: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumInt32" Prop1="0" Format="inline" Label="One" />
+      <!-- FlatTypeID 11: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="False" />
+      <!-- FlatTypeID 12: Type Descriptor which stores type definition -->
+      <TypeDesc Type="TypeDef" Flag1="0x0" Format="inline">
+        <TypeDesc Type="NumUInt32" Nested="True" Prop1="0" Format="inline" Label="Source" />
+        <Label Text="eventsource.ctl" />
+        </TypeDesc>
+      <!-- FlatTypeID 13: Type Descriptor which stores type definition -->
+      <TypeDesc Type="TypeDef" Flag1="0x0" Format="inline">
+        <TypeDesc Type="UnitUInt32" Nested="True" Prop1="0" Format="inline" Label="Type">
+          <EnumLabel>Null</EnumLabel>
+          <EnumLabel>Timeout</EnumLabel>
+          <EnumLabel>Annotation Menu Selection</EnumLabel>
+          <EnumLabel>Annotation Menu Selection?</EnumLabel>
+          <EnumLabel>App Instance Close</EnumLabel>
+          <EnumLabel>App Instance Close?</EnumLabel>
+          <EnumLabel>Autoscale Range Change</EnumLabel>
+          <EnumLabel>Bookmark Info Change</EnumLabel>
+          <EnumLabel>Cell Edit</EnumLabel>
+          <EnumLabel>Cell Edit?</EnumLabel>
+          <EnumLabel>Cursor Grab</EnumLabel>
+          <EnumLabel>Cursor Grab?</EnumLabel>
+          <EnumLabel>Cursor Menu Selection</EnumLabel>
+          <EnumLabel>Cursor Menu Selection?</EnumLabel>
+          <EnumLabel>Cursor Move</EnumLabel>
+          <EnumLabel>Cursor Release</EnumLabel>
+          <EnumLabel>Data Change</EnumLabel>
+          <EnumLabel>Direction Change</EnumLabel>
+          <EnumLabel>Display State Change</EnumLabel>
+          <EnumLabel>Drag Ended</EnumLabel>
+          <EnumLabel>Drag Enter</EnumLabel>
+          <EnumLabel>Drag Leave</EnumLabel>
+          <EnumLabel>Drag Over</EnumLabel>
+          <EnumLabel>Drag Source Update</EnumLabel>
+          <EnumLabel>Drag Starting</EnumLabel>
+          <EnumLabel>Drag Starting?</EnumLabel>
+          <EnumLabel>Drop</EnumLabel>
+          <EnumLabel>Exec State Change</EnumLabel>
+          <EnumLabel>Key Down</EnumLabel>
+          <EnumLabel>Key Down?</EnumLabel>
+          <EnumLabel>Key Repeat</EnumLabel>
+          <EnumLabel>Key Repeat?</EnumLabel>
+          <EnumLabel>Key Up</EnumLabel>
+          <EnumLabel>Listbox Double Click</EnumLabel>
+          <EnumLabel>Menu Activation?</EnumLabel>
+          <EnumLabel>Menu Selection (App)</EnumLabel>
+          <EnumLabel>Menu Selection? (App)</EnumLabel>
+          <EnumLabel>Menu Selection (User)</EnumLabel>
+          <EnumLabel>Mouse Down</EnumLabel>
+          <EnumLabel>Mouse Down?</EnumLabel>
+          <EnumLabel>Mouse Enter</EnumLabel>
+          <EnumLabel>Mouse Leave</EnumLabel>
+          <EnumLabel>Mouse Move</EnumLabel>
+          <EnumLabel>Mouse Up</EnumLabel>
+          <EnumLabel>Mouse Wheel</EnumLabel>
+          <EnumLabel>NI Security User Change (App)</EnumLabel>
+          <EnumLabel>Pane Size</EnumLabel>
+          <EnumLabel>Panel Close</EnumLabel>
+          <EnumLabel>Panel Close?</EnumLabel>
+          <EnumLabel>Panel Resize</EnumLabel>
+          <EnumLabel>Plot Attribute Change</EnumLabel>
+          <EnumLabel>Scale Range Change</EnumLabel>
+          <EnumLabel>Shortcut Menu Activation?</EnumLabel>
+          <EnumLabel>Shortcut Menu Selection (App)</EnumLabel>
+          <EnumLabel>Shortcut Menu Selection? (App)</EnumLabel>
+          <EnumLabel>Shortcut Menu Selection (User)</EnumLabel>
+          <EnumLabel>Tree Double Click</EnumLabel>
+          <EnumLabel>Tree Drag</EnumLabel>
+          <EnumLabel>Tree Drag?</EnumLabel>
+          <EnumLabel>Tree Drop</EnumLabel>
+          <EnumLabel>Tree Drop?</EnumLabel>
+          <EnumLabel>Tree Item Close</EnumLabel>
+          <EnumLabel>Tree Item Close?</EnumLabel>
+          <EnumLabel>Tree Item Open</EnumLabel>
+          <EnumLabel>Tree Item Open?</EnumLabel>
+          <EnumLabel>URL Change?</EnumLabel>
+          <EnumLabel>User Event</EnumLabel>
+          <EnumLabel>Value Change</EnumLabel>
+          </TypeDesc>
+        <Label Text="lveventtype.ctl" />
+        </TypeDesc>
+      <!-- FlatTypeID 14: Type Descriptor with single number as data -->
+      <TypeDesc Type="NumUInt32" Prop1="0" Format="inline" Label="Time" />
+      <!-- FlatTypeID 15: Type Descriptor with Reference data -->
+      <TypeDesc Type="Refnum" RefType="LVObjCtl" CtlFlags="0x0008" HasItem="0" Format="inline" Label="CtlRef">
+        <TypeDesc TypeID="2" />
+        </TypeDesc>
+      <!-- FlatTypeID 16: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="OldVal" />
+      <!-- FlatTypeID 17: Type Descriptor with Boolean data -->
+      <TypeDesc Type="Boolean" Format="inline" Label="NewVal" />
+      <!-- FlatTypeID 18: Type Descriptor which Clusters together other TDs into a struct -->
+      <TypeDesc Type="Cluster" Format="inline" Label="Event Data">
+        <TypeDesc TypeID="12" />
+        <TypeDesc TypeID="13" />
+        <TypeDesc TypeID="14" />
+        <TypeDesc TypeID="15" />
+        <TypeDesc TypeID="16" />
+        <TypeDesc TypeID="17" />
+        </TypeDesc>
+      <!-- FlatTypeID 19: Type Descriptor which Clusters together other TDs into a struct -->
+      <TypeDesc Type="Cluster" Format="inline" Label="Event Data">
+        <TypeDesc TypeID="12" />
+        <TypeDesc TypeID="13" />
+        <TypeDesc TypeID="14" />
+        </TypeDesc>
+      <!-- FlatTypeID 20: Type Descriptor with Reference data -->
+      <TypeDesc Type="Refnum" RefType="LVObjCtl" CtlFlags="0x0008" HasItem="0" Format="inline" Label="CtlRef" />
+      <!-- FlatTypeID 21: Type Descriptor which Clusters together other TDs into a struct -->
+      <TypeDesc Type="Cluster" Format="inline" Label="Event Data">
+        <TypeDesc TypeID="12" />
+        <TypeDesc TypeID="13" />
+        <TypeDesc TypeID="14" />
+        <TypeDesc TypeID="20" />
+        <TypeDesc TypeID="16" />
+        <TypeDesc TypeID="17" />
+        </TypeDesc>
+      <!-- FlatTypeID 22: Type Descriptor with Function data -->
+      <TypeDesc Type="Function" FuncFlags="0x200" Pattern="0x108" HasThrall="0" Format="inline">
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        </TypeDesc>
+      <!-- FlatTypeID 23: Type Descriptor with Function data -->
+      <TypeDesc Type="Function" FuncFlags="0x0" Pattern="0x108" HasThrall="0" Format="inline">
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        <TypeDesc TypeID="0" Flags="0x0000" />
+        </TypeDesc>
+      <TopLevel>
+        <!-- When Consolidated Type is referred to in other blocks, the TypeID is Index from this list -->
+        <TypeDesc Index="1" FlatTypeID="22" />
+        <TypeDesc Index="2" FlatTypeID="23" />
+        <TypeDesc Index="3" FlatTypeID="1" />
+        <TypeDesc Index="4" FlatTypeID="2" />
+        <TypeDesc Index="5" FlatTypeID="3" />
+        <TypeDesc Index="6" FlatTypeID="3" />
+        <TypeDesc Index="7" FlatTypeID="1" />
+        <TypeDesc Index="8" FlatTypeID="4" />
+        <TypeDesc Index="9" FlatTypeID="4" />
+        <TypeDesc Index="10" FlatTypeID="5" />
+        <TypeDesc Index="11" FlatTypeID="5" />
+        <TypeDesc Index="12" FlatTypeID="4" />
+        <TypeDesc Index="13" FlatTypeID="4" />
+        <TypeDesc Index="14" FlatTypeID="5" />
+        <TypeDesc Index="15" FlatTypeID="5" />
+        <TypeDesc Index="16" FlatTypeID="6" />
+        <TypeDesc Index="17" FlatTypeID="6" />
+        <TypeDesc Index="18" FlatTypeID="7" />
+        <TypeDesc Index="19" FlatTypeID="7" />
+        <TypeDesc Index="20" FlatTypeID="8" />
+        <TypeDesc Index="21" FlatTypeID="8" />
+        <TypeDesc Index="22" FlatTypeID="9" />
+        <TypeDesc Index="23" FlatTypeID="9" />
+        <TypeDesc Index="24" FlatTypeID="10" />
+        <TypeDesc Index="25" FlatTypeID="10" />
+        <TypeDesc Index="26" FlatTypeID="11" />
+        <TypeDesc Index="27" FlatTypeID="11" />
+        <TypeDesc Index="28" FlatTypeID="10" />
+        <TypeDesc Index="29" FlatTypeID="10" />
+        <TypeDesc Index="30" FlatTypeID="11" />
+        <TypeDesc Index="31" FlatTypeID="11" />
+        <TypeDesc Index="32" FlatTypeID="2" />
+        <TypeDesc Index="33" FlatTypeID="2" />
+        <TypeDesc Index="34" FlatTypeID="1" />
+        <TypeDesc Index="35" FlatTypeID="1" />
+        <TypeDesc Index="36" FlatTypeID="1" />
+        <TypeDesc Index="37" FlatTypeID="1" />
+        <TypeDesc Index="38" FlatTypeID="1" />
+        <TypeDesc Index="39" FlatTypeID="1" />
+        <TypeDesc Index="40" FlatTypeID="18" />
+        <TypeDesc Index="41" FlatTypeID="12" />
+        <TypeDesc Index="42" FlatTypeID="13" />
+        <TypeDesc Index="43" FlatTypeID="14" />
+        <TypeDesc Index="44" FlatTypeID="19" />
+        <TypeDesc Index="45" FlatTypeID="12" />
+        <TypeDesc Index="46" FlatTypeID="13" />
+        <TypeDesc Index="47" FlatTypeID="14" />
+        <TypeDesc Index="48" FlatTypeID="21" />
+        <TypeDesc Index="49" FlatTypeID="12" />
+        <TypeDesc Index="50" FlatTypeID="13" />
+        <TypeDesc Index="51" FlatTypeID="14" />
+        <TypeDesc Index="52" FlatTypeID="2" />
+        <TypeDesc Index="53" FlatTypeID="1" />
+        <TypeDesc Index="54" FlatTypeID="1" />
+        <TypeDesc Index="55" FlatTypeID="1" />
+        <TypeDesc Index="56" FlatTypeID="1" />
+        <TypeDesc Index="57" FlatTypeID="1" />
+        <TypeDesc Index="58" FlatTypeID="1" />
+        <TypeDesc Index="59" FlatTypeID="1" />
+        <TypeDesc Index="60" FlatTypeID="1" />
+        <TypeDesc Index="61" FlatTypeID="1" />
+        <TypeDesc Index="62" FlatTypeID="1" />
+        </TopLevel>
+      </Section>
+    </VCTP>
+  <FTAB>
+    <!-- Font Table -->
+    <Section Index="128" Prop1="0x10002" Prop3="3" Format="inline">
+      <Font Prop2="13" Prop3="1024" Prop4="0" Prop6="13" Prop7="212" Prop8="196">
+        <Name>Segoe UI</Name>
+        </Font>
+      <Font Prop2="13" Prop3="1024" Prop4="0" Prop6="13" Prop7="212" Prop8="196">
+        <Name>Segoe UI</Name>
+        </Font>
+      <Font Prop2="13" Prop3="1024" Prop4="0" Prop6="13" Prop7="212" Prop8="196">
+        <Name>Segoe UI</Name>
+        </Font>
+      <Font Prop2="32768" Prop3="33792" Prop4="32768" Prop6="13" Prop7="212" Prop8="196">
+        <Name>0</Name>
+        </Font>
+      <Font Prop2="32768" Prop3="33792" Prop4="32768" Prop6="13" Prop7="212" Prop8="196">
+        <Name>1</Name>
+        </Font>
+      <Font Prop2="32768" Prop3="33792" Prop4="1000" Prop6="13" Prop7="216" Prop8="207">
+        <Name>0</Name>
+        </Font>
+      <Font Prop2="32768" Prop3="33792" Prop4="32768" Prop6="13" Prop7="212" Prop8="196">
+        <Name>2</Name>
+        </Font>
+      </Section>
+    </FTAB>
+  </RSRC>

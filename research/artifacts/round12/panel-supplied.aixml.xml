@@ -1,0 +1,9 @@
+<VI _name="Supplied Panel.vi" description="Round-12 graft probe: a supplied PANEL with no diagram at all. Seven terminals, exactly the labels and types of round4's Batch Averager, no nodes - the shape a customer or an exam hands over. The scaffold (Scaffold Scaled.vi) carries the same seven plus one new control, so the graft has to paste the program, replace every duplicated control with the supplied one, and add Scale as a new control.">
+  <Control _name="Initial State" connection="recommended" description="State the machine starts in." outputs="value:100.value" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="4200" uid_parent="root" value="0"/>
+  <Control _name="Items" connection="recommended" description="Samples to average." outputs="value:4201.value" type="array{double}" uid="4201" uid_parent="root" value="[1.5,2.5,3.5,4.5]"/>
+  <Indicator _name="Final State" connection="recommended" description="State register value when the loop exited." inputs="value:" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="4210" uid_parent="root" value="0"/>
+  <Indicator _name="Sum" connection="recommended" description="Sum of all processed items." inputs="value:" type="double" uid="4211" uid_parent="root" value="0"/>
+  <Indicator _name="Items Processed" connection="recommended" description="How many items were accumulated." inputs="value:" type="int32" uid="4212" uid_parent="root" value="0"/>
+  <Indicator _name="Average" connection="recommended" description="Sum divided by Items Processed." inputs="value:" type="double" uid="4213" uid_parent="root" value="0"/>
+  <Indicator _name="Log" connection="recommended" description="Transition log." inputs="value:" type="string" uid="4214" uid_parent="root" value=""/>
+</VI>

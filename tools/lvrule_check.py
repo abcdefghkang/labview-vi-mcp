@@ -91,6 +91,27 @@ The rules, and the round that paid for each one:
          `connection` changes nothing, setting value="0" fixes it. string and
          timestamp legitimately accept "", so the check is scoped by type;
          deleting `connection` first is the wrong instinct and costs an hour.
+
+  LV012  a net crosses a structure boundary ................ round 12 (live)
+         The composer refuses with `net 'N' crosses a diagram boundary
+         without a tunnel`, and it names one net per attempt - so a document
+         with four stray constants takes four round trips to repair. The rule
+         was MISSING from this gate when round 12 first ran the round-7 event
+         probe: LV001-LV011 were all clean (0 error / 5 warning) and the
+         composer still refused the document twice. Both faults were the same
+         one: a Constant at root consumed inside a CaseFrame, and a Constant
+         inside the loop consumed inside an Event Structure's frames. A wire
+         never crosses a structure border implicitly - each structure needs
+         its outer Tunnel and each frame its own inner half, linked by _id.
+
+  LV013  an Event Structure's Timeout cannot be wired ..... round 12 (live)
+         There is no AIXML spelling for the `eventTimeOut` terminal. Writing
+         <Tunnel _id="In1" inputs="value:500"/> at structure level buys an
+         ORDINARY tunnel: measured round 12, the terminal stayed unwired
+         (eventTimeOut dco referenced by no signal) and the run answered
+         Timeouts=0 over 2.2 s with a 500 ms timeout - the loop waits forever.
+         No error anywhere. The event frames THEMSELVES do survive (3
+         EventSpecs, Timeout included) - it is the timeout value that is lost.
 """
 
 from __future__ import annotations
@@ -104,6 +125,14 @@ import xml.etree.ElementTree as ET
 
 UID_FLOOR = 4200          # LV002 - see the header, and docs/labview-crash-signatures.md
 SENTINEL_UID = "0"        # reused freely, LabVIEW assigns its own id
+# LV012's severity depends on WHICH composer will read the document, and that is
+# measured, not assumed: on `round4/batch-averager.aixml.xml` NI's converter
+# (grpc) answers errorCode 0 and writes a 13,800-byte VI whose structure tunnels
+# went 43 -> 154 (it creates every missing one), while pylabview's composer
+# refuses the same file with "net '220.zero' crosses a diagram boundary without
+# a tunnel". So: a warning on the grpc route, an error when the target is
+# pylabview. `LVRULE_BACKEND=pylabview` (or --backend) sets it.
+BOUNDARY_SEVERITY = "warning"
 COMMENT_RE = re.compile(r"<!--")
 # LV009 - "error in", "error out", "error in (no error)", "Error Out 2". Anchored
 # at the start so a legitimate control called "Last Error Count" is left alone.
@@ -213,6 +242,147 @@ def ancestry(nodes_by_uid, node):
     return chain
 
 
+# --- LV012: which container a net's half actually lives in ------------------
+# The boundary a net has to cross is not "the element's uid_parent". A Tunnel
+# carries TWO halves: the outer one is drawn in the container of the structure
+# that owns it, the inner one inside the frame. Reading uid_parent literally
+# puts every tunnel on the wrong side and the rule then fires on correct files.
+
+CONTAINER_TAGS = ("Structure", "CaseFrame")
+
+
+def home_container(nodes_by_uid, node):
+    """The container a half of this element lives in: 'root' or a uid."""
+    if node.tag == "Tunnel":
+        owner = nodes_by_uid.get(node.parent_uid)
+        if owner is not None and owner.tag == "CaseFrame":
+            return owner.uid                       # inner half: inside the frame
+        if owner is not None and owner.tag == "Structure":
+            return container_of(nodes_by_uid, owner)   # outer half: outside the structure
+    return container_of(nodes_by_uid, node)
+
+
+def container_of(nodes_by_uid, node):
+    """Nearest enclosing Structure/CaseFrame uid, else 'root'."""
+    seen, cur = set(), node
+    while cur is not None and cur.uid not in seen:
+        seen.add(cur.uid)
+        parent = nodes_by_uid.get(cur.parent_uid)
+        if parent is None:
+            return "root"
+        if parent.tag in CONTAINER_TAGS:
+            return parent.uid
+        cur = parent
+    return "root"
+
+
+def _tunnel_with(nodes_by_uid, container_uid, direction, net):
+    """Child Tunnel of `container_uid` whose `direction` nets contain `net`."""
+    container = nodes_by_uid.get(container_uid)
+    if container is None:
+        return None
+    for child in container.el:
+        if child.tag != "Tunnel":
+            continue
+        if net in nets_of(child.get(direction)):
+            return child
+    return None
+
+def check_boundaries(nodes, nodes_by_uid):
+    """LV012: every net that changes container must pass a tunnel."""
+    findings = []
+
+    prod, cons = {}, []
+    for n in nodes:
+        # A shift register's borders are not wires across a structure: Left is
+        # the seed carried IN (it must come from outside - LV003) and Right is
+        # the value carried OUT. Exempt, or every correct loop reports a fault.
+        shift_border = n.tag in ("Left", "Right") and nodes_by_uid.get(n.parent_uid) is not None \
+            and nodes_by_uid[n.parent_uid].tag == "ShiftReg"
+        home = home_container(nodes_by_uid, n)
+        for net in nets_of(n.el.get("outputs")):
+            prod.setdefault(net, []).append(home)
+        if shift_border:
+            continue
+        if n.tag == "CaseFrame":
+            for net in nets_of(n.el.get("selectout")):
+                prod.setdefault(net, []).append(n.uid)
+        for net in nets_of(n.el.get("inputs")):
+            cons.append((net, n, home))
+
+    for net, node, home in cons:
+        if net not in prod or home in prod[net]:
+            continue
+        # Walk outward, renaming the net at each tunnel it passes. Report the
+        # FIRST missing hop: that is the one the composer names.
+        cur, net_now, seen = home, net, set()
+        crossed = False
+        while cur not in prod[net] and cur not in seen:
+            seen.add(cur)
+            container = nodes_by_uid.get(cur)
+            if container is None or cur == "root":
+                break
+            if container.tag == "CaseFrame":
+                inner = _tunnel_with(nodes_by_uid, cur, "outputs", net_now)
+                if inner is None:
+                    findings.append(Finding(
+                        BOUNDARY_SEVERITY, "lv012-net-crosses-boundary", node.uid, node.describe(), node.path,
+                        f"net '{net_now}' is consumed in frame {cur} but produced outside it, and "
+                        "this frame declares no <Tunnel _id=... outputs=\"value:...\"/> for it. "
+                        "Each frame needs its OWN half of every tunnel, even when it does not use "
+                        "the value: write outputs=\"value:\" there."))
+                    crossed = None
+                    break
+                owner = nodes_by_uid.get(container.parent_uid)
+                outer = None
+                if owner is not None:
+                    for child in owner.el:
+                        if child.tag == "Tunnel" and child.get("_id") == inner.get("_id"):
+                            outer = child
+                            break
+                if outer is None or not nets_of(outer.get("inputs")):
+                    findings.append(Finding(
+                        BOUNDARY_SEVERITY, "lv012-net-crosses-boundary", node.uid, node.describe(), node.path,
+                        f"frame {cur} tunnels the net as _id='{inner.get('_id')}', but the "
+                        f"enclosing {owner.tag if owner is not None else 'structure'} has no outer "
+                        "half with that _id carrying inputs=\"value:...\". Both halves of a tunnel "
+                        "must exist and agree on _id."))
+                    crossed = None
+                    break
+                net_now = nets_of(outer.get("inputs"))[0]
+                cur = container_of(nodes_by_uid, owner)
+                crossed = True
+            else:                                   # While / For: one element, both halves
+                tun = _tunnel_with(nodes_by_uid, cur, "outputs", net_now)
+                if tun is None:
+                    findings.append(Finding(
+                        BOUNDARY_SEVERITY, "lv012-net-crosses-boundary", node.uid, node.describe(), node.path,
+                        f"net '{net_now}' is consumed inside {container.describe()} (uid {cur}) but "
+                        "produced outside it, and the loop declares no tunnel for it. pylabview's "
+                        "composer refuses the WHOLE document with \"net crosses a diagram boundary "
+                        "without a tunnel\" and names one net per attempt; NI's converter (grpc) "
+                        "quietly creates the missing tunnel instead (measured: 43 declared -> 154 in "
+                        "the VI), so a document can pass on grpc and fail on pylabview. Move the "
+                        "producer inside, or add <Tunnel _id=\"In1\" inputs=\"value:OUTER\" "
+                        "outputs=\"value:INNER\"/>."))
+                    crossed = None
+                    break
+                outer_nets = nets_of(tun.get("inputs"))
+                if not outer_nets:
+                    break
+                net_now = outer_nets[0]
+                cur = container_of(nodes_by_uid, container)
+                crossed = True
+        if crossed is None:
+            continue
+        if cur not in prod[net] and cur != "root":
+            findings.append(Finding(
+                BOUNDARY_SEVERITY, "lv012-net-crosses-boundary", node.uid, node.describe(), node.path,
+                f"net '{net}' could not be traced back to a producer in an enclosing container; "
+                "the wire has no path to a source."))
+    return findings
+
+
 def check(path):
     findings = []
     raw = open(path, encoding="utf-8", errors="replace").read()
@@ -245,6 +415,7 @@ def check(path):
     findings.extend(check_attributes(root, path))
     by_uid = {n.uid: n for n in nodes if n.uid}
     prod = producers(nodes)
+    findings.extend(check_boundaries(nodes, by_uid))              # LV012
     is_export = "exported" in os.path.basename(path).lower()   # kept for LV002's history
 
     for n in nodes:
@@ -301,6 +472,24 @@ def check(path):
                     "error", "lv005-while-without-condition", n.uid, n.describe(), n.path,
                     "the While Loop has no <Condition>: the diagram cannot stop it and LabVIEW "
                     "runs it forever. Add <Condition inputs=\"value:NET\" value=\"stop\"/>."))
+
+        # LV013 - an Event Structure's Timeout frame can never fire, because the
+        # eventTimeOut terminal has no AIXML spelling. Measured round 12: the
+        # tunnel written at structure level became an ORDINARY tunnel, the
+        # terminal was left unwired, and the run answered Timeouts=0 over 2.2 s
+        # with a 500 ms timeout wanted - no error anywhere.
+        if n.tag == "Structure" and (el.get("_name") or "") == "Event Structure":
+            timeouts = [f for f in el if f.tag == "CaseFrame"
+                        and "timeout" in (f.get("selector") or "").lower()]
+            if timeouts:
+                findings.append(Finding(
+                    "error", "lv013-event-timeout-unwireable", n.uid, n.describe(), n.path,
+                    "this Event Structure has a ' Timeout ' frame, but AIXML has no way to wire "
+                    "the structure's eventTimeOut terminal: a <Tunnel> here becomes an ordinary "
+                    "tunnel and the terminal stays unwired, so the frame NEVER fires and the loop "
+                    "waits forever (measured: Timeouts=0 over 2.2 s with 500 ms asked for). Wire "
+                    "the timeout by hand in the IDE, or pace the loop with a Wait (ms) / Wait on "
+                    "Notification and poll instead. The event frames themselves are fine."))
 
         # LV006 - a Call target is a bare or library-qualified NAME.
         if n.tag == "Call":
@@ -403,7 +592,16 @@ def main(argv):
     ap.add_argument("files", nargs="+")
     ap.add_argument("--json", action="store_true", help="machine readable")
     ap.add_argument("--min-severity", default="info", choices=["error", "warning", "info"])
+    ap.add_argument("--backend", default=os.environ.get("LVRULE_BACKEND", ""),
+                    choices=["", "grpc", "pylabview"],
+                    help="which composer the document is for: LV012 is a warning for grpc "
+                         "(NI's converter creates the missing tunnels) and an error for pylabview "
+                         "(its composer refuses the document)")
     args = ap.parse_args(argv)
+
+    global BOUNDARY_SEVERITY
+    if args.backend == "pylabview":
+        BOUNDARY_SEVERITY = "error"
 
     results, worst = [], 2
     for path in args.files:

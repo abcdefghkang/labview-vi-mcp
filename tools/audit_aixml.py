@@ -107,7 +107,12 @@ def summarise(results):
 
 
 def main(argv):
-    ap = argparse.ArgumentParser()
+    # allow_abbrev=False is NOT cosmetic: `--json` used to abbreviate to
+    # `--json-out`, so `audit_aixml.py --json <file>` swallowed the FIRST PATH as
+    # the report's destination and OVERWROTE that AIXML with 2,889 lines of JSON.
+    # Measured 2026-10-23 on research/artifacts/round10/lv009-probe.aixml.xml;
+    # recovered from git, and the trap is closed here.
+    ap = argparse.ArgumentParser(allow_abbrev=False)
     ap.add_argument("paths", nargs="+", help="files, directories or globs")
     ap.add_argument("--markdown", action="store_true", help="report as markdown tables")
     ap.add_argument("--out", help="write the report to this file")
@@ -128,6 +133,11 @@ def main(argv):
     if not files:
         print("no XML files found", file=sys.stderr)
         return 2
+    # A report written ON TOP of an input is always a mistake, never an intent.
+    for dest in (args.out, args.json_out):
+        if dest and os.path.abspath(dest) in {os.path.abspath(f) for f in files}:
+            print(f"refusing to overwrite input document '{dest}' with a report", file=sys.stderr)
+            return 2
 
     results = audit(files)
     sev, by_code = summarise(results)

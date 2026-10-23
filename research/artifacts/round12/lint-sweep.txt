@@ -1,0 +1,382 @@
+research/artifacts/round11/lv010-fixture.aixml.xml  [1E/0W]
+   ERRO lv010-constant-description   uid=4700   Constant 'K'
+research/artifacts/round11/p10-final.aixml.xml  [0E/1W]
+   WARN timestamp-value-discarded    uid=4201   Constant 'Stamp'
+research/artifacts/round11/p10-timestamp-probe.aixml.xml  [1E/1W]
+   ERRO lv011-numeric-empty-value    uid=4206   Indicator 'Num Out'
+   WARN timestamp-value-discarded    uid=4201   Constant 'Stamp'
+research/artifacts/round11/p10-variant-a.xml  [1E/1W]
+   ERRO lv011-numeric-empty-value    uid=4206   Indicator 'Num Out'
+   WARN timestamp-value-discarded    uid=4201   Constant 'Stamp'
+research/artifacts/round11/p10-variant-b.xml  [0E/1W]
+   WARN timestamp-value-discarded    uid=4201   Constant 'Stamp'
+research/artifacts/round11/p10-variant-c-recommended.aixml.xml  [0E/1W]
+   WARN timestamp-value-discarded    uid=4201   Constant 'Stamp'
+research/artifacts/round12/p5-valuechange-timeout-frames-v2.aixml.xml  [1E/5W]
+   ERRO lv013-event-timeout-unwireable uid=4320   Structure 'Event Structure'
+   WARN comment-may-be-clipped       uid=4200   FreeLabel
+   WARN net-unconsumed               uid=4201   Control 'Go'
+   WARN net-unconsumed               uid=4202   Control 'Stop'
+   WARN net-unconsumed               uid=4321   Tunnel 'In1'
+   WARN net-unconsumed               uid=4355   Control 'Go'
+research/artifacts/round3/clamp-demo.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round3/clamp-value.aixml.xml  [5E/1W]
+   ERRO lv005-while-without-condition uid=20     Structure 'Case Structure'
+   ERRO lv005-while-without-condition uid=30     Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=22     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=32     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=34     Tunnel 'Out1'
+   WARN uid-low                      uid=10     19 element(s), first Control 'x'
+research/artifacts/round3/saturating-accumulator-v2.aixml.xml  [5E/1W]
+   ERRO lv005-while-without-condition uid=260    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=262    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=263    Tunnel 'Out2'
+   ERRO lv012-net-crosses-boundary   uid=265    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=266    Tunnel 'Out2'
+   WARN uid-low                      uid=100    42 element(s), first Control 'Start Value'
+research/artifacts/round3/saturating-accumulator.aixml.xml  [8E/1W]
+   ERRO lv003-sr-seed-inside-loop    uid=230    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=233    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=236    ShiftReg
+   ERRO lv005-while-without-condition uid=260    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=262    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=263    Tunnel 'Out2'
+   ERRO lv012-net-crosses-boundary   uid=265    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=266    Tunnel 'Out2'
+   WARN uid-low                      uid=100    43 element(s), first Control 'Start Value'
+research/artifacts/round3/variant-a-nocase.aixml.xml  [3E/2W]
+   ERRO lv003-sr-seed-inside-loop    uid=230    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=233    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=236    ShiftReg
+   WARN net-unconsumed               uid=102    Control 'Limit'
+   WARN uid-low                      uid=100    30 element(s), first Control 'Start Value'
+research/artifacts/round3/variant-b-noindex.aixml.xml  [8E/1W]
+   ERRO lv003-sr-seed-inside-loop    uid=230    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=233    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=236    ShiftReg
+   ERRO lv005-while-without-condition uid=260    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=262    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=263    Tunnel 'Out2'
+   ERRO lv012-net-crosses-boundary   uid=265    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=266    Tunnel 'Out2'
+   WARN uid-low                      uid=100    41 element(s), first Control 'Start Value'
+research/artifacts/round3/variant-c-panelstop.aixml.xml  [8E/3W]
+   ERRO lv003-sr-seed-inside-loop    uid=230    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=233    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=236    ShiftReg
+   ERRO lv005-while-without-condition uid=260    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=262    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=263    Tunnel 'Out2'
+   ERRO lv012-net-crosses-boundary   uid=265    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=266    Tunnel 'Out2'
+   WARN comment-may-be-clipped       uid=1000   FreeLabel
+   WARN net-unconsumed               uid=254    Node 'Greater Or Equal?'
+   WARN uid-low                      uid=100    45 element(s), first Control 'Start Value'
+research/artifacts/round3/variant-d-rootseds.aixml.xml  [1E/1W]
+   ERRO lv012-net-crosses-boundary   uid=253    Node 'Add'
+   WARN uid-low                      uid=100    28 element(s), first Control 'Start Value'
+research/artifacts/round3/variant-e-mixedseeds.aixml.xml  [2E/1W]
+   ERRO lv003-sr-seed-inside-loop    uid=233    ShiftReg
+   ERRO lv003-sr-seed-inside-loop    uid=236    ShiftReg
+   WARN uid-low                      uid=100    28 element(s), first Control 'Start Value'
+research/artifacts/round4/batch-averager-empty-exported.aixml.xml  [1E/1W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   WARN uid-low                      uid=100    221 element(s), first Control 'Initial State'
+research/artifacts/round4/batch-averager-empty.aixml.xml  [29E/2W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=315    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=317    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=318    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=319    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=336    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=338    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=339    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=342    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=352    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=352    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=353    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=354    Node 'Less?'
+   ERRO lv012-net-crosses-boundary   uid=361    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=365    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=367    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=376    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=378    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=379    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=380    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=406    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=408    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=409    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=410    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=412    Tunnel 'Out7'
+   WARN net-unconsumed               uid=244    Right
+   WARN uid-low                      uid=100    110 element(s), first Control 'Initial State'
+research/artifacts/round4/batch-averager-exported.aixml.xml  [1E/1W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   WARN uid-low                      uid=100    221 element(s), first Control 'Initial State'
+research/artifacts/round4/batch-averager.aixml.xml  [29E/2W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=315    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=317    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=318    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=319    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=336    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=338    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=339    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=342    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=352    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=352    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=353    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=354    Node 'Less?'
+   ERRO lv012-net-crosses-boundary   uid=361    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=365    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=367    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=376    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=378    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=379    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=380    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=406    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=408    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=409    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=410    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=412    Tunnel 'Out7'
+   WARN net-unconsumed               uid=244    Right
+   WARN uid-low                      uid=100    110 element(s), first Control 'Initial State'
+research/artifacts/round4/probe-frame-sr-read.aixml.xml  [5E/2W]
+   ERRO lv005-while-without-condition uid=260    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=253    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=262    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=265    Tunnel 'Out1'
+   ERRO net-unproduced               uid=260    Structure 'Case Structure'
+   WARN net-unconsumed               uid=102    Control 'Mode'
+   WARN uid-low                      uid=100    30 element(s), first Control 'Start'
+research/artifacts/round4/probe-string-case.aixml.xml  [4E/1W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=311    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=321    Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=331    Tunnel 'Out1'
+   WARN uid-low                      uid=100    13 element(s), first Control 'Sel'
+research/artifacts/round4/ref-state-machine-fundamentals.aixml.xml  [1E/5W]
+   ERRO lv005-while-without-condition uid=202    Structure 'Case Structure'
+   WARN comment-may-be-clipped       uid=1123   FreeLabel
+   WARN comment-may-be-clipped       uid=1484   FreeLabel
+   WARN comment-may-be-clipped       uid=1856   FreeLabel
+   WARN comment-may-be-clipped       uid=513    FreeLabel
+   WARN uid-low                      uid=61     69 element(s), first Control '运行状态1'
+research/artifacts/round5/batch-averager-scaled.aixml.xml  [30E/2W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=315    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=317    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=318    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=319    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=331    Node 'Index Array'
+   ERRO lv012-net-crosses-boundary   uid=336    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=338    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=339    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=342    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=610    Node 'Multiply'
+   ERRO lv012-net-crosses-boundary   uid=610    Node 'Multiply'
+   ERRO lv012-net-crosses-boundary   uid=352    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=353    Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=354    Node 'Less?'
+   ERRO lv012-net-crosses-boundary   uid=361    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=365    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=367    Tunnel 'Out7'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=371    Node 'Divide'
+   ERRO lv012-net-crosses-boundary   uid=376    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=378    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=379    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=380    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=406    Node 'Concatenate Strings'
+   ERRO lv012-net-crosses-boundary   uid=408    Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=409    Tunnel 'Out4'
+   ERRO lv012-net-crosses-boundary   uid=410    Tunnel 'Out5'
+   ERRO lv012-net-crosses-boundary   uid=412    Tunnel 'Out7'
+   WARN net-unconsumed               uid=244    Right
+   WARN uid-low                      uid=100    112 element(s), first Control 'Initial State'
+research/artifacts/round5/clamp-demo.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round5/clamp-value.aixml.xml  [5E/1W]
+   ERRO lv005-while-without-condition uid=20     Structure 'Case Structure'
+   ERRO lv005-while-without-condition uid=30     Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=22     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=32     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=34     Tunnel 'Out1'
+   WARN uid-low                      uid=10     19 element(s), first Control 'x'
+research/artifacts/round5/deep-export.aixml.xml  [1E/1W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   WARN uid-low                      uid=100    221 element(s), first Control 'Initial State'
+research/artifacts/round5/scaled-export.aixml.xml  [1E/1W]
+   ERRO lv005-while-without-condition uid=300    Structure 'Case Structure'
+   WARN uid-low                      uid=100    230 element(s), first Control 'Initial State'
+research/artifacts/round6/node-probe/array-extra.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=108    12 element(s), first Constant 'C 99'
+research/artifacts/round6/node-probe/array-ops.aixml.xml  [0E/4W]
+   WARN net-unconsumed               uid=104    Constant 'C 10'
+   WARN net-unconsumed               uid=105    Constant 'C 20'
+   WARN net-unconsumed               uid=106    Constant 'C 30'
+   WARN uid-low                      uid=101    36 element(s), first Constant 'C 1'
+research/artifacts/round6/node-probe/bundle-empty.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=101    6 element(s), first Constant 'C 1'
+research/artifacts/round6/node-probe/bundle-only.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=101    5 element(s), first Constant 'C 1'
+research/artifacts/round6/node-probe/bundle-typed-base.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=101    6 element(s), first Constant 'C 1'
+research/artifacts/round6/node-probe/cluster-literal.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=130    2 element(s), first Constant 'Named Cluster'
+research/artifacts/round6/node-probe/cluster-ops.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=101    17 element(s), first Constant 'C 1'
+research/artifacts/round6/retarget-evidence/caller-n.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round6/retarget-evidence/caller-p2.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round6/retarget-evidence/caller-z.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round6/retarget-evidence/export-callerF.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round6/retarget-evidence/export-swapped.xml  [0E/1W]
+   WARN uid-low                      uid=100    37 element(s), first Control 'Start Value'
+research/artifacts/round6/retarget-evidence/kappa.aixml.xml  [5E/1W]
+   ERRO lv005-while-without-condition uid=20     Structure 'Case Structure'
+   ERRO lv005-while-without-condition uid=30     Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=22     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=32     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=34     Tunnel 'Out1'
+   WARN uid-low                      uid=10     19 element(s), first Control 'x'
+research/artifacts/round6/retarget-evidence/zeta.aixml.xml  [5E/1W]
+   ERRO lv005-while-without-condition uid=20     Structure 'Case Structure'
+   ERRO lv005-while-without-condition uid=30     Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=22     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=32     Tunnel 'Out1'
+   ERRO lv012-net-crosses-boundary   uid=34     Tunnel 'Out1'
+   WARN uid-low                      uid=10     19 element(s), first Control 'x'
+research/artifacts/round6/state-machine/heartbeat.aixml.xml  [2E/1W]
+   ERRO lv012-net-crosses-boundary   uid=1001   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1008   Node 'Add'
+   WARN uid-low                      uid=100    30 element(s), first Control 'Max Cycles'
+research/artifacts/round6/state-machine/traffic-light.aixml.xml  [16E/1W]
+   ERRO lv005-while-without-condition uid=202    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=1001   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1001   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1005   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=5003   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=1011   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1011   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1015   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=5007   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=1021   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1021   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1025   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=1028   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1028   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1029   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=1030   Node 'Greater Or Equal?'
+   WARN uid-low                      uid=100    58 element(s), first Control 'Max Cycles'
+research/artifacts/round6/state-machine/washing-machine.aixml.xml  [20E/1W]
+   ERRO lv005-while-without-condition uid=202    Structure 'Case Structure'
+   ERRO lv012-net-crosses-boundary   uid=1001   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1001   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1005   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=5003   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=1011   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1011   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1015   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=5007   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=1021   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1021   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1025   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=5011   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=1031   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1031   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1035   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=1038   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1038   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=1039   Node 'Select'
+   ERRO lv012-net-crosses-boundary   uid=1040   Node 'Greater Or Equal?'
+   WARN uid-low                      uid=100    67 element(s), first Control 'Max Cycles'
+research/artifacts/round7/bind-helper/bind-helper-instr-v1.aixml.xml  [1E/6W]
+   ERRO lv005-while-without-condition uid=4270   Structure 'Case Structure'
+   WARN net-unconsumed               uid=4150   Node 'Property Node'
+   WARN net-unconsumed               uid=4401   Node 'Property Node'
+   WARN net-unconsumed               uid=4425   Node 'Property Node'
+   WARN net-unconsumed               uid=4455   Node 'Property Node'
+   WARN net-unconsumed               uid=4485   Node 'Property Node'
+   WARN uid-low                      uid=4150   5 element(s), first Node 'Property Node'
+research/artifacts/round7/bind-helper/bind-helper-instr-v2.aixml.xml  [1E/8W]
+   ERRO lv005-while-without-condition uid=4270   Structure 'Case Structure'
+   WARN net-unconsumed               uid=4150   Node 'Property Node'
+   WARN net-unconsumed               uid=4245   Node 'Property Node'
+   WARN net-unconsumed               uid=4401   Node 'Property Node'
+   WARN net-unconsumed               uid=4410   Node 'Property Node'
+   WARN net-unconsumed               uid=4425   Node 'Property Node'
+   WARN net-unconsumed               uid=4455   Node 'Property Node'
+   WARN net-unconsumed               uid=4485   Node 'Property Node'
+   WARN uid-low                      uid=4150   7 element(s), first Node 'Property Node'
+research/artifacts/round7/fixtures/Configure.aixml.xml  [1E/3W]
+   ERRO conn-required-output         uid=101    Indicator 'obj out'
+   WARN net-unconsumed               uid=102    Control 'Setpoint'
+   WARN net-unconsumed               uid=103    Control 'Unit'
+   WARN uid-low                      uid=100    4 element(s), first Control 'obj in'
+research/artifacts/round7/fixtures/Monitor.aixml.xml  [1E/3W]
+   ERRO conn-required-output         uid=101    Indicator 'obj out'
+   WARN net-unconsumed               uid=102    Control 'Setpoint'
+   WARN net-unconsumed               uid=103    Control 'Unit'
+   WARN uid-low                      uid=100    4 element(s), first Control 'obj in'
+research/artifacts/round7/fixtures/Race1.aixml.xml  [1E/3W]
+   ERRO conn-required-output         uid=101    Indicator 'obj out'
+   WARN net-unconsumed               uid=102    Control 'Setpoint'
+   WARN net-unconsumed               uid=103    Control 'Unit'
+   WARN uid-low                      uid=100    4 element(s), first Control 'obj in'
+research/artifacts/round7/fixtures/Race2.aixml.xml  [1E/3W]
+   ERRO conn-required-output         uid=101    Indicator 'obj out'
+   WARN net-unconsumed               uid=102    Control 'Setpoint'
+   WARN net-unconsumed               uid=103    Control 'Unit'
+   WARN uid-low                      uid=100    4 element(s), first Control 'obj in'
+research/artifacts/round7/fixtures/Tune.aixml.xml  [1E/3W]
+   ERRO conn-required-output         uid=101    Indicator 'obj out'
+   WARN net-unconsumed               uid=102    Control 'Setpoint'
+   WARN net-unconsumed               uid=103    Control 'Unit'
+   WARN uid-low                      uid=100    4 element(s), first Control 'obj in'
+research/artifacts/round7/next-probes/p3-cluster-payload.aixml.xml  [0E/1W]
+   WARN comment-may-be-clipped       uid=4200   FreeLabel
+research/artifacts/round7/next-probes/p4-two-events-one-registration.aixml.xml  [1E/5W]
+   ERRO net-typo                     uid=4283   Tunnel 'Out1'
+   WARN comment-may-be-clipped       uid=4200   FreeLabel
+   WARN comment-may-be-clipped       uid=4269   FreeLabel
+   WARN comment-may-be-clipped       uid=4279   FreeLabel
+   WARN net-unconsumed               uid=4204   Constant 'False'
+   WARN net-unconsumed               uid=4210   Node 'Create User Event'
+research/artifacts/round7/next-probes/p5-valuechange-timeout-frames.aixml.xml  [6E/5W]
+   ERRO lv012-net-crosses-boundary   uid=4321   Tunnel 'In1'
+   ERRO lv012-net-crosses-boundary   uid=4357   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=4363   Tunnel 'Out3'
+   ERRO lv012-net-crosses-boundary   uid=4376   Node 'Add'
+   ERRO lv012-net-crosses-boundary   uid=4380   Tunnel 'Out3'
+   ERRO lv013-event-timeout-unwireable uid=4320   Structure 'Event Structure'
+   WARN comment-may-be-clipped       uid=4200   FreeLabel
+   WARN net-unconsumed               uid=4201   Control 'Go'
+   WARN net-unconsumed               uid=4202   Control 'Stop'
+   WARN net-unconsumed               uid=4321   Tunnel 'In1'
+   WARN net-unconsumed               uid=4355   Control 'Go'
+research/examples/01-create-vi/temperature-monitor.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    9 element(s), first Control 'Temperature'
+research/examples/02-aixml-snippet/measured-scaled-value.aixml.xml  [0E/3W]
+   WARN lv006-call-target-is-path    uid=4210   Call
+   WARN lv006-call-target-is-path    uid=4220   Call
+   WARN uid-low                      uid=126    2 element(s), first Indicator 'Sensor out'
+research/examples/02-aixml-snippet/temperature-monitor.aixml.xml  [0E/1W]
+   WARN uid-low                      uid=100    9 element(s), first Control 'Temperature'
+
+63 AIXML document(s), 58 with findings: 213 error(s), 107 warning(s), 0 info; 13 non-AIXML file(s) skipped (RSRC/FPHb dumps); 6 known false positive(s) suppressed (cond="true"/"false")
+by code: lv012-net-crosses-boundary=161, uid-low=48, net-unconsumed=41, lv005-while-without-condition=26, lv003-sr-seed-inside-loop=14, comment-may-be-clipped=11, timestamp-value-discarded=5, conn-required-output=5, lv011-numeric-empty-value=2, lv013-event-timeout-unwireable=2, lv006-call-target-is-path=2, lv010-constant-description=1, net-unproduced=1, net-typo=1json written to research/artifacts/round12/lint-sweep.json
+

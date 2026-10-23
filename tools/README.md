@@ -67,7 +67,7 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 
 ---
 
-## `lvrule_check.py` 的 10 条，每条来自一轮实测
+## `lvrule_check.py` 的 12 条，每条来自一轮实测
 
 | 规则 | 断言 | 来源 |
 |---|---|---|
@@ -81,6 +81,8 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 | `lv009-error-terminal-required` / `lv009-error-out-optional` | **上游两条规则看不到的** error 端子写法 | Round 9（本机抓到）+ Round 10（补上游空白） |
 | `lv010-constant-description` | `<Constant>` 上不允许 `description` | Round 11 **真机**：Error **-2628**，解析期整篇拒收（`Control`/`Indicator` 才有这个属性） |
 | `lv011-numeric-empty-value` | 数值端子的 `value` 不能是空串 | Round 11 **真机**：Error 53 "Unrecognized or unsupported attribute set" —— 报错不说 value，A/B 才查出是空串而非 `connection` |
+| `lv012-net-crosses-boundary` | 线不能隐式穿过结构边界：外层结构要外半截隧道，每帧要内半截，按 `_id` 对齐 | Round 12 **真机**：原件 0E/5W 过闸，composer 连拒两次（`net '4203.ms'`、`net '4205.one'`）。**级别按后端**：目标 grpc 时是 warning（NI 转换器自动补隧道，实测 43→154），目标 pylabview 时是 error（直接退件）。`--backend pylabview` 或 `LVRULE_BACKEND=pylabview` |
+| `lv013-event-timeout-unwireable` | 带 ` Timeout ` 帧的 Event Structure 一律报 | Round 12 **真机**：AIXML 没有 `eventTimeOut` 端子的写法，写 `<Tunnel>` 得到普通隧道；运行 2.2 s / 超时 500 ms → `Timeouts=0`，零报错。帧与事件注册本身是好的（3 个 EventSpec 全对） |
 
 **LV009 的范围是刻意窄的**，因为上游已经管了一部分：`conn-required-output` 管任何 Indicator 的
 `required`，`conn-error-in-not-recommended` 管带 `conIdx` 的 `error in`。LV009 只补两处空白 ——
@@ -93,6 +95,16 @@ case 隧道完整性（`case-frame-missing-out-tunnel` / `-orphan-tunnel`）、�
 验证锚点：Round 3 的 `saturating-accumulator.aixml.xml`（修复前）报 3 条 `lv003`，
 它的 `-v2`（修复后）与 `variant-d-rootseds`（根级种子）**0 条**。
 这不是调出来的参数，是那轮五分支实验的原始数据。
+
+LV012 的锚点是同一份文件的**修复前后**：`research/artifacts/round7/next-probes/p5-valuechange-timeout-frames.aixml.xml`
+（6 error：5×LV012 + 1×LV013）对 `round12/p5-valuechange-timeout-frames-v2.aixml.xml`
+（1 error：只剩 LV013）。两版之间 composer 的判定从两次拒件变成 `execState 1`，
+所以这一对可以当回归用：**改动闸门后先看它俩是否还是 6 / 1**。
+
+顺带记一次闸门自身的教训：Round 12 里一次 `Edit` 把 `# LV005 - While Loop stop.` 与下一行 `if`
+拼成了同一行，`if` 落进注释，LV005 从此对**每个 `Structure`** 生效（全库冒出 26 条，
+把 `Case Structure` 报成"While Loop 没有 Condition"）。修好后 grpc 口径回到 26E/269W。
+**闸门改动必须用已知红/已知绿两份文件回归**，只看新文件报什么是不够的。
 
 ---
 

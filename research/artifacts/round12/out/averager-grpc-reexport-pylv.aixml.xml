@@ -1,0 +1,235 @@
+<VI _name="_probe-averager-grpc.vi" description="Classic LabVIEW state machine in the NI canonical form (as exported from examples/Design Patterns/State Machine/State Machine Fundamentals.vi): an inline enum type uint16{Init,Load,Accumulate,Report,Stop} carries the state through a shift register; a Case Structure inside a While loop selects the frame by that state; each frame computes the next state (a constant, or a Select between two state constants when the transition is conditional) and writes every data register through a per-frame case Out tunnel, which is the per-state multiplexer for the register value. The Stop frame is the only one that raises the stop flag through a conditional (cond=true) tunnel wired straight to the loop condition. States: Init resets the registers; Load takes the next item from Items; Accumulate adds it to the sum, advances the index and branches back to Load or on to Report by comparing the index against the item count; Report divides sum by count into the average; Stop ends the loop. Every visited state is appended to a transition Log string register. Initial State accepts any state item so the machine can start mid-sequence.">
+  <Control _name="Initial State" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="100" uid_parent="root" value="0" outputs="value:100.value" />
+  <Control _name="Items" type="array{double}" uid="101" uid_parent="root" value="[1.5,2.5,3.5,4.5]" outputs="value:101.value" />
+  <Constant _name="Zero" type="int32" uid="220" uid_parent="root" value="0" outputs="value:220.value" />
+  <Constant _name="ZeroD" type="double" uid="221" uid_parent="root" value="0" outputs="value:221.value" />
+  <Constant _name="EmptyLog" type="string" uid="222" uid_parent="root" value="" outputs="value:222.value" />
+  <Indicator _name="Final State" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="500" uid_parent="root" value="0" inputs="value:232.value" />
+  <Indicator _name="Sum" type="double" uid="501" uid_parent="root" value="0" inputs="value:238.value" />
+  <Indicator _name="Items Processed" type="int32" uid="502" uid_parent="root" value="0" inputs="value:241.value" />
+  <Indicator _name="Average" type="double" uid="503" uid_parent="root" value="0" inputs="value:252.value" />
+  <Indicator _name="Log" type="string" uid="504" uid_parent="root" value="" inputs="value:247.value" />
+  <Structure _name="While Loop" uid="200" uid_parent="root" count="">
+    <Node _name="Array Size" uid="250" uid_parent="200" outputs="size(s):250.size(s)" inputs="array:211.value" />
+    <Structure _name="Case Structure" uid="300" uid_parent="200" selectin="231.value">
+      <Tunnel _id="In1" uid="1318" uid_parent="300" inputs="value:246.value" />
+      <Tunnel _id="In2" uid="1340" uid_parent="300" inputs="value:1329.value" />
+      <Tunnel _id="In3" uid="1357" uid_parent="300" inputs="value:1346.value" />
+      <Tunnel _id="In4" uid="1374" uid_parent="300" inputs="value:1363.value" />
+      <Tunnel _id="In5" uid="1407" uid_parent="300" inputs="value:211.value" />
+      <Tunnel _id="In6" uid="1421" uid_parent="300" inputs="value:240.value" />
+      <Tunnel _id="In7" uid="1474" uid_parent="300" inputs="value:246.value" />
+      <Tunnel _id="In8" uid="1547" uid_parent="300" inputs="value:237.value" />
+      <Tunnel _id="In9" uid="1561" uid_parent="300" inputs="value:243.value" />
+      <Tunnel _id="In10" uid="1612" uid_parent="300" inputs="value:250.size(s)" />
+      <Tunnel _id="In11" uid="1698" uid_parent="300" inputs="value:246.value" />
+      <Tunnel _id="In12" uid="1745" uid_parent="300" inputs="value:237.value" />
+      <Tunnel _id="In13" uid="1756" uid_parent="300" inputs="value:240.value" />
+      <Tunnel _id="In14" uid="1899" uid_parent="300" inputs="value:246.value" />
+      <Tunnel _id="In15" uid="1914" uid_parent="300" inputs="value:237.value" />
+      <Tunnel _id="In16" uid="1924" uid_parent="300" inputs="value:240.value" />
+      <Tunnel _id="In17" uid="1934" uid_parent="300" inputs="value:243.value" />
+      <Tunnel _id="In18" uid="1944" uid_parent="300" inputs="value:249.value" />
+      <CaseFrame selector="&quot;Init&quot;" uid="310" uid_parent="300" selectout="" label="Init">
+        <Tunnel _id="Out1" uid="312" uid_parent="310" inputs="value:311.value" />
+        <Tunnel _id="Out2" uid="313" uid_parent="310" inputs="value:322.value" />
+        <Tunnel _id="Out3" uid="317" uid_parent="310" inputs="value:1335.value" />
+        <Tunnel _id="Out4" uid="318" uid_parent="310" inputs="value:1352.value" />
+        <Tunnel _id="Out5" uid="319" uid_parent="310" inputs="value:1369.value" />
+        <Tunnel _id="Out6" uid="316" uid_parent="310" inputs="value:315.concatenated string" />
+        <Tunnel _id="Out7" uid="321" uid_parent="310" inputs="value:320.value" />
+        <Tunnel _id="In1" uid="1313" uid_parent="310" outputs="value:1313.value" />
+        <Tunnel _id="In2" uid="1335" uid_parent="310" outputs="value:1335.value" />
+        <Tunnel _id="In3" uid="1352" uid_parent="310" outputs="value:1352.value" />
+        <Tunnel _id="In4" uid="1369" uid_parent="310" outputs="value:1369.value" />
+        <Tunnel _id="In5" uid="1402" uid_parent="310" />
+        <Tunnel _id="In6" uid="1416" uid_parent="310" />
+        <Tunnel _id="In7" uid="1469" uid_parent="310" />
+        <Tunnel _id="In8" uid="1542" uid_parent="310" />
+        <Tunnel _id="In9" uid="1556" uid_parent="310" />
+        <Tunnel _id="In10" uid="1607" uid_parent="310" />
+        <Tunnel _id="In11" uid="1693" uid_parent="310" />
+        <Tunnel _id="In12" uid="1740" uid_parent="310" />
+        <Tunnel _id="In13" uid="1751" uid_parent="310" />
+        <Tunnel _id="In14" uid="1894" uid_parent="310" />
+        <Tunnel _id="In15" uid="1909" uid_parent="310" />
+        <Tunnel _id="In16" uid="1919" uid_parent="310" />
+        <Tunnel _id="In17" uid="1929" uid_parent="310" />
+        <Tunnel _id="In18" uid="1939" uid_parent="310" />
+        <Constant _name="ToLoad" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="311" uid_parent="310" value="1" outputs="value:311.value" />
+        <Constant _name="NoStop" type="bool" uid="322" uid_parent="310" value="false" outputs="value:322.value" />
+        <Constant _name="InitEntry" type="string" uid="314" uid_parent="310" value="Init; " outputs="value:314.value" />
+        <Constant _name="AvgZero" type="double" uid="320" uid_parent="310" value="0" outputs="value:320.value" />
+        <Node _name="Concatenate Strings" uid="315" uid_parent="310" outputs="concatenated string:315.concatenated string" inputs="string:1313.value,string:314.value" />
+      </CaseFrame>
+      <CaseFrame selector="&quot;Load&quot;" uid="330" uid_parent="300" selectout="" label="Load">
+        <Tunnel _id="Out1" uid="333" uid_parent="330" inputs="value:332.value" />
+        <Tunnel _id="Out2" uid="334" uid_parent="330" inputs="value:343.value" />
+        <Tunnel _id="Out3" uid="338" uid_parent="330" inputs="value:1910.value" />
+        <Tunnel _id="Out4" uid="339" uid_parent="330" inputs="value:1920.value" />
+        <Tunnel _id="Out5" uid="340" uid_parent="330" inputs="value:331.element" />
+        <Tunnel _id="Out6" uid="337" uid_parent="330" inputs="value:336.concatenated string" />
+        <Tunnel _id="Out7" uid="342" uid_parent="330" inputs="value:1940.value" />
+        <Tunnel _id="In1" uid="1314" uid_parent="330" />
+        <Tunnel _id="In2" uid="1336" uid_parent="330" />
+        <Tunnel _id="In3" uid="1353" uid_parent="330" />
+        <Tunnel _id="In4" uid="1370" uid_parent="330" />
+        <Tunnel _id="In5" uid="1403" uid_parent="330" outputs="value:1403.value" />
+        <Tunnel _id="In6" uid="1417" uid_parent="330" outputs="value:1417.value" />
+        <Tunnel _id="In7" uid="1470" uid_parent="330" outputs="value:1470.value" />
+        <Tunnel _id="In8" uid="1543" uid_parent="330" />
+        <Tunnel _id="In9" uid="1557" uid_parent="330" />
+        <Tunnel _id="In10" uid="1608" uid_parent="330" />
+        <Tunnel _id="In11" uid="1694" uid_parent="330" />
+        <Tunnel _id="In12" uid="1741" uid_parent="330" />
+        <Tunnel _id="In13" uid="1752" uid_parent="330" />
+        <Tunnel _id="In14" uid="1895" uid_parent="330" />
+        <Tunnel _id="In15" uid="1910" uid_parent="330" outputs="value:1910.value" />
+        <Tunnel _id="In16" uid="1920" uid_parent="330" outputs="value:1920.value" />
+        <Tunnel _id="In17" uid="1930" uid_parent="330" />
+        <Tunnel _id="In18" uid="1940" uid_parent="330" outputs="value:1940.value" />
+        <Constant _name="ToAccumulate" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="332" uid_parent="330" value="2" outputs="value:332.value" />
+        <Constant _name="NoStop" type="bool" uid="343" uid_parent="330" value="false" outputs="value:343.value" />
+        <Constant _name="LoadEntry" type="string" uid="335" uid_parent="330" value="Load; " outputs="value:335.value" />
+        <Node _name="Index Array" uid="331" uid_parent="330" outputs="element:331.element" inputs="array:1403.value,index:1417.value" />
+        <Node _name="Concatenate Strings" uid="336" uid_parent="330" outputs="concatenated string:336.concatenated string" inputs="string:1470.value,string:335.value" />
+      </CaseFrame>
+      <CaseFrame selector="&quot;Accumulate&quot;" uid="350" uid_parent="300" selectout="" label="Accumulate">
+        <Tunnel _id="Out1" uid="358" uid_parent="350" inputs="value:357.s? t\3Af" />
+        <Tunnel _id="Out2" uid="359" uid_parent="350" inputs="value:368.value" />
+        <Tunnel _id="Out3" uid="363" uid_parent="350" inputs="value:352.x+y" />
+        <Tunnel _id="Out4" uid="364" uid_parent="350" inputs="value:353.x+y" />
+        <Tunnel _id="Out5" uid="365" uid_parent="350" inputs="value:1931.value" />
+        <Tunnel _id="Out6" uid="362" uid_parent="350" inputs="value:361.concatenated string" />
+        <Tunnel _id="Out7" uid="367" uid_parent="350" inputs="value:1941.value" />
+        <Tunnel _id="In1" uid="1315" uid_parent="350" />
+        <Tunnel _id="In2" uid="1337" uid_parent="350" />
+        <Tunnel _id="In3" uid="1354" uid_parent="350" />
+        <Tunnel _id="In4" uid="1371" uid_parent="350" />
+        <Tunnel _id="In5" uid="1404" uid_parent="350" />
+        <Tunnel _id="In6" uid="1418" uid_parent="350" />
+        <Tunnel _id="In7" uid="1471" uid_parent="350" />
+        <Tunnel _id="In8" uid="1544" uid_parent="350" outputs="value:1544.value" />
+        <Tunnel _id="In9" uid="1558" uid_parent="350" outputs="value:1558.value" />
+        <Tunnel _id="In10" uid="1609" uid_parent="350" outputs="value:1609.value" />
+        <Tunnel _id="In11" uid="1695" uid_parent="350" outputs="value:1695.value" />
+        <Tunnel _id="In12" uid="1742" uid_parent="350" />
+        <Tunnel _id="In13" uid="1753" uid_parent="350" outputs="value:1753.value" />
+        <Tunnel _id="In14" uid="1896" uid_parent="350" />
+        <Tunnel _id="In15" uid="1911" uid_parent="350" />
+        <Tunnel _id="In16" uid="1921" uid_parent="350" />
+        <Tunnel _id="In17" uid="1931" uid_parent="350" outputs="value:1931.value" />
+        <Tunnel _id="In18" uid="1941" uid_parent="350" outputs="value:1941.value" />
+        <Constant _name="One" type="int32" uid="351" uid_parent="350" value="1" outputs="value:351.value" />
+        <Constant _name="BackToLoad" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="355" uid_parent="350" value="1" outputs="value:355.value" />
+        <Constant _name="ToReport" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="356" uid_parent="350" value="3" outputs="value:356.value" />
+        <Constant _name="NoStop" type="bool" uid="368" uid_parent="350" value="false" outputs="value:368.value" />
+        <Constant _name="AccEntry" type="string" uid="360" uid_parent="350" value="Accumulate; " outputs="value:360.value" />
+        <Node _name="Add" uid="352" uid_parent="350" outputs="x+y:352.x+y" inputs="y:1558.value,x:1544.value" />
+        <Node _name="Add" uid="353" uid_parent="350" outputs="x+y:353.x+y" inputs="y:351.value,x:1753.value" />
+        <Node _name="Less?" uid="354" uid_parent="350" inputs="y:1609.value,x:353.x+y" outputs="x &lt; y?:354.x &lt; y?" />
+        <Node _name="Select" uid="357" uid_parent="350" outputs="s? t\3Af:357.s? t\3Af" inputs="f:356.value,s:354.x &lt; y?,t:355.value" />
+        <Node _name="Concatenate Strings" uid="361" uid_parent="350" outputs="concatenated string:361.concatenated string" inputs="string:1695.value,string:360.value" />
+      </CaseFrame>
+      <CaseFrame selector="&quot;Report&quot;" uid="370" uid_parent="300" selectout="" label="Report">
+        <Tunnel _id="Out1" uid="373" uid_parent="370" inputs="value:372.value" />
+        <Tunnel _id="Out2" uid="374" uid_parent="370" inputs="value:382.value" />
+        <Tunnel _id="Out3" uid="378" uid_parent="370" inputs="value:1912.value" />
+        <Tunnel _id="Out4" uid="379" uid_parent="370" inputs="value:1922.value" />
+        <Tunnel _id="Out5" uid="380" uid_parent="370" inputs="value:1932.value" />
+        <Tunnel _id="Out6" uid="377" uid_parent="370" inputs="value:376.concatenated string" />
+        <Tunnel _id="Out7" uid="381" uid_parent="370" inputs="value:371.x/y" />
+        <Tunnel _id="In1" uid="1316" uid_parent="370" />
+        <Tunnel _id="In2" uid="1338" uid_parent="370" />
+        <Tunnel _id="In3" uid="1355" uid_parent="370" />
+        <Tunnel _id="In4" uid="1372" uid_parent="370" />
+        <Tunnel _id="In5" uid="1405" uid_parent="370" />
+        <Tunnel _id="In6" uid="1419" uid_parent="370" />
+        <Tunnel _id="In7" uid="1472" uid_parent="370" />
+        <Tunnel _id="In8" uid="1545" uid_parent="370" />
+        <Tunnel _id="In9" uid="1559" uid_parent="370" />
+        <Tunnel _id="In10" uid="1610" uid_parent="370" />
+        <Tunnel _id="In11" uid="1696" uid_parent="370" />
+        <Tunnel _id="In12" uid="1743" uid_parent="370" outputs="value:1743.value" />
+        <Tunnel _id="In13" uid="1754" uid_parent="370" outputs="value:1754.value" />
+        <Tunnel _id="In14" uid="1897" uid_parent="370" outputs="value:1897.value" />
+        <Tunnel _id="In15" uid="1912" uid_parent="370" outputs="value:1912.value" />
+        <Tunnel _id="In16" uid="1922" uid_parent="370" outputs="value:1922.value" />
+        <Tunnel _id="In17" uid="1932" uid_parent="370" outputs="value:1932.value" />
+        <Tunnel _id="In18" uid="1942" uid_parent="370" />
+        <Constant _name="ToStop" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="372" uid_parent="370" value="4" outputs="value:372.value" />
+        <Constant _name="NoStop" type="bool" uid="382" uid_parent="370" value="false" outputs="value:382.value" />
+        <Constant _name="ReportEntry" type="string" uid="375" uid_parent="370" value="Report; " outputs="value:375.value" />
+        <Node _name="Divide" uid="371" uid_parent="370" outputs="x/y:371.x/y" inputs="y:1754.value,x:1743.value" />
+        <Node _name="Concatenate Strings" uid="376" uid_parent="370" outputs="concatenated string:376.concatenated string" inputs="string:1897.value,string:375.value" />
+      </CaseFrame>
+      <CaseFrame selector="&quot;Stop&quot;" uid="400" uid_parent="300" selectout="" label="Stop">
+        <Tunnel _id="Out1" uid="402" uid_parent="400" inputs="value:401.value" />
+        <Tunnel _id="Out2" uid="404" uid_parent="400" inputs="value:403.value" />
+        <Tunnel _id="Out3" uid="408" uid_parent="400" inputs="value:1913.value" />
+        <Tunnel _id="Out4" uid="409" uid_parent="400" inputs="value:1923.value" />
+        <Tunnel _id="Out5" uid="410" uid_parent="400" inputs="value:1933.value" />
+        <Tunnel _id="Out6" uid="407" uid_parent="400" inputs="value:406.concatenated string" />
+        <Tunnel _id="Out7" uid="412" uid_parent="400" inputs="value:1943.value" />
+        <Tunnel _id="In1" uid="1317" uid_parent="400" />
+        <Tunnel _id="In2" uid="1339" uid_parent="400" />
+        <Tunnel _id="In3" uid="1356" uid_parent="400" />
+        <Tunnel _id="In4" uid="1373" uid_parent="400" />
+        <Tunnel _id="In5" uid="1406" uid_parent="400" />
+        <Tunnel _id="In6" uid="1420" uid_parent="400" />
+        <Tunnel _id="In7" uid="1473" uid_parent="400" />
+        <Tunnel _id="In8" uid="1546" uid_parent="400" />
+        <Tunnel _id="In9" uid="1560" uid_parent="400" />
+        <Tunnel _id="In10" uid="1611" uid_parent="400" />
+        <Tunnel _id="In11" uid="1697" uid_parent="400" />
+        <Tunnel _id="In12" uid="1744" uid_parent="400" />
+        <Tunnel _id="In13" uid="1755" uid_parent="400" />
+        <Tunnel _id="In14" uid="1898" uid_parent="400" outputs="value:1898.value" />
+        <Tunnel _id="In15" uid="1913" uid_parent="400" outputs="value:1913.value" />
+        <Tunnel _id="In16" uid="1923" uid_parent="400" outputs="value:1923.value" />
+        <Tunnel _id="In17" uid="1933" uid_parent="400" outputs="value:1933.value" />
+        <Tunnel _id="In18" uid="1943" uid_parent="400" outputs="value:1943.value" />
+        <Constant _name="StayStopped" type="uint16{Init,Load,Accumulate,Report,Stop}" uid="401" uid_parent="400" value="4" outputs="value:401.value" />
+        <Constant _name="StopLoop" type="bool" uid="403" uid_parent="400" value="true" outputs="value:403.value" />
+        <Constant _name="StopEntry" type="string" uid="405" uid_parent="400" value="Stop; " outputs="value:405.value" />
+        <Node _name="Concatenate Strings" uid="406" uid_parent="400" outputs="concatenated string:406.concatenated string" inputs="string:1898.value,string:405.value" />
+      </CaseFrame>
+      <Tunnel _id="Out1" uid="301" uid_parent="300" outputs="value:301.value" />
+      <Tunnel _id="Out2" uid="302" uid_parent="300" outputs="value:302.value" />
+      <Tunnel _id="Out3" uid="303" uid_parent="300" outputs="value:303.value" />
+      <Tunnel _id="Out4" uid="304" uid_parent="300" outputs="value:304.value" />
+      <Tunnel _id="Out5" uid="305" uid_parent="300" outputs="value:305.value" />
+      <Tunnel _id="Out6" uid="306" uid_parent="300" outputs="value:306.value" />
+      <Tunnel _id="Out7" uid="307" uid_parent="300" outputs="value:307.value" />
+    </Structure>
+    <Tunnel _id="In1" uid="211" uid_parent="200" inputs="value:101.value" outputs="value:211.value" />
+    <Tunnel _id="In2" uid="1329" uid_parent="200" inputs="value:221.value" outputs="value:1329.value" />
+    <Tunnel _id="In3" uid="1346" uid_parent="200" inputs="value:220.value" outputs="value:1346.value" />
+    <Tunnel _id="In4" uid="1363" uid_parent="200" inputs="value:221.value" outputs="value:1363.value" />
+    <ShiftReg uid="230" uid_parent="200">
+      <Left uid="231" uid_parent="230" inputs="value:100.value" outputs="value:231.value" />
+      <Right uid="232" uid_parent="230" outputs="value:232.value" inputs="value:301.value" />
+    </ShiftReg>
+    <ShiftReg uid="236" uid_parent="200">
+      <Left uid="237" uid_parent="236" inputs="value:221.value" outputs="value:237.value" />
+      <Right uid="238" uid_parent="236" outputs="value:238.value" inputs="value:303.value" />
+    </ShiftReg>
+    <ShiftReg uid="239" uid_parent="200">
+      <Left uid="240" uid_parent="239" inputs="value:220.value" outputs="value:240.value" />
+      <Right uid="241" uid_parent="239" outputs="value:241.value" inputs="value:304.value" />
+    </ShiftReg>
+    <ShiftReg uid="242" uid_parent="200">
+      <Left uid="243" uid_parent="242" inputs="value:221.value" outputs="value:243.value" />
+      <Right uid="244" uid_parent="242" inputs="value:305.value" />
+    </ShiftReg>
+    <ShiftReg uid="245" uid_parent="200">
+      <Left uid="246" uid_parent="245" inputs="value:222.value" outputs="value:246.value" />
+      <Right uid="247" uid_parent="245" outputs="value:247.value" inputs="value:306.value" />
+    </ShiftReg>
+    <ShiftReg uid="248" uid_parent="200">
+      <Left uid="249" uid_parent="248" inputs="value:221.value" outputs="value:249.value" />
+      <Right uid="252" uid_parent="248" outputs="value:252.value" inputs="value:307.value" />
+    </ShiftReg>
+    <Condition uid="201" uid_parent="200" value="stop" inputs="value:302.value" />
+  </Structure>
+</VI>

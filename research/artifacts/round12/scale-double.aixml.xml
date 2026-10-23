@@ -1,0 +1,6 @@
+<VI _name="Scale Double.vi" description="Round-12 test-layer subject: y = x * factor. Two doubles in, one out, nothing else - the smallest VI that a generated Caraya test can drive, so what the round measures is the test toolchain and not the subject.">
+  <Control _name="x" connection="recommended" outputs="value:4200.value" type="double" uid="4200" uid_parent="root" value="0"/>
+  <Control _name="factor" connection="recommended" outputs="value:4201.value" type="double" uid="4201" uid_parent="root" value="0"/>
+  <Indicator _name="y" connection="recommended" inputs="value:4210.out" type="double" uid="4210" uid_parent="root" value="0"/>
+  <Node _name="Multiply" inputs="x:4200.value,y:4201.value" outputs="x*y:4210.out" uid="4211" uid_parent="root"/>
+</VI>
