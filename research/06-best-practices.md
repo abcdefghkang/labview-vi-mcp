@@ -1035,11 +1035,74 @@ URL 基准是本轮确认的：`/C/Users/...` 是绝对路径；`../lib/X` 相�
 
 ---
 
-## 17. 快速参考：一页纸
+## 17. Round15 增补：2018 工位、一条被推翻的版本警告、与派发绑定的边界
+
+Round15 是在一台**只跑 LabVIEW 2018（32 位）**的工位上做的（用户当日 10:00 启动；2026 仍装着但没开）。
+gRPC 服务随 Nigel 启动，2018 没有 Nigel——两次 `lvai_ensure_labview` 都停在 `starting`，
+44 个候选端口全灭。**但整条管线在 pylabview 路线上照常工作**，并且推翻了服务器自己的一条警告。
+
+### 17.1 版本警告是错的（本机实测）
+
+`convert(backend:"pylabview")` 每次都附：
+
+> "LabVIEW 2018 is in use and the composer writes files for LabVIEW 2020 and later only, so this VI
+> carries the LabVIEW 2026 stamp, which LabVIEW 2018 refuses (Error 1125)."
+
+文件头里确实有 2026 戳（`LBVW` 内 `26 00 80 00`）。**实测：2018 通过 ActiveX 打开并运行了这些
+VI** —— `y=x*factor` 探针 x=6/factor=7 → **42.00000000000000**，负对照（乱给控制名）被拒并列出
+面板真实端子。该警告出自静态版本比较，没有在本机测量。**在任何 <2026 工位上，忽略 versionWarning，
+直接 compose + ActiveX 跑。**（边界：以上是 VI Server 自动化通道；IDE 手动 File>Open 未测。）
+
+### 17.2 一台 2018 工位拥有什么
+
+convert / generate_vi / exec_state / run_vi_and_read_values / swap_subvis(含 constantsJson) /
+add_class_method / convert_vi_to_aixml **全部可用**（backend 显式 `pylabview`）；`open_file`
+只能开项目不能开 VI；一切 grpc 工具不可用。composer 对同一份 AIXML 的产物字节数与 grpc 路线一致
+（4447 B 对 4447 B）。**"运行验证"从此不依赖 2026 在场。**
+
+### 17.3 类调用方的标准配方（2018 上端到端验证）
+
+1. 类方法：path 替身 AIXML（obj in/out 用 `type="path"`）→ `generate_vi(backend:pylabview)`
+   → `add_class_method(lvclassPath, methodsJson:[{vi, classTerminals, dispatchTerminals}],
+   projectPath, backend:pylabview)`；覆盖用 `{"terminal":"obj in","class":"...\\Child.lvclass"}`。
+2. 调用方：AIXML 里放 **path 常量**喂 Call 的类端子 → `generate_vi`（**预期
+   `failedAtStep:"convert"` / `execState 0`**，这是文档预言的中间态）→
+   `swap_subvis(constantsJson:[{label, class}], backend:pylabview)` → `run`。
+3. 导出里常量现形为 `type="ref{UDClassInst}"`；reader 不解码其值（类身份在读侧是盲的）。
+
+### 17.4 重定界规则：常量喂进来的动态调用，编辑期就绑死了
+
+> 类常量换入动态派发调用的上游 → LabVIEW 把该调用重链到常量所属类的最派生实现——
+> **沿数据流溯源、穿越成员边界、与声明线类型无关**。
+
+三次实测：① 直接喂（v1）→ 调用目标变成子类；② 中间过一个动态方法（v2）→ 两个 Call 全重定界，
+连没有覆盖的方法也被改名到子类作用域（指向继承成员）；③ 中间过一个**静态**直通成员
+（v3，`Carrier`，其二进制里只有 `Sensor.lvclass`、obj out 确是 Sensor 类型）→ 静态调用锚住不动，
+但下游动态调用**照样**重定界。把节点 `swapsJson` 换回父方法也存不住（保存后仍是子类链接）。
+
+**后果（P15 钉死）**：运行时动态派发（父类型线 + 子类型值）在本管线里**观测不到**——类值的唯一
+可 author 来源是常量，而常量喂进来的调用编辑期即绑定；运行期设定父类型窗格端子这条路，
+AIXML 写不出类端子、run 工具也没有类实例字面量。`To More Generic Class` 需要类说明符常量，
+AIXML 无此语法。**记为"表达不出来"**；残路是 IDE 手搭调用方或等上游补语法。
+
+### 17.5 其他
+
+- `generate_vi` 的 repair 步会自动把输出的 `required` 改 `recommended`——AIXML 源要同步改，否则
+  G0 每报一次 `conn-required-output`。
+- 方法源 `obj in=0/tag=1` 会有 1 条窗格 warning（输出落中间列，建议 conIdx 4）；
+  `add_class_method` 把 pane 4833→4815 且 conIdx 不变、调用方无需改。
+- `projectBecomeActive` 每次为 true；本轮没踩前台焦点的坑。
+- 经济学：`add_class_method` 20–50 s、`generate_vi` 带 cleanup 54 s/不带 13 s、compose 0.5–1.5 s、
+  swap 2–5 s、run 5–18 ms、`exec_state` ~2.6 s。**类改动逐个来，批量化提交。**
+- LV016：类限定目标 `X.lvclass\3AY.vi` 的 `\3A` 是转义冒号不是路径——LV006 先剥 `\XX` 转义再判
+  路径性；真路径仍报警（有负对照）。
+
+## 18. 快速参考：一页纸
 
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
+         2018 工位：服务永远起不来 → 全线显式 backend:"pylabview"，忽略 versionWarning（§17.1）
 选型：   settings.json "aixmlBackend": "auto"   （LV<2026 自动切 pylabview）
 查重：   lvai_example_index / lvai_palette_index   （先查 NI 有没有写过）
                                             离线等价：LabVIEWMCP --examples / --palette
@@ -1054,19 +1117,20 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
          否则 Add Class.lvlib / Add Interface.lvlib 全"不在安装目录里"（§16.1）
 建类序：interface(含全部方法) → class(实现它并覆盖) → child → accessors；
          条目被 LabVIEW 保存冲掉时先 lvai_close_active_project 再补（§16.4）
+类调用：path 常量替身 → generate_vi（预期 execState 0）→ swap_subvis constantsJson
+         → 跑；调用目标会随常量类重定界，这是特性（§17.3 / §17.4）
 工程：   python tools/lvproj_audit.py <x.lvproj>    （唯一读 .lvproj 的闸门，§16.6）
 预检：   lvai_check_aixml  [fix:true]               （0.4 ms 离线，抓静默错误）
 校验：   lvai_validate_aixml                        （118 ms，失败不烧名）
 生成：   lvai_generate_vi                           （validate+convert+面板测量）
 布局：   lvai_layout_diagram                        （整图重排，规则见 §11.4）
 回读：   lvai_convert_vi_to_aixml / lvai_describe_vi（结构对不对）
-可执行： 本机 exec_state 不可用（helper 坏）→ 用 backend:"pylabview" 跑
+可执行： exec_state / run_vi_and_read_values        （一律显式 backend:"pylabview"）
 诊断：   lvai_error_list                            （execState 0 时先问它，别猜）
 存活：   常量先 convert→回导再进测试                （timestamp 会被丢弃，见 §12.2.1）
 属性：   Constant 无 description · 数值 value 不能空（Error -2628 / 53，见 §13.2）
 继承：   只读 inheritsFrom，别读 ancestors[0]       （Box/Flathead 的 ancestors[0] 是接口）
 测试：   套件跑两次 · Broken≠Failed · 只读 JUnit 报告（Caraya 的 source 会指错套件）
-运行：   lvai_run_vi_and_read_values                （backend:"pylabview" 可绕开辅助 VI）
 纪律：   副本上干活 · git 先行 · 写操作每次确认 · 升级后 dump_schema · 手写 uid ≥4200
 ```
 

@@ -1,0 +1,5 @@
+<VI _name="Tag" description="Round15 P15: Temp Sensor's override of Sensor:Tag. Same shape; only the returned string differs, so a dispatched call reveals which implementation ran.">
+  <Control _name="obj in" conIdx="0" connection="required" type="path" uid="4200" uid_parent="root" value="" outputs="value:4200.value"/>
+  <Indicator _name="tag" conIdx="1" connection="recommended" type="string" uid="4201" uid_parent="root" value="" inputs="value:4210.value"/>
+  <Constant _name="tag text" outputs="value:4210.value" type="string" uid="4210" uid_parent="root" value="Temp Sensor"/>
+</VI>

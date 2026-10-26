@@ -124,6 +124,18 @@ The rules, and the round that paid for each one:
          constant answered 99 with no error while the callee did nothing.
          Sub-case worth knowing: SOME terminals paned is legal (a partial pane
          ran fine), and slots follow conIdx rather than document order.
+
+  LV016  a class-qualified target is a NAME, not a path ....... round 15 (live)
+         LV006 warns when a Call target contains `/` or `\`, reading it as a
+         path that can never resolve. A class- or library-qualified name
+         carries AIXML's escaped colon - `Sensor.lvclass\3ATag.vi` - and that
+         backslash is escaping, not a separator. Measured round 15: the
+         composer linked such a target against the loaded project (the report
+         named `Call 'Sensor.lvclass:Tag.vi' <- ...`), the run executed it, and
+         the swap's callTargets read it back. So the rule now strips every
+         `\XX` hex escape before judging path-ness; a real Windows path
+         (`C:\cls\X.vi`, `..\lib\X.vi`) still warns, because `\c`, `\l` are
+         not escapes.
 """
 
 from __future__ import annotations
@@ -506,7 +518,12 @@ def check(path):
         # LV006 - a Call target is a bare or library-qualified NAME.
         if n.tag == "Call":
             target = el.get("target") or ""
-            if "/" in target or "\\" in target:
+            # LV016 (round 15): strip AIXML's \XX escapes before judging
+            # path-ness - `Sensor.lvclass\3ATag.vi` is a qualified NAME whose
+            # backslash escapes ':', and it resolves (measured: linked against
+            # the loaded project, executed, and read back by the swap).
+            bare = re.sub(r"\\[0-9A-Fa-f]{2}", "", target)
+            if "/" in bare or "\\" in bare:
                 findings.append(Finding(
                     "warning", "lv006-call-target-is-path", n.uid, n.describe(), n.path,
                     f"target '{target}' looks like a path. Generation resolves a target by NAME "

@@ -1,0 +1,7 @@
+<VI _name="Dispatch Probe 2.vi" description="Round15 P15 v2: the type-launderer chain. seed (class constant) feeds Sensor:Scale By, whose obj out is a SENSOR-typed wire; that wire feeds Sensor:Tag. Because Tag's input arrives parent-typed, the editor cannot bind it at edit time, so the runtime value (a Temp Sensor) must select the implementation - dynamic dispatch, observed. answer=Temp Sensor with both calls still on Sensor members proves it.">
+  <Constant _name="seed" outputs="value:4200.value" type="path" uid="4200" uid_parent="root" value=""/>
+  <Constant _name="factor" outputs="value:4201.factor" type="double" uid="4201" uid_parent="root" value="1"/>
+  <Indicator _name="answer" conIdx="0" connection="recommended" type="string" uid="4210" uid_parent="root" value="" inputs="value:4230.tag"/>
+  <Call target="Sensor.lvclass\3AScale By.vi" inputs="obj in:4200.value,Factor:4201.factor" outputs="obj out:4220.obj" uid="4220" uid_parent="root"/>
+  <Call target="Sensor.lvclass\3ATag.vi" inputs="obj in:4220.obj" outputs="tag:4230.tag" uid="4230" uid_parent="root"/>
+</VI>

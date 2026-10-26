@@ -1,0 +1,6 @@
+<VI _name="Dispatch Probe.vi" description="Round15 P15: calls Sensor:Tag through a dynamic-dispatch terminal. The diagram constant 'seed' is a path stand-in that lvai_swap_subvis constantsJson turns into a class constant; which class it names decides which implementation runs. answer=Temp Sensor proves dynamic dispatch; answer=Sensor proves it does not.">
+  <Indicator _name="answer" type="string" uid="4210" uid_parent="root" value="" conIdx="0" connection="recommended" inputs="value:76.tag" />
+  <Constant _name="seed" type="ref{UDClassInst}" uid="71" uid_parent="root" value="" outputs="value:71.value" />
+  <Call uid="76" uid_parent="root" target="Temp Sensor.lvclass:Tag.vi" inputs="obj in:71.value" outputs="tag:76.tag" />
+  <!-- vi2aixml: constant 71: value of type Refnum.UDClassInst not decoded -->
+</VI>

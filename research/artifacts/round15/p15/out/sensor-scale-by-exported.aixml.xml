@@ -1,0 +1,5 @@
+<VI _name="Sensor.lvclass:Scale By.vi" description="Round14: Sensor's override of Can Scale:Scale By. Same pane shape as the interface declares (obj in, Factor, obj out); the diagram is a pass-through because a class-typed unbundle cannot be authored in AIXML.">
+  <Control _name="obj in" type="ref{UDClassInst}" uid="60" uid_parent="root" value="" conIdx="0" connection="dynamic" outputs="value:60.value" />
+  <Control _name="Factor" type="double" uid="101" uid_parent="root" value="1" conIdx="1" connection="required" />
+  <Indicator _name="obj out" type="ref{UDClassInst}" uid="58" uid_parent="root" value="" conIdx="2" connection="dynamic" inputs="value:60.value" />
+</VI>

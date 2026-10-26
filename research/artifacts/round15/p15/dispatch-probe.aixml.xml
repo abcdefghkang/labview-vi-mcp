@@ -1,0 +1,5 @@
+<VI _name="Dispatch Probe.vi" description="Round15 P15 v1: calls Sensor:Tag through a dynamic-dispatch terminal. The diagram constant 'seed' is a path stand-in that lvai_swap_subvis constantsJson turns into a class constant; which class it names decides which implementation runs. Superseded by v2/v3 - kept as the record of the first chain and of the edit-time binding.">
+  <Constant _name="seed" outputs="value:4200.value" type="path" uid="4200" uid_parent="root" value=""/>
+  <Indicator _name="answer" conIdx="0" connection="recommended" type="string" uid="4210" uid_parent="root" value="" inputs="value:4220.tag"/>
+  <Call target="Sensor.lvclass\3ATag.vi" inputs="obj in:4200.value" outputs="tag:4220.tag" uid="4220" uid_parent="root"/>
+</VI>

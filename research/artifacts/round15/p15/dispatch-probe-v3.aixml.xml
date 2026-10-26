@@ -1,0 +1,6 @@
+<VI _name="Dispatch Probe 3.vi" description="Round15 P15 v3: the static-launderer chain. seed (class constant) feeds Sensor:Carrier, a STATIC member, whose obj out is a Sensor-typed wire; that wire feeds the dynamic call Sensor:Tag. The editor cannot bind Tag at edit time (the wire is parent-typed), so the runtime value must select the implementation. answer=Temp Sensor while callTargets still name Sensor members is the proof of dynamic dispatch.">
+  <Constant _name="seed" outputs="value:4200.value" type="path" uid="4200" uid_parent="root" value=""/>
+  <Indicator _name="answer" conIdx="0" connection="recommended" type="string" uid="4210" uid_parent="root" value="" inputs="value:4231.tag"/>
+  <Call target="Sensor.lvclass\3ACarrier.vi" inputs="obj in:4200.value" outputs="obj out:4230.obj" uid="4230" uid_parent="root"/>
+  <Call target="Sensor.lvclass\3ATag.vi" inputs="obj in:4230.obj" outputs="tag:4231.tag" uid="4231" uid_parent="root"/>
+</VI>

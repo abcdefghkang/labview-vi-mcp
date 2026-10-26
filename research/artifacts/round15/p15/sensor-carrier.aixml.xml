@@ -1,0 +1,4 @@
+<VI _name="Carrier" description="Round15 P15: STATIC pass-through member of Sensor. Its class-typed terminals are retyped by lvai_add_class_method WITHOUT dynamic dispatch, so calling it with a Temp Sensor constant leaves the link alone and puts a SENSOR-typed wire on obj out - the type launderer that was supposed to make runtime dispatch observable (it did not: the binding follows provenance, see research/24).">
+  <Control _name="obj in" conIdx="0" connection="required" type="path" uid="4200" uid_parent="root" value="" outputs="value:4200.value"/>
+  <Indicator _name="obj out" conIdx="1" connection="recommended" type="path" uid="4201" uid_parent="root" value="" inputs="value:4200.value"/>
+</VI>
