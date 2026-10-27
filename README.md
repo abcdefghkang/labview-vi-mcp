@@ -14,6 +14,7 @@ A reusable agent skill for building and editing **LabVIEW VI front panels** thro
 | `scripts/deliver.py` | Copy master VI + newest render → deliverable + preview PNG |
 | `scripts/compare_deliver.py` | Pixel-diff quantification + before/after comparison image |
 | `scripts/render_verify.py` | Find newest render / crop & zoom / sample pixel colors |
+| `research/` | 滚动研究看板（`00-status.md`）+ 单轮实证文档（`20-25-*.md`）：AI 借 MCP 开发 LabVIEW 的完整经验、铁律、闸门与复现入口，Round 1–16 |
 
 ## Requirements
 

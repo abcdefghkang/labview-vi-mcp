@@ -1,0 +1,76 @@
+{
+ "root": "research/artifacts",
+ "stats": {
+  "classes": 13,
+  "with_parent": 9,
+  "parent_is_interface": 0,
+  "parent_unresolved": 9,
+  "parent_file_missing": 0,
+  "resolvedBy:basename-ambiguous:3": 1
+ },
+ "rows": [
+  {
+   "class": "research/artifacts\\round14\\lib\\No Override.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round14\\lib\\Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round14\\lib\\Temp Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round15\\p15\\lib\\No Override.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round15\\p15\\lib\\Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round15\\p15\\lib\\Temp Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round16\\p16\\lib\\No Override.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round16\\p16\\lib\\Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  },
+  {
+   "class": "research/artifacts\\round16\\p16\\lib\\Temp Sensor.lvclass",
+   "url": "../Can Scale.lvclass",
+   "parentPath": null,
+   "resolvedBy": "basename-ambiguous:3",
+   "verdict": "unresolved"
+  }
+ ]
+}

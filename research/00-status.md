@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 15（2026-10-26）。
+> 最近更新：Round 16（2026-10-26）。
 
 ---
 
@@ -56,7 +56,8 @@
 | 12 | 10-22 | 是 | 边界 / 事件超时 / 面板移植 | 线不能隐式穿结构边界；Event Timeout 端子无 AIXML 写法 | `f31f80a` |
 | 13 | 10-23 | 是 | 连接器窗格 + 测试层 | **`conIdx` 才是"在不在位上"**，缺了静默空接 | `1b72a50` |
 | 14 | 10-23 | 是 | LVOOP 全链 + 装错的螺丝 | pylabview 在这台机器上答的是 LabVIEW **2018** | `bbde2aa` |
-| 15 | 10-26 | 是 | **2018 工位**：无 Nigel 的一天 | composer 写的 2026 戳 VI 被 2018 打开并跑对（versionWarning 被推翻）；类调用方端到端；**派发绑定在编辑期**，P15 钉死 | 本轮 |
+| 15 | 10-26 | 是 | **2018 工位**：无 Nigel 的一天 | composer 写的 2026 戳 VI 被 2018 打开并跑对（versionWarning 被推翻）；类调用方端到端；**派发绑定在编辑期**，P15 钉死 | `3e1825a` |
+| 16 | 10-26 | 是 | **gRPC 路线恢复**：2026-capable 工位 | 全链路 author→compile(grpc)→run(pylabview) 跑通（y=42）；三处新规则 LV017/018/019；遗留 p16 LVOOP 树验证为合法 2026 中文工程 | 本轮 |
 
 **四次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
@@ -66,6 +67,7 @@
 | `generate_test` 报 `noTerminals`（R13） | 测试工具不支持 | 生成的 VI 没有连接器窗格（写侧从没设过 `conIdx`） |
 | 建类报 `no Add Class.lvlib`（R14） | 工具缺能力 | pylabview 认错安装（2018 没有 AddClass/AddInterface） |
 | convert 警告 "2018 refuses (Error 1125)"（R15） | 2018 打不开 2026 戳产物 | **静态版本比较的误判**：2018 经 VI Server 通道打开并运行了 2026 戳的 composer 产物（6×7=42 实测） |
+| `run_vi_and_read_values(grpc)` 报 `helperAixmlInvalid`（R16） | run 工具坏了 | **gRPC 的 run helper 在中文 2026 下自身校验不过**（helper AIXML 损坏）；run 改走 `backend:"pylabview"` 即好（LV019） |
 
 ---
 
@@ -85,6 +87,7 @@
 | **LVOOP 调用方端到端**：path 常量替身 → `swap_subvis` constantsJson → 类方法调用 → 实跑出值（`"Temp Sensor"` / 负对照 `"Sensor"`） | `artifacts/round15/p15/`，2018 工位 |
 | 无框架自包含测试（正 `AllPass=true` / 负 `false`，误差 1） | `artifacts/round13` |
 | `.lvproj` 容器手写 + 对账审计 | `artifacts/round14`，5 工程 0E/0W |
+| **全链路 author→compile→run（gRPC 恢复后）**：AI 写 AIXML → NI 编译器出 .vi → 实跑读数（y=6×7=42）；run 走 pylabview 避开损坏的 gRPC helper | `artifacts/round16/scale-double-r16.aixml.xml` + `Scale Double R16.vi`，2026-capable 工位 |
 
 ### B. 有条件可用（有坑，按配方走才行）
 
@@ -126,6 +129,8 @@
 | 2018 工位闭环 | compose 0.5–1.5 s；类方法 20–50 s；swap 2–5 s；run 5–18 ms | `24-*.md` |
 | 会话经济学 | 延迟占比 3.6~9.7 : 1，每轮中位 7.1 s，重启中位 30.75 s | `17-*.md` |
 | 类父链接离线解析 | 468 个类，13 个"父类"其实是接口 | `artifacts/round11/lvclass-parents.json` |
+| gRPC 权威接口面（dump_schema） | **23 RPC**（proto3，package lvai） | `artifacts/round16/dump_schema_summary.txt` |
+| p16 继承扫描（per-tree） | 4 类 / 3 有父 / 父全为接口 / 0 未解析 | `artifacts/round16/p16-parent-scan.json` |
 
 ---
 
@@ -155,7 +160,7 @@
 | **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；v2.2.0 可能补类说明符常量语法（直接关系 P1） |
 | **P4** | `lvai_layout_diagram` 首测 | Round1"图面难看"的正式收尾，用 round3 的 saturating-accumulator-v2 做输入比尺寸 |
 | **P5** | `lvai_error_list` 回诊 Round6/8 那些 `execState 0` 的档案 | 当时查不出原因不等于现在查不出 |
-| **P6** | P10 `timestamp` 存活复验 / P11 `inheritsFrom` 全站扫描 | 唯一"若本机不同则影响所有测试生成"的结论 |
+| **P6** | P10 `timestamp` 存活复验 | P11 已完成（per-tree 扫描，见 §3/§4）；P10 仍待复验 |
 | **P7** | 测试层判据脚本（读 JUnit `.xml`，`Broken ≠ Failed` 即 fail-fast） | Caraya 的 `source` 字段会指向通过的套件，不能看状态码 |
 | **P8** | 覆盖空白：字符串/路径节点、Network Streams、XControls | 后者 v2.2.0 + pylabview 才支持 |
 | **P9** | 给上游报版本警告的误判（2018 经 VI Server 不拒开 2026 戳产物） | 我们改不了上游代码，但文档里的这句话正在把用户吓退 |
@@ -166,12 +171,12 @@
 
 | 项 | 值 |
 |---|---|
-| LabVIEW | **2018（32-bit，运行中，用户当日 10:00 启动）**；2026 26.3.1f1 装着未开；另装 2015–2025 |
+| LabVIEW | **2026-capable（gRPC/Nigel 在线，port 44148）；pylabview 认 2026（resolve.py 补丁取最高版本）；2018 32-bit 装着但本会话进程是 2026；另装 2015–2025** |
 | MCP server | `LabVIEWMCP.exe` 2.0.1（`77eb0b22`），UI 开关已恢复（`disabled:true` 已除） |
-| gRPC 服务 | **不在**（2018 无 Nigel；44 候选端口全灭）⇒ 一切 lvai_* 显式 `backend:"pylabview"` |
+| gRPC 服务 | **在线**（port 44148，Nigel；`lvai.LVAI` 可达）⇒ author/compile 走 grpc；**run 仍需 pylabview**（中文 2026 下 run helper 损坏，LV019） |
 | pylabview 安装解析 | **需本机补丁** `bin/scripts/aixml-pylabview/resolve.py`（两个 base 取最高版本），`resolve.py.orig-round14` 为备份 |
 | 已知缺件 | Caraya / `Test.lvclass`（VIPM 只有 `.spec` 缓存，`HTTP Transport error ... jkisoft.com`） |
-| 已知坏件 | 4 个 helper AIXML 被中文版拒收；`signalsJson` 在 pylabview 路线上仍被拒 |
+| 已知坏件 | 4 个 helper AIXML 被中文版拒收；`signalsJson` 在 pylabview 路线仍被拒；**gRPC run helper 在中文 2026 损坏**（LV019）；gRPC 路径须反斜杠（LV017）；pylabview 读侧中文乱码（LV018） |
 | 死条目 | `mcp.json` 里 `labview-cli` 指向已删除的 `Desktop\新建文件夹 (3)\...`，建议在 UI 删除 |
 
 **存活判据**（不要信 `lvai_status` 的缓存）：`netstat` 有 LISTENING + `tasklist` 有 `LabVIEW.exe`。
@@ -195,9 +200,11 @@ python tools/cold_build_census.py <upstream>/bin/docs
 # 3) 类父关系离线扫描
 python tools/lvclass_parent_scan.py <dir> --json
 
-# 4) 线上最小闭环（MCP 在线时）
-lvai_status → lvai_validate_aixml → lvai_convert_aixml_to_vi(backend:"pylabview")
-→ lvai_convert_vi_to_aixml（回读比对）→ lvai_run_vi_and_read_values
+# 4) 线上最小闭环（gRPC 在线时）
+lvai_status → lvai_validate_aixml(backend:"grpc")
+→ lvai_convert_aixml_to_vi(backend:"grpc", 反斜杠 viPath)   # LV017：路径必须反斜杠
+→ lvai_convert_vi_to_aixml(backend:"grpc", 回读比对)          # LV018：中文工程回读用 grpc
+→ lvai_run_vi_and_read_values(backend:"pylabview")            # LV019：gRPC run helper 损坏，run 走 pylabview
 
 # 5) 2018 工位类调用方闭环（Round15 配方，详见 24-*.md §6）
 generate_vi(path替身方法AIXML, backend:pylabview)

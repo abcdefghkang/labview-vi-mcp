@@ -1097,12 +1097,48 @@ AIXML 无此语法。**记为"表达不出来"**；残路是 IDE 手搭调用方
 - LV016：类限定目标 `X.lvclass\3AY.vi` 的 `\3A` 是转义冒号不是路径——LV006 先剥 `\XX` 转义再判
   路径性；真路径仍报警（有负对照）。
 
-## 18. 快速参考：一页纸
+## 18. Round16 增补：gRPC 路线恢复、三处新规则与 p16 验证
+
+**环境变回 2026-capable**（gRPC/Nigel 在线，port 44148；pylabview 也在线）。本轮把 2018 工位丢掉的
+gRPC 路线整条接回来，并钉死三处纯工具/环境层规则（详见
+[`25-grpc-route-restored.md`](25-grpc-route-restored.md)）。
+
+### 18.1 全链路闭环（canonical AI→VI→run）实测
+
+AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi → `run_vi_and_read_values`
+跑出值。**author/compile 走 grpc（NI 编译器），run 走 pylabview（ActiveX，无 helper）**。
+样例 `artifacts/round16/scale-double-r16.aixml.xml`：`y = x × factor`，输入 6/7 → 实跑 `y = 42`。
+
+### 18.2 三处新规则（LV017 / LV018 / LV019）
+
+- **LV017 — gRPC 文件路径必须反斜杠（Windows）**：`lvai_*` 走 grpc 且带 `viPath/aiXmlFilePath/
+  projectPath` 时，传正斜杠会被 NI 的 `OpenVIReference` 拼成 `C:\/Users...` 报 Error 7"未找到文件"。
+  **一律传反斜杠**；pylabview 读侧两种斜杠都收。
+- **LV018 — 中文工程回读用 grpc**：pylabview 读侧对 CJK 标签有编码 bug（"读取Name.vi" 变 `\u2202\u00A1...`），
+  `describe_vi / convert_vi_to_aixml / 回导` 一律 `backend:"grpc"` 才能正确还原中文。
+- **LV019 — gRPC run helper 在中文 2026 下损坏**：`run_vi_and_read_values(grpc)` 报 `helperAixmlInvalid`
+  （helper 文档自身校验失败）。**立即换 `backend:"pylabview"`** 用 ActiveX 直跑即可（不经 helper）。
+
+### 18.3 p16：把孤儿 LVOOP 树收编为样例
+
+上一未完成会话留下的 `artifacts/round16/p16/` 是合法的 2026 中文 LVOOP 工程（接口 `Can Scale` +
+三实现类 + 4 中文访问器），双后端 `convert_vi_to_aixml` 均 0；per-tree 继承扫描确认 3 个父类全是接口、
+0 未解析。已提交为样例。
+
+### 18.4 dump_schema 权威接口面（P3 第一步）
+
+`lvai_dump_schema(summary)` 取到 23 RPC 的 NI 私有 gRPC 接口（package lvai），落盘
+`artifacts/round16/dump_schema_summary.txt`。MCP server 仍是 v2.0.1，**四个 v2.2.0 helper 仍未出现**，
+升级项继续挂起（升级会覆盖 `resolve.py` 补丁，须重打）。
+
+---
+
+## 19. 快速参考：一页纸
 
 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
-         2018 工位：服务永远起不来 → 全线显式 backend:"pylabview"，忽略 versionWarning（§17.1）
+         2026-capable 工位：gRPC 在线（port 44148）→ author/compile 走 grpc；run 仍走 pylabview（helper 在中文 2026 损坏，LV019）
 选型：   settings.json "aixmlBackend": "auto"   （LV<2026 自动切 pylabview）
 查重：   lvai_example_index / lvai_palette_index   （先查 NI 有没有写过）
                                             离线等价：LabVIEWMCP --examples / --palette
@@ -1111,6 +1147,8 @@ AIXML 无此语法。**记为"表达不出来"**；残路是 IDE 手搭调用方
 G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，见 §11.3）
 窗格：   Control/Indicator 一律写 conIdx="0,1,2..."   （不写=不在窗格上=不可被 Call，
          且 Call 它不报错、只是数据线空接，见 §15.1 / §15.4）
+路径：   lvai_* 走 grpc 的文件路径一律反斜杠（正斜杠 → Error 7 未找到文件，LV017）
+中文：   中文工程回读/describe 一律 backend:"grpc"（pylabview 读侧乱码，LV018）
          方法源文件尤其如此：panePattern 4815 不创建 <cons>，缺 conIdx 直接死在
          conpane 步（"no <cons> array in the front-panel heap"，§16.2，LV015）
 建类前：先确认 pylabview 认对安装 —— resolve.labview_root() 要是正在跑的那个版本，
@@ -1125,7 +1163,7 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
 生成：   lvai_generate_vi                           （validate+convert+面板测量）
 布局：   lvai_layout_diagram                        （整图重排，规则见 §11.4）
 回读：   lvai_convert_vi_to_aixml / lvai_describe_vi（结构对不对）
-可执行： exec_state / run_vi_and_read_values        （一律显式 backend:"pylabview"）
+可执行： exec_state / run_vi_and_read_values        （run 一律 backend:"pylabview"；grpc 报 helperAixmlInvalid 就换，LV019）
 诊断：   lvai_error_list                            （execState 0 时先问它，别猜）
 存活：   常量先 convert→回导再进测试                （timestamp 会被丢弃，见 §12.2.1）
 属性：   Constant 无 description · 数值 value 不能空（Error -2628 / 53，见 §13.2）
@@ -1136,6 +1174,6 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
 
 ---
 
-*本文所有【实测】数据采集于 2026-10-18，环境：LabVIEW 2026 (64-bit) + LabVIEW 2018
+*本文所有【实测】数据采集于 2026-10-18（Round1–15）与 2026-10-26（Round16：gRPC 恢复 + LV017/018/019），环境：LabVIEW 2026 (64-bit) + LabVIEW 2018
 (32-bit, 运行中) + LabVIEWMCP server 2.0.1 (77eb0b22)，完整原始记录见
 [`07-measured-session.md`](07-measured-session.md)。*

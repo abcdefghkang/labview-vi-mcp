@@ -1,0 +1,6 @@
+<VI _name="Scale Double R16.vi" description="Round16 gRPC-loop proof: y = x * factor, authored as AIXML, compiled through NI's gRPC ConvertAIXMLToVI, and run through RunVIAndReadValues. Demonstrates the canonical AI -> VI -> run pipeline that was dead in the 2018-only station and is restored in this 2026-capable session. All three terminals carry conIdx so the VI is also Callable (LV014).">
+  <Control _name="x" conIdx="0" connection="required" outputs="value:4200.value" type="double" uid="4200" uid_parent="root" value="0"/>
+  <Control _name="factor" conIdx="1" connection="required" outputs="value:4201.value" type="double" uid="4201" uid_parent="root" value="0"/>
+  <Indicator _name="y" conIdx="2" connection="recommended" inputs="value:4210.out" type="double" uid="4210" uid_parent="root" value="0"/>
+  <Node _name="Multiply" inputs="x:4200.value,y:4201.value" outputs="x*y:4210.out" uid="4211" uid_parent="root"/>
+</VI>
