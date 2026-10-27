@@ -1,0 +1,37 @@
+<VI _name="Accumulator.vi" description="Round17 complex-demo flagship: a While Loop with four shift registers accumulating, over N iterations (element = iteration index + 1), the running Sum, Sum of Squares, and Product. Demonstrates AI-authored loops, shift registers, arithmetic, and conditional termination - a genuinely algorithmic VI - built and run through the pylabview backend (no gRPC/Nigel required). Verified for N=5: Sum=15, SumSq=55, Product=120, Done=true. Constants feeding shift-register terminals stay on the root diagram; constants feeding loop-internal arithmetic enter via Tunnels (LV012).">
+  <Control _name="N" conIdx="0" connection="required" outputs="value:4300.value" type="int32" uid="4300" uid_parent="root" value="5"/>
+  <Constant _name="Zero" outputs="value:4202.zero" type="int32" uid="4202" uid_parent="root" value="0"/>
+  <Constant _name="One" outputs="value:4203.one" type="int32" uid="4203" uid_parent="root" value="1"/>
+  <Constant _name="True" outputs="value:4204.t" type="bool" uid="4204" uid_parent="root" value="true"/>
+  <Structure _name="While Loop" count="" uid="4200" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4300.value" outputs="value:4211.max" uid="4211" uid_parent="4200"/>
+    <Tunnel _id="In2" inputs="value:4203.one" outputs="value:4213.one" uid="4213" uid_parent="4200"/>
+    <ShiftReg uid="4230" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4234.iter" uid="4234" uid_parent="4230"/>
+      <Right inputs="value:4251.iter1" outputs="value:4291.final_iter" uid="4291" uid_parent="4230"/>
+    </ShiftReg>
+    <ShiftReg uid="4233" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4235.s" uid="4235" uid_parent="4233"/>
+      <Right inputs="value:4252.sn" outputs="value:4292.final_sum" uid="4292" uid_parent="4233"/>
+    </ShiftReg>
+    <ShiftReg uid="4236" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4237.sq" uid="4237" uid_parent="4236"/>
+      <Right inputs="value:4253.sqn" outputs="value:4293.final_sq" uid="4293" uid_parent="4236"/>
+    </ShiftReg>
+    <ShiftReg uid="4239" uid_parent="4200">
+      <Left inputs="value:4203.one" outputs="value:4240.p" uid="4240" uid_parent="4239"/>
+      <Right inputs="value:4254.pn" outputs="value:4294.final_p" uid="4294" uid_parent="4239"/>
+    </ShiftReg>
+    <Node _name="Add" inputs="x:4234.iter,y:4213.one" outputs="x+y:4251.iter1" uid="4251" uid_parent="4200"/>
+    <Node _name="Add" inputs="x:4235.s,y:4251.iter1" outputs="x+y:4252.sn" uid="4252" uid_parent="4200"/>
+    <Node _name="Multiply" inputs="x:4251.iter1,y:4251.iter1" outputs="x*y:4255.e2" uid="4255" uid_parent="4200"/>
+    <Node _name="Add" inputs="x:4237.sq,y:4255.e2" outputs="x+y:4253.sqn" uid="4253" uid_parent="4200"/>
+    <Node _name="Multiply" inputs="x:4240.p,y:4251.iter1" outputs="x*y:4254.pn" uid="4254" uid_parent="4200"/>
+    <Node _name="Greater Or Equal?" inputs="x:4251.iter1,y:4211.max" outputs="x >= y?:4256.stop" uid="4256" uid_parent="4200"/>
+    <Condition inputs="value:4256.stop" uid="4201" uid_parent="4200" value="stop"/>
+  </Structure>
+  <Indicator _name="Sum" conIdx="1" connection="recommended" inputs="value:4292.final_sum" type="int32" uid="4301" uid_parent="root" value="0"/>
+  <Indicator _name="SumSq" conIdx="2" connection="recommended" inputs="value:4293.final_sq" type="int32" uid="4302" uid_parent="root" value="0"/>
+  <Indicator _name="Product" conIdx="3" connection="recommended" inputs="value:4294.final_p" type="int32" uid="4303" uid_parent="root" value="0"/>
+  <Indicator _name="Done" conIdx="4" connection="recommended" inputs="value:4204.t" type="bool" uid="4304" uid_parent="root" value="false"/>
+</VI>

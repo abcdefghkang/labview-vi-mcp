@@ -14,7 +14,7 @@ A reusable agent skill for building and editing **LabVIEW VI front panels** thro
 | `scripts/deliver.py` | Copy master VI + newest render → deliverable + preview PNG |
 | `scripts/compare_deliver.py` | Pixel-diff quantification + before/after comparison image |
 | `scripts/render_verify.py` | Find newest render / crop & zoom / sample pixel colors |
-| `research/` | 滚动研究看板（`00-status.md`）+ 单轮实证文档（`20-25-*.md`）：AI 借 MCP 开发 LabVIEW 的完整经验、铁律、闸门与复现入口，Round 1–16 |
+| `research/` | 滚动研究看板（`00-status.md`）+ 单轮实证文档（`20-26-*.md`）：AI 借 MCP 开发 LabVIEW 的完整经验、铁律、闸门与复现入口，Round 1–17 |
 
 ## Requirements
 
@@ -53,7 +53,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 
 | Doc | Content |
 |---|---|
-| `research/00-status.md` | **Board** (Round 15): the 5 research lines, rounds 1–15 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P9, current environment and liveness check (Chinese) |
+| `research/00-status.md` | **Board** (Round 17): the 5 research lines, rounds 1–17 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
 | `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
 | `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
@@ -85,6 +85,8 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/artifacts/round14/lib/` | `Can Scale.lvclass` (interface) + its method, `Sensor.lvclass` + override, `Temp Sensor.lvclass` (child), `No Override.lvclass` (the broken-then-fixed probe), 4 wizard accessors |
 | `tools/lvproj_audit.py` | Entry-vs-file reconciliation for a `.lvproj`; catches the deleted-entry shape, has a negative control |
 | `research/24-the-2018-station.md` | Round-15: **the 2018 station, and one version warning struck down**. The machine switched to LabVIEW 2018 (32-bit) with no Nigel, so the whole gRPC route is dead — and yet the AIXML → VI → run pipeline works end to end on pylabview, with 2026-stamped VIs opened **and executed** by 2018 (`y = x·factor`, 6×7 → 42.00000000000000), striking down the server's own versionWarning ("2018 refuses, Error 1125"). On that basis the LVOOP chain (dynamic method + static member + class constant + caller) runs end to end on 2018, and P15 is nailed down: **binding happens at edit time, traced along dataflow, and a static "type washer" cannot stop it** — three probes (direct / dynamic-method cascade / static anchor) plus binary evidence. Plus the no-gRPC tool-surface truth table, the Class-constant recipe as the only correct way to write a class caller, and LV016 (Chinese) |
+| `research/25-grpc-route-restored.md` | Round-16: **gRPC route restored on a 2026-capable station**. Full author(grpc)→compile(grpc)→run(pylabview) loop proven (y=42); three new tool/env rules LV017/018/019; the orphan p16 LVOOP tree validated as a legal 2026 Chinese project; `dump_schema` authoritative 23-RPC face (Chinese) |
+| `research/26-complex-demo-showcase.md` | Round-17: **gRPC can be down and the loop still runs** (pylabview-only closure) + **LV020 loop-dialect boundary rule nailed**. First truly machine-verified "complex program" flagship — `examples/complex-demo/Accumulator.vi` (While Loop + 4 shift registers, Sum/SumSq/Product), verified at N=3 and N=5; the `traffic-light.aixml.xml` loop sample was never actually compiled and carried a boundary bug (Chinese) |
 | `research/artifacts/round15/p15/` | The self-contained LVOOP tree this round ran: `Can Scale` interface + `Sensor` / `Temp Sensor` classes + `Tag` dynamic method ×2 + `Carrier` static member + three dispatch probes + exported AIXML evidence, with the whole tree still verifying `execState 1` |
 | `research/artifacts/round15/scratch/` | The 2018 run probes: `probe-scale-by.vi` and `probe-arith.vi` — the two VIs that struck down the version warning |
 | `research/22-connector-pane-the-missing-slot.md` | Round-13: **the missing slot**. `connection` says required/recommended/optional; only `conIdx` puts a terminal ON the connector pane, and with no `conIdx` the composer writes `conNum=-1` and leaves the skeleton's `objFlags 0x10000` alone — that flag's own comment reads "NO TERMINAL ON THE PANE". Measured four ways on one VI (A: no `conIdx` → 0 in/0 out; B: 0/1/2 → pane; C: out of document order → **slots follow `conIdx`, not document order**; D: only `x` → a PARTIAL pane, which is legal). End to end: `3*5 → Result=15`. **A Call to a pane-less VI composes, runs and reports no error while passing nothing** (`Marker Out=99`). `generate_test` goes `noTerminals` → `route:"direct"` → `no Test.lvclass`, i.e. Caraya is simply not installed on this station (VIPM holds only `.spec` caches). With no framework available, a 20-node self-contained test was written instead: positive `AllPass=true / Error=0`, negative `false / 1`. Also captures a real crash: 5× `Fatal insanity (0x00000004)` in `lvai_typedef_tree.vi`, `fpsane.cpp(1140)`, 4 minidumps, all inside `ConvertAIXMLToVI.vi`. Corpus: 383 terminals, **9.9% carry a `conIdx`** |
@@ -100,6 +102,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `tools/lvclass_parent_scan.py` | Offline parent/interface scanner for `.lvclass`; the three URL conventions it had to learn are in the docstring |
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
+| `examples/complex-demo/` | **Flagship runnable example** — `Accumulator.aixml.xml` (AI-authored) + compiled `Accumulator.vi` + `README.md`: a While Loop with 4 shift registers accumulating Sum/SumSq/Product over N iterations; verified at N=3 and N=5; rebuild + run recipe for the pylabview backend (no gRPC/Nigel needed) |
 
 ## Notes
 

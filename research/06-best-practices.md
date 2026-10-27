@@ -1118,6 +1118,21 @@ AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi 
   `describe_vi / convert_vi_to_aixml / 回导` 一律 `backend:"grpc"` 才能正确还原中文。
 - **LV019 — gRPC run helper 在中文 2026 下损坏**：`run_vi_and_read_values(grpc)` 报 `helperAixmlInvalid`
   （helper 文档自身校验失败）。**立即换 `backend:"pylabview"`** 用 ActiveX 直跑即可（不经 helper）。
+- **LV020 — 循环方言：线不能隐式穿循环边界（对 LV012 的实例化）**：pylabview composer 硬性规定——
+  - 喂**循环内节点**的常量 → 必须经 `<Tunnel>` 进循环（`Tunnel` 的 `inputs` 接 root 常量、`outputs` 给循环内新网）。
+  - 喂 **shift register `Left`/`Right` 端子**（它们贴在循环边界上）的常量 → 必须留在 **root 图**直连 `Left`；**不能**放进循环内（否则报 `net '…' crosses a diagram boundary without a tunnel`）。
+  - shift register 的 `Right`（循环出口）喂 root 级 indicator 是**豁免**的越界，允许。
+  - 推论：`research/artifacts/round16/traffic-light.aixml.xml` 那类"root 常量 → 循环内节点"的离线稿在真机上会被拒；它一直没爆只是因为 Round6 是离线轮、从未编译。正解样本见 `examples/complex-demo/Accumulator.aixml.xml`（Round17 实跑通过）。
+
+### 18.2.1 Round17 新增：pylabview-only 闭环（gRPC 掉线也能跑）
+
+`lvai_status` 报 gRPC / Nigel 未启动时（LabVIEW.exe 在跑但 `lvai.LVAI` 不可达），整条
+**AI→AIXML→编译→运行** 链路仍可走 **pylabview 后端**完成，不需要 NI 的 gRPC 服务：
+
+- `lvai_convert_aixml_to_vi(backend:"pylabview")` 用 pylabview 自带 composer 写 `.vi`（不调用 NI 的 ConvertAIXMLToVI RPC）；
+- `lvai_run_vi_and_read_values(backend:"pylabview")` 经 LabVIEW 的 ActiveX 服务器实跑（只需 `LabVIEW.exe` 在跑）。
+
+这是 gRPC 掉线时的"逃生舱"，比"等有人手动开 Nigel"稳得多。判据仍是读盘 + 实跑数值，不看 `ok`。
 
 ### 18.3 p16：把孤儿 LVOOP 树收编为样例
 
@@ -1139,6 +1154,10 @@ AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi 
 ```
 连接：   lvai_status               （starting 是正常的，再调一次；服务随 Nigel 起）
          2026-capable 工位：gRPC 在线（port 44148）→ author/compile 走 grpc；run 仍走 pylabview（helper 在中文 2026 损坏，LV019）
+         gRPC/Nigel 没起也别慌：convert_aixml_to_vi(backend:"pylabview") + run_vi_and_read_values(backend:"pylabview")
+         闭环照样通，只要 LabVIEW.exe 在跑（Round17 实证）
+循环：   While/For Loop：循环内节点吃的常量走 Tunnel 进；shift register Left/Right 端子吃的常量留 root（LV020）
+         root 常量直连循环内节点会被 composer 拒："crosses a diagram boundary without a tunnel"
 选型：   settings.json "aixmlBackend": "auto"   （LV<2026 自动切 pylabview）
 查重：   lvai_example_index / lvai_palette_index   （先查 NI 有没有写过）
                                             离线等价：LabVIEWMCP --examples / --palette
@@ -1174,6 +1193,7 @@ G0 预检：python tools/audit_aixml.py --summary <file>（2.5 s，0 次 RPC，�
 
 ---
 
-*本文所有【实测】数据采集于 2026-10-18（Round1–15）与 2026-10-26（Round16：gRPC 恢复 + LV017/018/019），环境：LabVIEW 2026 (64-bit) + LabVIEW 2018
-(32-bit, 运行中) + LabVIEWMCP server 2.0.1 (77eb0b22)，完整原始记录见
+*本文所有【实测】数据采集于 2026-10-18（Round1–15）、2026-10-26（Round16：gRPC 恢复 + LV017/018/019）与
+2026-10-27（Round17：gRPC 掉线下的 pylabview-only 闭环 + LV020 循环方言），环境：LabVIEW 2026 (64-bit) +
+LabVIEW 2018 (32-bit) + LabVIEWMCP server 2.0.1 (77eb0b22)，完整原始记录见
 [`07-measured-session.md`](07-measured-session.md)。*

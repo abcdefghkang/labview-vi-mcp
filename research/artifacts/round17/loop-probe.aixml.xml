@@ -1,0 +1,17 @@
+<VI _name="Loop Probe.vi" description="Round17 dialect-validation probe: a While Loop with one shift register that counts iterations until it reaches N. Validates the While Loop + ShiftReg + Condition + Tunnel AIXML dialect through the pylabview backend (no gRPC/Nigel). Expected: Count == N for N>=1 (Count=5 when N=5). Lesson: a constant feeding a loop-internal node must enter via a Tunnel; a constant feeding a shift-register terminal (at the loop boundary) must come from the root diagram (LV012).">
+  <Control _name="N" conIdx="0" connection="required" outputs="value:4300.value" type="int32" uid="4300" uid_parent="root" value="5"/>
+  <Constant _name="Zero" outputs="value:4202.zero" type="int32" uid="4202" uid_parent="root" value="0"/>
+  <Constant _name="One" outputs="value:4203.one" type="int32" uid="4203" uid_parent="root" value="1"/>
+  <Structure _name="While Loop" count="" uid="4200" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4300.value" outputs="value:4211.max" uid="4211" uid_parent="4200"/>
+    <Tunnel _id="In2" inputs="value:4203.one" outputs="value:4213.one" uid="4213" uid_parent="4200"/>
+    <ShiftReg uid="4230" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4234.iter" uid="4234" uid_parent="4230"/>
+      <Right inputs="value:4251.iter1" outputs="value:4291.final_iter" uid="4291" uid_parent="4230"/>
+    </ShiftReg>
+    <Node _name="Add" inputs="x:4234.iter,y:4213.one" outputs="x+y:4251.iter1" uid="4251" uid_parent="4200"/>
+    <Node _name="Greater Or Equal?" inputs="x:4251.iter1,y:4211.max" outputs="x >= y?:4256.stop" uid="4256" uid_parent="4200"/>
+    <Condition inputs="value:4256.stop" uid="4201" uid_parent="4200" value="stop"/>
+  </Structure>
+  <Indicator _name="Count" conIdx="1" connection="recommended" inputs="value:4291.final_iter" type="int32" uid="4301" uid_parent="root" value="0"/>
+</VI>
