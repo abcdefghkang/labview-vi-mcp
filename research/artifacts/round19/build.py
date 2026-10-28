@@ -132,25 +132,28 @@ BTN_ARROW = 86
 # 局部坐标把它们重新摆一遍：绘图区吃满，Y 轴贴左，X 轴贴底。
 # 注意 dynBounds 才是渲染用的动态边界，只改 bounds 不生效。
 GRAPH_PARTS = {
-    417: (35, 100, 531, 770),    # 绘图区：左边让出 100 给 Y 轴刻度，底边到控件下沿
-    405: (585, 100, 640, 770),   # X 轴
-    510: (2, 756, 10, 764),      # 图例示意块：缩到右上角（等于隐藏）
+    # 白面回满高；图例示意块缩成 1x1（visBool=False 关不掉图例，只有缩块有效）
+    417: (83, 235, 523, 733),
+    510: (-120, 0, -119, 1),     # 图例框推到控件上方外侧（负坐标）
 }
+# 单变量实验：405 的 bounds / howGrow 都不动，只改 ScaleData 里的 scaleRect，
+# 看 X 轴是否跟着走（Round18 里 Y 轴就是这样挪出来的）。
+# 让 bounds 真正生效：scale 的常规 howGrow 是 4144（bit12 + 两个位），
+# 加载时按设计尺寸比例重算，写进去的 bounds 被覆盖。改 5 后立即采用。
+GRAPH_HOWGROW = {405: 5}
 
 # 坐标轴的屏幕坐标缓存：scaleRMin32/RMax32 存的是"轴线起止点的面板绝对坐标"，
 # 它们不会跟着零件 bounds 一起变 —— 只改 bounds 不同步改缓存，LabVIEW 会按旧缓存
 # 把刻度画到老位置（这就是之前 X 轴刻度浮在格子中间的原因）。
 AXIS_SPAN = {
-    410: (342, 995),    # X 轴：RMin=绘图区左边, RMax=绘图区右边
-    416: (625, 154),    # Y 轴：RMin=绘图区底边, RMax=绘图区顶边
+    0: (478, 976),      # X 轴：RMin/RMax = 轴线两个端点的屏幕 x
 }
 
 # 坐标轴真正的位置存在 <scaleRect> 里（面板绝对坐标, 顺序 top/left/bottom/right），
 # 改 bounds / dynBounds 都不动它 —— 这就是"X 轴刻度一直浮在格子中间"的根因。
 # 顺序与 XML 里出现顺序一致：第一条 = X 轴, 第二条 = Y 轴。
 SCALE_RECTS = [
-    (470, 337, 515, 1007),    # X 轴
-    (145, 305, 635, 418),     # Y 轴
+    (636, 478, 672, 976),     # X 轴：绝对坐标（ddo 原点 113,243 + 相对 523,235,559,733）
 ]
 # 注意：图例树(420)、图例数组(463)、图例簇(432) 三个零件不要动，也不要清
 # GraphPlotLegendData —— 它们要么改不动（LabVIEW 按内容重算），要么一改就直接
@@ -159,7 +162,7 @@ SCALE_RECTS = [
 # scaleRMin32/RMax32 屏幕坐标缓存，外框改了不同步改缓存，LabVIEW 会按旧缓存
 # 把轴拉到画布外面，导出画布从 1222 撑成 1573。
 GRAPH_DYN = {
-    405: (585, 100, 640, 770),   # X 轴 dynBounds 与 bounds 一致
+    405: (523, 235, 559, 733),   # X 轴 dynBounds 与 bounds 一致
 }
 
 # ---------------------------------------------------------------------------
@@ -547,11 +550,24 @@ def _part_span(seg, pu):
     return m.start(), sla_span(seg, m.start())
 
 
+def _nth_scale_cache(seg, idx, rmin, rmax):
+    """改第 idx 个 ScaleData 的轴线端点缓存（第 0 个 = X 轴，第 1 个 = Y 轴）。"""
+    hits = list(re.finditer(r'<scaleRMin32>-?\d+</scaleRMin32>\s*<scaleRMax32>-?\d+</scaleRMax32>', seg))
+    if idx >= len(hits):
+        print('  !! ScaleData 缓存只找到 %d 组，需要第 %d 组' % (len(hits), idx))
+        return seg
+    m = hits[idx]
+    new = '<scaleRMin32>%d</scaleRMin32><scaleRMax32>%d</scaleRMax32>' % (rmin, rmax)
+    return seg[:m.start()] + new + seg[m.end():]
+
+
 def style_graph(s):
     """波形图：钉死 howGrow，把绘图区撑满，把两条坐标轴挪到绘图区外面。"""
     # howGrow=240 会让 LabVIEW 在加载时按比例重算控件尺寸，结果控件永远比
     # 写进去的 ddo bounds 小一大截。改成 5（只钉左上、不跟随缩放）后才稳定。
-    for uid in (393, 550, 581):
+    # 只给两个"数组当卡片"的控件钉 howGrow。图形控件内部零件不要动：
+    # scale 的 howGrow 是 4144/4288，改 5 会让引擎改用 bounds，反而把轴顶到画布外。
+    for uid in (393, 581):
         sp = _fpdco_span(s, uid)
         if not sp:
             continue
@@ -559,9 +575,13 @@ def style_graph(s):
         seg = re.sub(r'<howGrow>[^<]*</howGrow>', '<howGrow>5</howGrow>', s[a:b])
         s = s[:a] + seg + s[b:]
 
-    # 图例关掉（HTML 里没有图例，曲线名在右栏"通道图例"卡片上）
+    # 图例关掉（HTML 里没有图例，曲线名在右栏"通道图例"卡片上）。
+    # visBool=False 只是不画"图例条目"，那个小方块还在，所以再把名字清空 + 由
+    # GRAPH_PARTS 把 510 缩成 1x1，三重手段一起用才看不见。
     s = re.sub(r'(<SL__arrayElement class="PlotLegendData">(?:(?!</SL__arrayElement>).)*?)'
                r'<visBool>True</visBool>', r'\1<visBool>False</visBool>', s, flags=re.S)
+    s = re.sub(r'(<SL__arrayElement class="PlotLegendData">\s*<name>)"[^"]*"',
+               r'\1""', s)
 
     sp = _fpdco_span(s, 550)
     if not sp:
@@ -586,18 +606,11 @@ def style_graph(s):
     for pu, box in GRAPH_PARTS.items():
         set_b(pu, box)
 
-    # 坐标轴屏幕坐标缓存同步（否则刻度画在旧位置）
-    for pu, (rmin, rmax) in AXIS_SPAN.items():
-        ps = _part_span(seg, pu)
-        if not ps:
-            print('  !! 轴缓存零件 %d 未找到' % pu)
-            continue
-        pa, pb = ps
-        sub = re.sub(r'<scaleRMin32>-?\d+</scaleRMin32>',
-                     '<scaleRMin32>%d</scaleRMin32>' % rmin, seg[pa:pb])
-        sub = re.sub(r'<scaleRMax32>-?\d+</scaleRMax32>',
-                     '<scaleRMax32>%d</scaleRMax32>' % rmax, sub)
-        seg = seg[:pa] + sub + seg[pb:]
+    # 轴线起止点的屏幕坐标缓存（scaleRMin32/RMax32）。它在 <ScaleData> 里，
+    # 不在 405/411 零件内 —— 之前按零件 uid 找是白改（一个都没命中）。
+    # ScaleData 元素没有 uid，只能按出现顺序改：第 1 个 = X 轴，第 2 个 = Y 轴。
+    for idx, (rmin, rmax) in AXIS_SPAN.items():
+        seg = _nth_scale_cache(seg, idx, rmin, rmax)
 
     # scaleRect 才是坐标轴的位置
     n = [0]
@@ -711,7 +724,8 @@ def main():
     if k > 0:
         e = seg.find('</SL__arrayElement>', k)
         sub = seg[k:e]
-        sub = re.sub(r'<ImageResID>-?\d+</ImageResID>', '<ImageResID>0</ImageResID>', sub)
+        # 注意：把 ImageResID 改成 0 会让面板底色变成纯黑（贴图没了、bgColor 也没顶上），
+        # 所以那张 -704 灰度贴图必须留着 —— 它就是现在的浅灰底。
         sub = re.sub(r'<bgColor>[^<]*</bgColor>', '<bgColor>%s</bgColor>' % PANE_BG, sub)
         sub = re.sub(r'<fgColor>[^<]*</fgColor>', '<fgColor>%s</fgColor>' % PANE_BG, sub)
         seg = seg[:k] + sub + seg[e:]
