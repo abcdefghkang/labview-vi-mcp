@@ -1155,6 +1155,38 @@ AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi 
   `aixml-pylabview/parts/vi-server-props.json` 学习表为准；自定义节点 uid 从 100 起
   编（10~41 是保留段）；net 名必须等于端子名；跨 For Loop/Case 每层补 Tunnel。
 
+### 18.2.3 Round19 新增：图形控件内部几何、`howGrow` 的真语义、与"验证工具在骗你"
+
+六条可复用结论（详见 `28-single-base-iteration-and-graph-internals.md`）：
+
+- **单基座迭代法定型**：调布局时不要"每版一个 vN + 二分"，改成 `src/`（只读源）→
+  `build.py`（一串幂等替换函数）→ `pylv_rebuild` 覆盖**同一个** VI。改动以函数为粒度，
+  可单独开关；每处替换必须自检命中次数（静默失配是上一轮最大的时间黑洞）。
+- **三套坐标绝不交叉**：控件 `ddo/bounds` 是**面板绝对坐标**；`partsList/*/bounds` 是
+  **相对 ddo 左上角**；`scale` 还有第三套 `scaleRect` + `scaleRMin32/RMax32`（轴线起止点
+  屏幕坐标缓存，改了 bounds 不同步改它，轴线长度按旧缓存画）。把绝对坐标填进零件 bounds
+  = 越界被 clamp = "改了纹丝不动"。
+- **`howGrow` 不是缩放比例，是"加载时要不要重算 bounds"的开关**：`240`（数组/图形控件
+  常规件）会按设计尺寸比例重算 → 写进去的 bounds 被覆盖；改 `5` 后 bounds 立刻被采用。
+  但**一次只改一个零件**——`550` 段内全改 5，Y 轴标签会跳到绘图区正中间，因为内部还有
+  一套按位组合推出的锚定逻辑。
+- **图形控件（TypeID 47）内部几何表**（相对 ddo，控件 790×559）：绘图区
+  `417 cosm(28) = 76,235,482,734`；Y 轴 `411 scale(19) = 68,178,490,291`；X 轴
+  `405 scale(18) = 367,231,531,744`；图例树 `420 = 315,790,559,1348`（**right 1348
+  是导出画布被撑宽的唯一原因**，改不动，只能靠面板裁掉）。**X 轴刻度线画在 X 轴 band
+  的 `top`**（367），不是绘图区底边——这才是"刻度浮在中间"的根因。
+- **数组控件伪装成卡片必须铺四层**：`indArr` → 元素外框 `cosm(9)` → 元素面 `ddo` →
+  文字区 `label(11)`。只铺两层，卡片宽度卡在设计尺寸（167/184）。四层全铺：左卡 150→192、
+  右卡 105→215。另：`DefaultData` 写 N 个元素**不会**变成 N 张卡片（只渲染 1 个 + 滚动条
+  + 索引框），正确姿势是 **1 个元素 + 多行文本**（`\n` 分组、`'─'*30` 画分隔线）。
+- **验证工具本身会骗人**：自研 `helper_fp_print` 导出的 PNG 是 1578×775 的**非等比缩放**
+  （内容 x≈0.82 / y≈0.96，画布被图例树撑宽）——按它量宽度会系统性错；量像素必须用
+  `PrintWindow(hwnd, 2)` 截真窗口（1280×846，1:1）。**先证伪工具，再改代码。**
+- **静态数据进 chart 第四次封死**：FPHb `<PlotData>` 只有 `<cnt>0</cnt>`；COM
+  `SetControlValue` + `MakeCurValueDefault` + `SaveInstrument` 保存后仍 0（文件只 +4B）；
+  VITS 只有 53 字节 `SourceOnly` 壳；**AIXML 的 `value="[t0,dt,[Y...]]"` 在 AIXML→VI
+  这步被丢弃**。chart 的历史数据是运行时状态，不存 VI 文件——纯前面板 VI 天生空图。
+
 ### 18.3 p16：把孤儿 LVOOP 树收编为样例
 
 上一未完成会话留下的 `artifacts/round16/p16/` 是合法的 2026 中文 LVOOP 工程（接口 `Can Scale` +
