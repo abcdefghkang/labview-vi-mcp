@@ -1,0 +1,64 @@
+<VI _name="graph_style.vi" description="Find the graph control (GraphChart or WaveformGraph) on a VI's front panel by class name and write its Plot Area BG Color, then save the VI in place. All inputs are strings; BG Color is a LabVIEW color integer as decimal text (R + G*256 + B*65536).">
+  <Control _name="VI Path" conIdx="1" connection="required" outputs="value:100.value" type="string" uid="100" uid_parent="root" value=""/>
+  <Control _name="BG Color" conIdx="2" connection="required" outputs="value:101.value" type="string" uid="101" uid_parent="root" value="16777215"/>
+  <Node _name="String To Path" inputs="string:100.value" outputs="path:102.path" uid="102" uid_parent="root"/>
+  <Node _name="Decimal String To Number" inputs="string:101.value" outputs="number:103.number" uid="103" uid_parent="root"/>
+  <Node _name="Open VI Reference" inputs="vi path:102.path" outputs="vi reference:104.vi reference,error out:104.error out" uid="104" uid_parent="root"/>
+  <Node _name="Property Node" fields="read+Front Panel" type="{LV.VI}" inputs="reference:104.vi reference,error in (no error):104.error out" outputs="Front Panel:105.Front Panel,error out:105.error out" uid="105" uid_parent="root"/>
+  <Node _name="Property Node" fields="read+Controls[]" type="{LV.Panel}" inputs="reference:105.Front Panel,error in (no error):105.error out" outputs="Controls[]:106.Controls[],error out:106.error out" uid="106" uid_parent="root"/>
+  <Structure _name="For Loop" count="" maxin="" maxout="" uid="150" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:106.Controls[]" mode="index" outputs="value:151.value" uid="151" uid_parent="150"/>
+    <Tunnel _id="In2" inputs="value:105.error out" outputs="value:152.value" uid="152" uid_parent="150"/>
+    <Tunnel _id="In3" inputs="value:103.number" outputs="value:155.value" uid="155" uid_parent="150"/>
+    <Tunnel _id="Out1" inputs="value:215.value" outputs="value:153.value" uid="153" uid_parent="150"/>
+    <Tunnel _id="Out2" inputs="value:216.value" outputs="value:154.value" uid="154" uid_parent="150"/>
+    <Tunnel _id="Out3" inputs="value:160.Class Name" mode="index" outputs="value:158.value" uid="158" uid_parent="150"/>
+    <Node _name="Property Node" fields="read+Class Name" type="{LV.Control}" inputs="reference:151.value,error in (no error):152.value" outputs="Class Name:160.Class Name,reference out:,error out:160.error out" uid="160" uid_parent="150"/>
+    <Structure _name="Case Structure" selectin="160.Class Name" uid="200" uid_parent="150">
+      <Tunnel _id="In1" inputs="value:151.value" uid="201" uid_parent="200"/>
+      <Tunnel _id="In2" inputs="value:160.error out" uid="202" uid_parent="200"/>
+      <Tunnel _id="In3" inputs="value:155.value" uid="156" uid_parent="200"/>
+      <Tunnel _id="Out1" outputs="value:215.value" uid="215" uid_parent="200"/>
+      <Tunnel _id="Out2" outputs="value:216.value" uid="216" uid_parent="200"/>
+      <CaseFrame selector="&quot;GraphChart&quot;" selectout="" uid="210" uid_parent="200">
+        <Tunnel _id="In1" outputs="value:211.value" uid="211" uid_parent="210"/>
+        <Tunnel _id="In2" outputs="value:212.value" uid="212" uid_parent="210"/>
+        <Tunnel _id="In3" outputs="value:226.value" uid="226" uid_parent="210"/>
+        <Tunnel _id="Out1" inputs="value:225.error out" uid="213" uid_parent="210"/>
+        <Tunnel _id="Out2" inputs="value:221.value" uid="214" uid_parent="210"/>
+        <Constant _name="graph class" outputs="value:220.value" type="ref{LV.GraphChart}" uid="220" uid_parent="210" value=""/>
+        <Constant _name="matched1" outputs="value:221.value" type="string" uid="221" uid_parent="210" value="GraphChart"/>
+        <Node _name="To More Specific Class" inputs="reference:211.value,error in:212.value,target class:220.value" outputs="specific class reference:222.specific class reference,error out:222.error out" uid="222" uid_parent="210"/>
+        <Node _name="Property Node" fields="write+Plot Area\3AColors\3ABG Color" type="{LV.GraphChart}" inputs="reference:222.specific class reference,error in (no error):222.error out,Plot Area\3AColors\3ABG Color:226.value" outputs="reference out:,error out:225.error out" uid="225" uid_parent="210"/>
+      </CaseFrame>
+      <CaseFrame selector="&quot;WaveformGraph&quot;" selectout="" uid="240" uid_parent="200">
+        <Tunnel _id="In1" outputs="value:241.value" uid="241" uid_parent="240"/>
+        <Tunnel _id="In2" outputs="value:242.value" uid="242" uid_parent="240"/>
+        <Tunnel _id="In3" outputs="value:266.value" uid="266" uid_parent="240"/>
+        <Tunnel _id="Out1" inputs="value:265.error out" uid="263" uid_parent="240"/>
+        <Tunnel _id="Out2" inputs="value:251.value" uid="264" uid_parent="240"/>
+        <Constant _name="waveform class" outputs="value:250.value" type="ref{LV.WaveformGraph}" uid="250" uid_parent="240" value=""/>
+        <Constant _name="matched2" outputs="value:251.value" type="string" uid="251" uid_parent="240" value="WaveformGraph"/>
+        <Node _name="To More Specific Class" inputs="reference:241.value,error in:242.value,target class:250.value" outputs="specific class reference:252.specific class reference,error out:252.error out" uid="252" uid_parent="240"/>
+        <Node _name="Property Node" fields="write+Plot Area\3AColors\3ABG Color" type="{LV.GraphChart}" inputs="reference:252.specific class reference,error in (no error):252.error out,Plot Area\3AColors\3ABG Color:266.value" outputs="reference out:,error out:265.error out" uid="265" uid_parent="240"/>
+      </CaseFrame>
+      <CaseFrame selector="Default" selectout="" uid="270" uid_parent="200">
+        <Tunnel _id="In1" outputs="value:271.value" uid="271" uid_parent="270"/>
+        <Tunnel _id="In2" outputs="value:272.value" uid="272" uid_parent="270"/>
+        <Tunnel _id="In3" outputs="value:" uid="277" uid_parent="270"/>
+        <Tunnel _id="Out1" inputs="value:272.value" uid="275" uid_parent="270"/>
+        <Tunnel _id="Out2" inputs="value:273.value" uid="276" uid_parent="270"/>
+        <Constant _name="no match" outputs="value:273.value" type="string" uid="273" uid_parent="270" value=""/>
+      </CaseFrame>
+    </Structure>
+  </Structure>
+  <Node _name="Invoke Node" target="Save.Instrument" type="{LV.VI}" inputs="reference:104.vi reference,error in (no error):153.value" outputs="reference out:300.reference out,error out:300.error out" uid="300" uid_parent="root"/>
+  <Node _name="Close Reference" inputs="reference:300.reference out,error in (no error):300.error out" outputs="error out:310.error out" uid="310" uid_parent="root"/>
+  <Node _name="Unbundle By Name" fields="status,code,source" inputs="input cluster:310.error out" outputs="status:320.status,code:320.code,source:320.source" uid="320" uid_parent="root"/>
+  <Node _name="Number To Decimal String" inputs="number:320.code" outputs="decimal integer string:330.decimal integer string" uid="330" uid_parent="root"/>
+  <Node _name="Flatten To XML" inputs="anything:158.value" outputs="xml string:335.xml string" uid="335" uid_parent="root"/>
+  <Indicator _name="matched" conIdx="0" connection="recommended" inputs="value:154.value" type="string" uid="360" uid_parent="root" value=""/>
+  <Indicator _name="classes" conIdx="3" connection="recommended" inputs="value:335.xml string" type="string" uid="363" uid_parent="root" value=""/>
+  <Indicator _name="code" conIdx="4" connection="recommended" inputs="value:330.decimal integer string" type="string" uid="361" uid_parent="root" value=""/>
+  <Indicator _name="source" conIdx="5" connection="recommended" inputs="value:320.source" type="string" uid="362" uid_parent="root" value=""/>
+</VI>

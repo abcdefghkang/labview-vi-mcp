@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 17（2026-10-27）。
+> 最近更新：Round 18（2026-10-28）。
 
 ---
 
@@ -38,7 +38,7 @@
 
 ---
 
-## 2. 进度总表（Round 1–14）
+## 2. 进度总表（Round 1–18）
 
 | 轮 | 日期 | 在线 | 主题 | 一句话结论 | 提交 |
 |---|---|---|---|---|---|
@@ -58,7 +58,8 @@
 | 14 | 10-23 | 是 | LVOOP 全链 + 装错的螺丝 | pylabview 在这台机器上答的是 LabVIEW **2018** | `bbde2aa` |
 | 15 | 10-26 | 是 | **2018 工位**：无 Nigel 的一天 | composer 写的 2026 戳 VI 被 2018 打开并跑对（versionWarning 被推翻）；类调用方端到端；**派发绑定在编辑期**，P15 钉死 | `3e1825a` |
 | 16 | 10-26 | 是 | **gRPC 路线恢复**：2026-capable 工位 | 全链路 author→compile(grpc)→run(pylabview) 跑通（y=42）；三处新规则 LV017/018/019；遗留 p16 LVOOP 树验证为合法 2026 中文工程 | `0a5be93` |
-| 17 | 10-27 | 是 | **gRPC 掉线也能跑**：pylabview-only 闭环 + 循环方言 | gRPC/Nigel 本会话未起，整条 AI→AIXML→compile(pylabview)→run(pylabview) 闭环照通；**LV020 循环边界规则落成**；首个真机跑通的"复杂程序"旗舰样例 `examples/complex-demo/Accumulator.vi`（四 shift register 累计 Sum/SumSq/Product，N=3/5 数值逐位吻合） | 本轮 |
+| 17 | 10-27 | 是 | **gRPC 掉线也能跑**：pylabview-only 闭环 + 循环方言 | gRPC/Nigel 本会话未起，整条 AI→AIXML→compile(pylabview)→run(pylabview) 闭环照通；**LV020 循环边界规则落成**；首个真机跑通的"复杂程序"旗舰样例 `examples/complex-demo/Accumulator.vi`（四 shift register 累计 Sum/SumSq/Product，N=3/5 数值逐位吻合） | `b515485` |
+| 18 | 10-28 | 是 | **HTML→VI 前面板移植 + 深度换肤** | 4 个 HTML 主界面移植为纯前面板 VI；bundle XML 换肤配方（坐标/颜色/字体/mojibake 中文管线）全钉死；**两条死路**（装饰件注入不渲染、克隆控件拒载）做实验排除；**绘图区黑底不在 XML 里**——自研 `helper_graph_style.vi` 运行时写 `Plot Area:Colors:BG Color` 解决；NI 校验器失效改走 pylabview 后端合成 | 本轮 |
 
 **四次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
@@ -92,6 +93,7 @@
 | **全链路 author→compile→run（gRPC 恢复后）**：AI 写 AIXML → NI 编译器出 .vi → 实跑读数（y=6×7=42）；run 走 pylabview 避开损坏的 gRPC helper | `artifacts/round16/scale-double-r16.aixml.xml` + `Scale Double R16.vi`，2026-capable 工位 |
 | **全链路 pylabview-only 闭环（gRPC 掉线也能跑）**：`convert_aixml_to_vi(backend:"pylabview")` 写 .vi + `run_vi_and_read_values(backend:"pylabview")` 实跑；不依赖 NI 的 gRPC 服务 | `examples/complex-demo/Accumulator.vi` + `Accumulator.aixml.xml`，R17 |
 | **复杂算法 VI（While Loop + 四 shift register + 条件终止）**：AI 写 AIXML 实跑出值 | `examples/complex-demo/`：N=3→Sum6/SumSq14/Product6；N=5→Sum15/SumSq55/Product120；循环方言 LV020 钉死 |
+| **HTML→VI 前面板移植 + bundle 深度换肤**：4 个 HTML 主界面 → 纯前面板 VI；绘图区底色等引擎默认经 VI Server 属性运行时改写（渲染 PNG 像素级验证） | `examples/hmi-html-port/`（4 .vi）+ `artifacts/round18/`（换肤脚本、helper_fp_print、helper_graph_style + AIXML 源、渲染图），R18 |
 
 ### B. 有条件可用（有坑，按配方走才行）
 

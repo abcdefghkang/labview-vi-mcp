@@ -1134,6 +1134,27 @@ AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi 
 
 这是 gRPC 掉线时的"逃生舱"，比"等有人手动开 Nigel"稳得多。判据仍是读盘 + 实跑数值，不看 `ok`。
 
+### 18.2.2 Round18 新增：HTML→VI 前面板移植、bundle 换肤配方、与绘图区黑底
+
+四条可复用结论（详见 `27-html-frontpanel-port-and-restyle.md`）：
+
+- **bundle 换肤链**：`pylv_extract` → 编辑 `*_FPHb.xml` → `pylv_rebuild` → 自研
+  `helper_fp_print.vi` 渲染 PNG 比对。坐标 `(top,left,bottom,right)`，零件 bounds 相对
+  ddo 且不随缩放；颜色 `0x00RRGGBB`；中文必须走
+  `s.encode('gbk').decode('mac_roman')` 的 mojibake 管线；改 `DefaultData` 必须重算
+  4 字节大端长度；文件里有多个 `</zPlaneList>`，字符串替换勿按第一个匹配。
+- **两条死路（实验钉死）**：窗格注入 cosm 装饰件（4 种风格）一律不渲染——绘制表写死；
+  注入克隆 free label fPDCO 会让 LabVIEW **拒载前面板**。Win95 凹凸边框只能编辑器手动加。
+- **绘图区黑底不在 XML 里**：换遍 `BGColor`/`gridMaxColor` 网格会变、底色不变——它是
+  经典图形引擎的运行时默认。唯一改法：写 VI Server 属性
+  `Plot Area:Colors:BG Color`（U32）。自研 `helper_graph_style.vi`（遍历
+  `Controls[]` → Class Name 字符串 Case 分流 → To More Specific Class → 写属性 →
+  Save Instrument）是可复用模板，换属性名即可改曲线色等。
+- **NI 校验器失效**：当前版本对所有 Property Node 一律报"无效属性"——官方自带脚本
+  同样过不了。属性行 AIXML 一律 `lvai_generate_vi(backend:"pylabview")`，属性名以
+  `aixml-pylabview/parts/vi-server-props.json` 学习表为准；自定义节点 uid 从 100 起
+  编（10~41 是保留段）；net 名必须等于端子名；跨 For Loop/Case 每层补 Tunnel。
+
 ### 18.3 p16：把孤儿 LVOOP 树收编为样例
 
 上一未完成会话留下的 `artifacts/round16/p16/` 是合法的 2026 中文 LVOOP 工程（接口 `Can Scale` +
