@@ -55,7 +55,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 
 | Doc | Content |
 |---|---|
-| `research/00-status.md` | **Board** (Round 21): the 5 research lines, rounds 1–21 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
+| `research/00-status.md` | **Board** (Round 22): the 5 research lines, rounds 1–22 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
 | `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
 | `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
@@ -109,6 +109,8 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `examples/multi-vi-demo/` | **Multi-VI program** — top-level `Multi VI Demo.vi` orchestrating `Accumulate N.vi` (While Loop + 2 shift registers) and `Mean Of Pair.vi` (Divide, int→DBL promotion across the pane); 3 AIXML + 3 compiled `.vi` + README with the rebuild-and-run recipe; evidence in `research/artifacts/round20/` |
 | `research/30-nested-multi-vi-chain.md` | Round-21: **nested multi-VI chain + batch drive finalized**. Three-level Call chain — top → child (a Call INSIDE a While Loop accumulating the grandchild's output) → grandchild (one Multiply); two-point run bit-for-bit (N=3 → Sum 12 / Count 3, N=4 → 20/4, Sum crosses 4 pane boundaries); the R6/R20 recipe applies unchanged — **no new dialect for Calls inside structures or at depth**. `scripts/mcp_call.py` gains `batch` mode: a round = one JSON plan + one run, idempotent and re-runnable (~5 s); G0's `net-unconsumed` rule caught a dangling shift-register output on first contact (Chinese) |
 | `examples/nested-multi-vi-demo/` | **Three-level nested chain** — `Nested Chain Demo.vi` → `Sum Of Doubles.vi` (While Loop + 2 SR + in-loop Call) → `Double It.vi`; 3 AIXML + 3 compiled `.vi` + README; evidence in `research/artifacts/round21/` (plan + transcript pair is the recorded, re-runnable round) |
+| `research/31-caraya-testing-layer.md` | Round-22: **Caraya installed by hand, the test layer's last link closed (P2/P7)**. The "missing piece" verdict is corrected — the three Caraya tools were always in the 99-tool surface, only the runtime was absent. `.vip` = zip, installed from `vipm-io/caraya` 2.0.0 (728 files, one nesting-detour on the way); full loop `generate_test` → `generate_caraya_test_runner` → `run_caraya_tests` on pylabview; positive 3/0, negative control (one `lvai_set_constant` edit) failures=1 **naming the exact case**, restore to green — verdicts all read off the on-disk JUnit report (Chinese) |
+| `examples/caraya-demo/` | **AI-written, AI-judged Caraya suite** — `Test Double It.vi` + `run-tests.vi` (both tool-generated) + `TestReport.xml`; evidence in `research/artifacts/round22/` (2 batch plans + transcripts + install notes) |
 
 ## Notes
 

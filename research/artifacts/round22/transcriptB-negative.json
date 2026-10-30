@@ -1,0 +1,98 @@
+{
+ "label": "round22 plan B - negative control: break expected 2, run, restore, re-run",
+ "planFile": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\research\\artifacts\\round22\\planB-negative.json",
+ "server": "C:\\Users\\heiyashi\\labview-mcp\\bin\\LabVIEWMCP.exe",
+ "stepsRun": 4,
+ "failed": 0,
+ "allOk": true,
+ "steps": [
+  {
+   "step": 1,
+   "name": "lvai_set_constant",
+   "args": {
+    "viPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+    "constantLabel": "expected 2",
+    "value": "99",
+    "backend": "pylabview",
+    "timeoutSeconds": 180
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n  \"constantLabel\": \"expected 2\",\r\n  \"type\": \"int32\",\r\n  \"kind\": \"Digital\",\r\n  \"before\": \"-8\",\r\n  \"asked\": \"99\",\r\n  \"after\": \"99\",\r\n  \"verified\": true,\r\n  \"helperErrorCode\": 0,\r\n  \"helperErrorSource\": \"\",\r\n  \"note\": \"The constant holds the new value in the saved VI, read back from its export.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 6304
+  },
+  {
+   "step": 2,
+   "name": "lvai_run_caraya_tests",
+   "args": {
+    "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+    "backend": "pylabview",
+    "timeoutSeconds": 300
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"runnerViPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\run-tests.vi\",\r\n  \"elapsedMs\": 6524,\r\n  \"reportPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\TestReport.xml\",\r\n  \"reportFresh\": true,\r\n  \"tests\": 3,\r\n  \"failures\": 1,\r\n  \"errors\": 0,\r\n  \"suites\": [\r\n    {\r\n      \"suite\": \"Test Double It\",\r\n      \"testVi\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n      \"tests\": 3,\r\n      \"failures\": 1,\r\n      \"errors\": 0,\r\n      \"timestamp\": \"2026-10-30T14:25:40.857\"\r\n    }\r\n  ],\r\n  \"failing\": [\r\n    {\r\n      \"suite\": \"Test Double It\",\r\n      \"testVi\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n      \"case\": \"doubles -4\",\r\n      \"kind\": \"failure\",\r\n      \"body\": \"\\u0022FAIL\\u0022\"\r\n    }\r\n  ],\r\n  \"runnerErrorOut\": {\r\n    \"status\": true,\r\n    \"code\": 7002,\r\n    \"source\": \"Test Double It.vi\",\r\n    \"sourceNamesAFailingSuite\": true\r\n  },\r\n  \"ok\": false,\r\n  \"note\": \"1 case(s) failed - named in \\u0060failing\\u0060, with the test VI each is in. Caraya\\u0027s failure body is the literal \\u0022FAIL\\u0022; the label is the identification.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 6535
+  },
+  {
+   "step": 3,
+   "name": "lvai_set_constant",
+   "args": {
+    "viPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+    "constantLabel": "expected 2",
+    "value": "-8",
+    "backend": "pylabview",
+    "timeoutSeconds": 180
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n  \"constantLabel\": \"expected 2\",\r\n  \"type\": \"int32\",\r\n  \"kind\": \"Digital\",\r\n  \"before\": \"99\",\r\n  \"asked\": \"-8\",\r\n  \"after\": \"-8\",\r\n  \"verified\": true,\r\n  \"helperErrorCode\": 0,\r\n  \"helperErrorSource\": \"\",\r\n  \"note\": \"The constant holds the new value in the saved VI, read back from its export.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 5066
+  },
+  {
+   "step": 4,
+   "name": "lvai_run_caraya_tests",
+   "args": {
+    "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+    "backend": "pylabview",
+    "timeoutSeconds": 300
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"runnerViPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\run-tests.vi\",\r\n  \"elapsedMs\": 6325,\r\n  \"reportPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\TestReport.xml\",\r\n  \"reportFresh\": true,\r\n  \"tests\": 3,\r\n  \"failures\": 0,\r\n  \"errors\": 0,\r\n  \"suites\": [\r\n    {\r\n      \"suite\": \"Test Double It\",\r\n      \"testVi\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n      \"tests\": 3,\r\n      \"failures\": 0,\r\n      \"errors\": 0,\r\n      \"timestamp\": \"2026-10-30T14:25:52.271\"\r\n    }\r\n  ],\r\n  \"failing\": [],\r\n  \"runnerErrorOut\": {\r\n    \"status\": false,\r\n    \"code\": 0,\r\n    \"source\": \"\",\r\n    \"sourceNamesAFailingSuite\": null\r\n  },\r\n  \"ok\": true,\r\n  \"note\": \"All 3 test(s) passed.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 6327
+  }
+ ]
+}

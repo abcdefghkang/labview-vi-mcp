@@ -1,0 +1,36 @@
+{
+  "label": "round22 plan A - generate Caraya test + runner, run positive control",
+  "steps": [
+    {
+      "name": "lvai_generate_test",
+      "args": {
+        "viPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\nested-multi-vi-demo\\Double It.vi",
+        "casesJson": "[{\"label\":\"doubles 3\",\"inputs\":{\"x\":\"3\"},\"expect\":{\"Doubled\":\"6\"}},{\"label\":\"doubles -4\",\"inputs\":{\"x\":\"-4\"},\"expect\":{\"Doubled\":\"-8\"}},{\"label\":\"doubles 0\",\"inputs\":{\"x\":\"0\"},\"expect\":{\"Doubled\":\"0\"}}]",
+        "testViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    },
+    {
+      "name": "lvai_generate_caraya_test_runner",
+      "args": {
+        "testViPaths": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+        "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+        "reportFileName": "TestReport.xml",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    },
+    {
+      "name": "lvai_run_caraya_tests",
+      "args": {
+        "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    }
+  ]
+}

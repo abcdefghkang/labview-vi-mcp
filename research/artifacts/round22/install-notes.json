@@ -1,0 +1,55 @@
+{
+  "round": 22,
+  "date": "2026-10-30",
+  "what": "Caraya unit-test framework installed by hand; full test layer closed (board P2/P7)",
+  "install": {
+    "source": "https://github.com/vipm-io/caraya/releases/download/2.0.0/jki_lib_caraya-2.0.0.151.vip",
+    "downloadedBy": "curl --socks5-hostname 127.0.0.1:10808 (direct GitHub: connection refused/000)",
+    "sizeBytes": 6433804,
+    "spec": {
+      "Exclusive_LabVIEW_Version": "LabVIEW>=20.0 (2026 OK)",
+      "installScripts": "none (pure file placement)",
+      "dependency": "jki_rsc_toolkits_palette>=1.1 (palette icons only, not needed to run tests)"
+    },
+    "fileGroups": {
+      "File Group 0": "713 files -> <LabVIEW 2026 root> (help/, project/, resource/, vi.lib/addons/_JKI Toolkits/Caraya/)",
+      "File Group 1": "15 .mnu -> vi.lib/addons/_JKI Toolkits/dynamic_palette/"
+    },
+    "firstAttemptError": "FG0 paths are relative to <application> (LabVIEW root), NOT to vi.lib\\addons\\_JKI Toolkits\\Caraya - first pass nested everything one level deep, caught by checking for Caraya.lvlib at the documented path, cleaned and re-extracted",
+    "verified": [
+      "Caraya.lvlib present (21956 B)",
+      "Run Tests.vi present (17961 B) = Caraya.lvlib\\3ARun Tests.vi, the runner generator's target",
+      "zero-byte file batch-tester\\nonVI member for ... is a package-original test sample, not damage",
+      "editorial proof: generated test VI's callTargets include Caraya.lvlib:Test.lvclass:Define Test.vi - LabVIEW resolved the new library"
+    ],
+    "vipmNotInstalled": true,
+    "installMethod": "python zipfile extraction following the .vip's own spec section"
+  },
+  "experiments": {
+    "positiveControl": {
+      "plan": "planA-positive.json",
+      "transcript": "transcriptA-positive.json",
+      "steps": ["lvai_generate_test (108.5 s, placeholder route)", "lvai_generate_caraya_test_runner (19.0 s)", "lvai_run_caraya_tests (6.6 s)"],
+      "verdict": "tests=3 failures=0 errors=0 ok=true reportFresh=true",
+      "reportSnapshot": "testreport-positive-snapshot.xml"
+    },
+    "negativeControl": {
+      "plan": "planB-negative.json",
+      "transcript": "transcriptB-negative.json",
+      "steps": ["lvai_set_constant expected 2 -> 99 (6.3 s)", "lvai_run_caraya_tests (6.5 s)", "lvai_set_constant expected 2 -> -8 restore (5.1 s)", "lvai_run_caraya_tests (6.3 s)"],
+      "brokenRunVerdict": "tests=3 failures=1 errors=0 ok=false, failing names case 'doubles -4' exactly",
+      "restoredRunVerdict": "tests=3 failures=0 errors=0 ok=true",
+      "kindField": "failure (legal test failure), NOT error - Broken != Failed holds"
+    }
+  },
+  "timings": {
+    "generate_test_first": "108.5 s (includes placeholder + retarget + measureDiagram render)",
+    "generate_runner": "19.0 s",
+    "run_suite": "6.3-6.6 s per run",
+    "set_constant": "5.1-6.3 s per edit"
+  },
+  "openObservations": [
+    "lvai_typedef_tree fpsane.cpp(1140) crash not exercised this round (no typedef tree call)",
+    "vipm-io/caraya is the framework's current home; github.com/JKI/Caraya releases API 404s"
+  ]
+}

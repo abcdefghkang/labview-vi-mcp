@@ -1,0 +1,45 @@
+{
+  "label": "round22 plan B - negative control: break expected 2, run, restore, re-run",
+  "steps": [
+    {
+      "name": "lvai_set_constant",
+      "args": {
+        "viPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+        "constantLabel": "expected 2",
+        "value": "99",
+        "backend": "pylabview",
+        "timeoutSeconds": 180
+      },
+      "timeout": 240
+    },
+    {
+      "name": "lvai_run_caraya_tests",
+      "args": {
+        "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    },
+    {
+      "name": "lvai_set_constant",
+      "args": {
+        "viPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\Test Double It.vi",
+        "constantLabel": "expected 2",
+        "value": "-8",
+        "backend": "pylabview",
+        "timeoutSeconds": 180
+      },
+      "timeout": 240
+    },
+    {
+      "name": "lvai_run_caraya_tests",
+      "args": {
+        "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    }
+  ]
+}

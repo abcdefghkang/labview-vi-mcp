@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites framework-name="Caraya" framework-version="2.0.0.151">
+<testsuite name="Test Double It" errors="0" skipped="0" tests="3" failures="0" timestamp="2026-10-30T14:24:38.899">
+    <testcase classname="Test Double It" name="doubles -4"/>
+    <testcase classname="Test Double It" name="doubles 3"/>
+    <testcase classname="Test Double It" name="doubles 0"/>
+</testsuite>
+</testsuites>

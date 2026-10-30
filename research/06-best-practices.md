@@ -1199,6 +1199,26 @@ AI 写 AIXML → `validate_aixml(grpc)` → `convert_aixml_to_vi(grpc)` 出 .vi 
 `artifacts/round16/dump_schema_summary.txt`。MCP server 仍是 v2.0.1，**四个 v2.2.0 helper 仍未出现**，
 升级项继续挂起（升级会覆盖 `resolve.py` 补丁，须重打）。
 
+### 18.5 Round22 增补：Caraya 测试层打通（修正 §15.5 的"缺件"判断）
+
+§15.5 当时的判断"Caraya 需装包，未通"被 R22 修正：**MCP 侧三个 Caraya 工具
+（`lvai_generate_test` / `lvai_generate_caraya_test_runner` / `lvai_run_caraya_tests`）
+一直在 99 工具面里，缺的只是 vi.lib 里的运行时**。装上即通：
+
+- **手工装 .vip**：.vip 即 zip；读包内 `spec` 段拿 `Exclusive_LabVIEW_Version` 与各
+  File Group 的 `Target Dir`（`<application>` = LabVIEW 安装根，不是包内同名目录——
+  R22 第一遍就因理解错嵌套了一层）。框架已迁 `vipm-io/caraya`（JKI org 的 releases
+  API 404）；VIPM 本身不需要。
+- **测试层配方**（全程 `backend:"pylabview"`）：`lvai_vi_terminals` 查端子 →
+  `lvai_generate_test`（casesJson 按端子名键控；浮点断言精确相等，用例值选 IEEE754
+  精确可表的；返回的 `expectedConstants` 是负对照的标签表）→
+  `lvai_generate_caraya_test_runner`（测试 VI 必须与 runner 同目录或其子目录）→
+  `lvai_run_caraya_tests`：`ok` 只认本次运行所写、含至少一测、无 failure/error 的
+  JUnit 报告；`failing[].case` 指名失败用例，`kind` 区分 failure（断言没过）与
+  error（VI 跑不起来）——**Broken ≠ Failed 由工具内置**。
+- **负对照成本**：`lvai_set_constant` 按标签原位改期望值（5-6 s）→ 跑 → 核对
+  failing 指对 → 改回 → 复跑归零；一轮 4 步约 24 s，替代 R13 时代的整版再生成。
+
 ---
 
 ## 19. 快速参考：一页纸

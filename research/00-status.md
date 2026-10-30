@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 21（2026-10-30）。
+> 最近更新：Round 22（2026-10-30）。
 
 ---
 
@@ -31,14 +31,14 @@
 | **A. 生成（synthesis）** | 一份需求文档 → AIXML → `.vi`，能到多复杂？ | 单 VI / 状态机 / 多 VI / 事件结构 / 面板移植 全线打通 |
 | **B. 编辑（editing）** | 已有 VI 上改，而不是重生成 | 读侧坐标 → 写侧补丁 / bundle 深编 / `pylv_apply` 四级手段已定型 |
 | **C. 面向对象（LVOOP）** | 类、接口、继承、override、动态派发 | 建链全通 + **类调用方端到端跑出值**（2018 工位）；派发绑定在编辑期完成，**运行时派发观测不到**（边界已钉死） |
-| **D. 测试（verification）** | AI 写的东西谁来判对错 | 无框架的自包含测试可用（含负对照）；Caraya 需装包，未通 |
+| **D. 测试（verification）** | AI 写的东西谁来判对错 | **Caraya 全链打通（R22）**：generate_test → generate_runner → run_caraya_tests 读 JUnit，全程 pylabview；无框架自包含测试（R13）与负对照并用 |
 | **E. 横向：闸门与工具化** | 把经验变成不依赖人记性的检查 | 16 条自研规则 + 上游 37 条 + 工程审计，全部离线可跑 |
 
 横向这条是本研究最实的产出：**每一条踩过的坑，最终都要变成一条能在 2.5 秒内报出来的规则。**
 
 ---
 
-## 2. 进度总表（Round 1–20）
+## 2. 进度总表（Round 1–22）
 
 | 轮 | 日期 | 在线 | 主题 | 一句话结论 | 提交 |
 |---|---|---|---|---|---|
@@ -63,8 +63,9 @@
 | 19 | 10-28 | 是 | 单基座迭代法：图形控件内部几何 / `howGrow` / 验证工具的假象 | 控件写绝对坐标、零件写相对坐标；`howGrow`="加载时是否重算"；**自研打印助手导出 PNG 非 1:1**（量像素改用 PrintWindow 截真窗）；`scaleRect` 是轴位置的唯一杠杆 | `c9bf141` |
 | 20 | 10-30 | 是 | **多 VI 编排（P6 关闭）+ 冷机无人值守闭环** | 顶层 Call ×2（迭代子 VI + 汇总子 VI）N=5/3 两点验证逐位吻合；**pylabview 对 Call 查磁盘不查 IDE 内存**（R6 的 `openVI:true` 前提属 gRPC 路线）；`ensure_labview` 自己拉起 LabVIEW；`scripts/mcp_call.py` 无 IDE 直驱（本轮 9 次调用全经它） | 本轮 |
 | 21 | 10-30 | 是 | **三层嵌套多 VI 链 + batch 直驱定型** | 孙→子→顶（Call 在 While Loop 内，深度 2）N=3/4 两点逐位吻合（12/3、20/4），R20 配方原样适用**无新方言**；`mcp_call.py` batch 模式：一轮=一份 JSON 计划+一次运行，幂等可重放（复跑 5 s）；G0 `net-unconsumed` 首次实战命中 | 本轮 |
+| 22 | 10-30 | 是 | **Caraya 装包 + 测试层全链打通（D 方向关闭）** | "缺件"被修正：MCP 侧工具齐全，缺的只是 Caraya 运行时；.vip 即 zip 手工装（`vipm-io/caraya` 2.0.0，728 文件，含一次路径返工）；正对照 tests=3 failures=0、负对照 failures=1 **指名被改用例**、恢复归零；判据全部来自磁盘 JUnit 报告 | 本轮 |
 
-**四次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
+**七次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
 | 症状 | 当时判断 | 真因 |
 |---|---|---|
@@ -74,6 +75,7 @@
 | convert 警告 "2018 refuses (Error 1125)"（R15） | 2018 打不开 2026 戳产物 | **静态版本比较的误判**：2018 经 VI Server 通道打开并运行了 2026 戳的 composer 产物（6×7=42 实测） |
 | `run_vi_and_read_values(grpc)` 报 `helperAixmlInvalid`（R16） | run 工具坏了 | **gRPC 的 run helper 在中文 2026 下自身校验不过**（helper AIXML 损坏）；run 改走 `backend:"pylabview"` 即好（LV019） |
 | `lvai_status` 报 "Could not find a port serving lvai.LVAI"（R17） | gRPC 全挂、工具全废 | **gRPC/Nigel AI 服务没起，但 LabVIEW.exe 在跑**；整条闭环改走 `backend:"pylabview"`（convert + run）照样通（R17 实证），这是掉线时的"逃生舱" |
+| Caraya 测试一直"未通"（R13 判断缺件，此后各轮未装） | 工具链缺 Caraya 支持，需 VIPM 装包 | **MCP 侧三个 Caraya 工具一直在 99 工具面里**，缺的只是 vi.lib 里的运行时；.vip 即 zip，手工铺 728 个文件即通（R22），VIPM 根本不需要 |
 
 ---
 
@@ -100,6 +102,7 @@
 | **多 VI 编排（顶层 Call ×2，P6）**：N 进 → 迭代子 VI（While Loop + 双 SR）→ 汇总子 VI（Divide）→ Sum/Count/Mean 出；int→DBL 提升穿越子 VI 边界与顶层窗格；N=5/3 两点与手算逐位吻合 | `examples/multi-vi-demo/`（3 AIXML + 3 .vi），R20 |
 | **冷机无人值守闭环**：`lvai_ensure_labview` 自起 LabVIEW 2026（gRPC 仍死照跑）→ convert(pylabview) ×3 → run(pylabview) ×2 出值 | `artifacts/round20/`，R20 |
 | **三层嵌套多 VI 链（Call in loop，深度 2）**：顶层 → 子（While Loop 内 Call 孙 VI 累加）→ 孙（纯乘法）；Sum 值共穿越 4 道窗格；N=3/4 两点与手算逐位吻合；R6/R20 配方原样适用，无新方言 | `examples/nested-multi-vi-demo/`（3 AIXML + 3 .vi），R21 |
+| **Caraya 测试层全链（AI 写、AI 判）**：`generate_test`（placeholder 路线，期望常量自动标签）→ `generate_caraya_test_runner` → `run_caraya_tests` 读 JUnit；正 3/0、负 3/1（failing 指名 case）、恢复归零；全程 pylabview，一轮=一份 batch 计划 | `examples/caraya-demo/`（2 工具生成 .vi + JUnit 报告）+ `artifacts/round22/`，R22 |
 
 ### B. 有条件可用（有坑，按配方走才行）
 
@@ -148,6 +151,7 @@
 | 多 VI 编排实跑（R20） | Sum/Count/Mean 在 N=5（15/5/3.0）与 N=3（6/3/2.0）与手算逐位吻合；run 3 ms | `examples/multi-vi-demo/` |
 | 冷启动→出值（R20） | ensure 45 s + convert 3.1 s（3 份）+ run 3 ms；全程无 IDE、无 Nigel | `29-*.md` |
 | 嵌套链 batch 直驱（R21） | 2 计划 / 8 调用幂等可重放（首轮约 20 s、复跑约 5 s）；convert 0.6–1.0 s；run 2–3 ms；首轮 0E/1W → 补 Count 后 0E/0W | `artifacts/round21/` |
+| Caraya 测试层（R22） | generate_test 108.5 s（首次，含 placeholder+retarget+渲染）；runner 19.0 s；跑一轮 6.3–6.6 s；set_constant 改期望 5.1–6.3 s；负对照+恢复 4 步约 24 s | `artifacts/round22/` |
 
 ---
 
@@ -161,7 +165,7 @@
 | **G3** 结构验证 | validate 只报 `Unsupported SubVI:` 才放行 → `execState 1` | `validate_aixml` / `generate_vi` | 通（grpc 需 pylabview 兜底） |
 | **G3.5** 常量存活 | 常量 convert→回导后值不丢 | 自建往返探针 | 强制（`timestamp` 必死） |
 | **G4** 文件级验证 | 读盘：描述符、`udClassDDO`、链接、`stdPath` | `pylv_extract` + grep `*_FPHb.xml` | 通 |
-| **G5** 运行 + 冷启动 | 实跑数值 + 负对照 + 重建后重开 | `run_vi_and_read_values` | 通（测试层需 Caraya） |
+| **G5** 运行 + 冷启动 | 实跑数值 + 负对照 + 重建后重开 | `run_vi_and_read_values` | 通（测试层 Caraya 已通，R22） |
 
 另有 `tools/lvproj_audit.py`：**唯一读 `.lvproj` 的闸门**，专抓"工具写进去的条目被 LabVIEW
 的旧内存副本冲掉"这个形状（表象是 `classIndex:-1`，看起来像路径拼错）。
@@ -173,12 +177,12 @@
 | 优先 | 事项 | 为什么排这里 |
 |---|---|---|
 | **P1** | IDE 手搭一个"父类型窗格端子"调用方给人/AI 读 | R15 钉死了边界：运行时派发需要"父类型线+子类型值"，而类值只能来自常量（编辑期绑定）。一个手工样本就能让 AI 照着 graft/改写 |
-| **P2** | 装 Caraya（VIPM，需联网）→ 再跑 `generate_test(pylabview)` | 测试层三级卡在最后一级；顺带观察 `lvai_typedef_tree.vi` 的 `fpsane.cpp(1140)` 崩溃是否复现 |
+| **P2** ~~已关闭（R22）~~ | 装 Caraya → 再跑 `generate_test(pylabview)` | **R22 关闭**：.vip 即 zip 手工装（`vipm-io/caraya` 2.0.0，VIPM 不需要）；三级全通，正/负对照齐备，见 `examples/caraya-demo/` 与 `research/31-*.md`。`lvai_typedef_tree` 的 `fpsane.cpp(1140)` 崩溃本轮未触发，保持开放 |
 | **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；上游已到 **v2.3.1（2026-10-28，114 工具）**（R20 网络调研），升级窗口成熟 |
 | **P4** | `lvai_layout_diagram` 首测 | **本机 v2.0.1 工具面无此工具**；**上游 v2.2.x 已交付**（自研布局引擎，2026-10-16 起内置于所有写入流程）——升级后即测，补 AI 产物"人看不懂"的最后一块 |
 | **P5** | `lvai_error_list` 回诊 Round6/8 那些 `execState 0` 的档案 | **同上，v2.0.1 无此工具**；R17 改用"编译+运行真机验证"替代其部分意图（循环样本已验） |
 | **P6** ~~已关闭（R20）~~ | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | **R20 关闭**：`examples/multi-vi-demo/` 两点验证逐位吻合；R6 配方在 pylabview 路线细化为"**查磁盘、按顺序**"（`openVI:true` 属 gRPC 路线）。**R21 纵深**：嵌套 Call 链（Call 在 While Loop 内、被调方自身含 Call，深度 2）同配方照通，见 `examples/nested-multi-vi-demo/` |
-| **P7** | 测试层判据脚本（读 JUnit `.xml`，`Broken ≠ Failed` 即 fail-fast） | Caraya 的 `source` 字段会指向通过的套件，不能看状态码 |
+| **P7** ~~已关闭（R22）~~ | 测试层判据脚本（读 JUnit `.xml`，`Broken ≠ Failed` 即 fail-fast） | **R22 关闭**：`lvai_run_caraya_tests` 自带 JUnit 判据（`ok` 只认本次运行所写、含至少一测、无 failure/error 的报告），`failing[].case` 指名失败用例、`kind` 区分 failure/error——脚本要做的判断工具已内置 |
 | **P8** | 覆盖空白：字符串/路径节点、Network Streams、XControls | 后者 v2.2.0 + pylabview 才支持 |
 | **P9** | 给上游报版本警告的误判（2018 经 VI Server 不拒开 2026 戳产物） | 我们改不了上游代码，但文档里的这句话正在把用户吓退 |
 | **P10** | P1 的父类型调用方 / 运行时动态派发 | R20 网络调研：**上游 v2.3.1 仍无类端子语法**（类身份不编码进 AIXML 类型串，动态端子仅 `connection:"dynamic"` 标注）；等上游补类说明符常量语法 |
@@ -193,7 +197,7 @@
 | MCP server | `LabVIEWMCP.exe` 2.0.1（`77eb0b22`），UI 开关已恢复（`disabled:true` 已除） |
 | gRPC 服务 | R20 冷机起步：`lvai_status` 十一候选端口全不可用；`ensure_labview` 只把 IDE 拉起（服务随 Nigel 起，需人手动开）。**闭环不依赖它**——convert+run 走 `backend:"pylabview"` 照常通（R17/R20 双实证） |
 | pylabview 安装解析 | **需本机补丁** `bin/scripts/aixml-pylabview/resolve.py`（两个 base 取最高版本），`resolve.py.orig-round14` 为备份 |
-| 已知缺件 | Caraya / `Test.lvclass`（VIPM 只有 `.spec` 缓存，`HTTP Transport error ... jkisoft.com`） |
+| 已知缺件 | ~~Caraya~~（**R22 已手工装通**：`vipm-io/caraya` 2.0.0，728 文件铺入 LabVIEW 2026 目录；配方见 `research/31-*.md` §1）。仍缺：`jki_rsc_toolkits_palette`（仅调色板图标，跑测试不需要） |
 | 已知坏件 | 4 个 helper AIXML 被中文版拒收；`signalsJson` 在 pylabview 路线仍被拒；**gRPC run helper 在中文 2026 损坏**（LV019，run 走 pylabview 即可）；gRPC 路径须反斜杠（LV017）；pylabview 读侧中文乱码（LV018）；pylabview `versionWarning` 误报"2018 在跑"（cosmetic bug，忽略） |
 | 死条目 | `mcp.json` 里 `labview-cli` 指向已删除的 `Desktop\新建文件夹 (3)\...`，建议在 UI 删除 |
 
