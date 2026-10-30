@@ -1,0 +1,63 @@
+{
+  "label": "round21 nested multi-VI chain: grandchild Double It -> child Sum Of Doubles (Call inside While Loop) -> top Nested Chain Demo; convert in callee-first order (hard constraint), then two-point run N=3 -> Sum 12 / Count 3, N=4 -> Sum 20 / Count 4",
+  "steps": [
+    {
+      "name": "lvai_ensure_labview",
+      "timeout": 120,
+      "args": { "waitSeconds": 45 }
+    },
+    {
+      "name": "lvai_convert_aixml_to_vi",
+      "timeout": 300,
+      "args": {
+        "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Double It.aixml.xml",
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Double It.vi",
+        "openVI": true,
+        "backend": "pylabview",
+        "timeoutSeconds": 240
+      }
+    },
+    {
+      "name": "lvai_convert_aixml_to_vi",
+      "timeout": 300,
+      "args": {
+        "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.aixml.xml",
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.vi",
+        "openVI": true,
+        "backend": "pylabview",
+        "timeoutSeconds": 240
+      }
+    },
+    {
+      "name": "lvai_convert_aixml_to_vi",
+      "timeout": 300,
+      "args": {
+        "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.aixml.xml",
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+        "openVI": true,
+        "backend": "pylabview",
+        "timeoutSeconds": 240
+      }
+    },
+    {
+      "name": "lvai_run_vi_and_read_values",
+      "timeout": 360,
+      "args": {
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+        "inputsJson": "{\"N\": \"3\"}",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      }
+    },
+    {
+      "name": "lvai_run_vi_and_read_values",
+      "timeout": 360,
+      "args": {
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+        "inputsJson": "{\"N\": \"4\"}",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      }
+    }
+  ]
+}

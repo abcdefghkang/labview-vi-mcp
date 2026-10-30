@@ -1,0 +1,50 @@
+{
+ "label": "round21 G4 file-side evidence: extract the written .vi files back to XML (needs no LabVIEW) to prove the nested Call links live on disk",
+ "planFile": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\research\\artifacts\\round21\\plan-extract.json",
+ "server": "C:\\Users\\heiyashi\\labview-mcp\\bin\\LabVIEWMCP.exe",
+ "stepsRun": 2,
+ "failed": 0,
+ "allOk": true,
+ "steps": [
+  {
+   "step": 1,
+   "name": "pylv_extract",
+   "args": {
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+    "outDirectory": "C:\\LV_AUTOTEST\\gen\\p7\\extract-top"
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi\",\r\n  \"bundleDirectory\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\extract-top\",\r\n  \"mainXml\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\extract-top\\\\NestedChainDemo.xml\",\r\n  \"fileCount\": 11,\r\n  \"files\": [\r\n    \"NestedChainDemo.xml\",\r\n    \"NestedChainDemo_BDEx.bin\",\r\n    \"NestedChainDemo_BDHb.xml\",\r\n    \"NestedChainDemo_FPEx.bin\",\r\n    \"NestedChainDemo_FPHb.xml\",\r\n    \"NestedChainDemo_HIST.bin\",\r\n    \"NestedChainDemo_ICON.png\",\r\n    \"NestedChainDemo_LVSR_Field90.bin\",\r\n    \"NestedChainDemo_VITS.bin\",\r\n    \"NestedChainDemo_VPDP.bin\",\r\n    \"NestedChainDemo_icl8.png\"\r\n  ],\r\n  \"annotation\": {\r\n    \"ran\": true,\r\n    \"exitCode\": 0,\r\n    \"output\": \"252 node names, 574 terminal names, 1 diagram heap(s) to process\\r\\n  NestedChainDemo_BDHb.xml           0 nodes, 0 terminals\"\r\n  },\r\n  \"rawFallbackWarnings\": [\r\n    \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi: Warning: Block b\\u0027VITS\\u0027 section 0 parse exception: LVVariant has ver set to size=0x000015, but file version is above LV8.0.\",\r\n    \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi: Warning: Block b\\u0027VITS\\u0027 section 0 size is 53 and does not match parsed size 32\"\r\n  ],\r\n  \"elapsedMs\": 267,\r\n  \"note\": \"Blocks named in rawFallbackWarnings were copied through unparsed. That is why the round trip is lossless, not a sign of damage.\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 449
+  },
+  {
+   "step": 2,
+   "name": "pylv_extract",
+   "args": {
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.vi",
+    "outDirectory": "C:\\LV_AUTOTEST\\gen\\p7\\extract-child"
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Sum Of Doubles.vi\",\r\n  \"bundleDirectory\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\extract-child\",\r\n  \"mainXml\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\extract-child\\\\SumOfDoubles.xml\",\r\n  \"fileCount\": 11,\r\n  \"files\": [\r\n    \"SumOfDoubles.xml\",\r\n    \"SumOfDoubles_BDEx.bin\",\r\n    \"SumOfDoubles_BDHb.xml\",\r\n    \"SumOfDoubles_FPEx.bin\",\r\n    \"SumOfDoubles_FPHb.xml\",\r\n    \"SumOfDoubles_HIST.bin\",\r\n    \"SumOfDoubles_ICON.png\",\r\n    \"SumOfDoubles_LVSR_Field90.bin\",\r\n    \"SumOfDoubles_VITS.bin\",\r\n    \"SumOfDoubles_VPDP.bin\",\r\n    \"SumOfDoubles_icl8.png\"\r\n  ],\r\n  \"annotation\": {\r\n    \"ran\": true,\r\n    \"exitCode\": 0,\r\n    \"output\": \"252 node names, 574 terminal names, 1 diagram heap(s) to process\\r\\n  SumOfDoubles_BDHb.xml              2 nodes, 4 terminals, 1 primResID not in table\"\r\n  },\r\n  \"rawFallbackWarnings\": [\r\n    \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Sum Of Doubles.vi: Warning: Block b\\u0027VITS\\u0027 section 0 parse exception: LVVariant has ver set to size=0x000015, but file version is above LV8.0.\",\r\n    \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Sum Of Doubles.vi: Warning: Block b\\u0027VITS\\u0027 section 0 size is 53 and does not match parsed size 32\"\r\n  ],\r\n  \"elapsedMs\": 279,\r\n  \"note\": \"Blocks named in rawFallbackWarnings were copied through unparsed. That is why the round trip is lossless, not a sign of damage.\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 400
+  }
+ ]
+}

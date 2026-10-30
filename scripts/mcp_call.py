@@ -16,8 +16,18 @@ Usage (bundled Python 3.12, no third-party deps):
   python mcp_call.py --server "C:\\path\\LabVIEWMCP.exe" call lvai_status
   python mcp_call.py --server ... call lvai_convert_aixml_to_vi ^
       --args "{\"aiXmlFilePath\":\"C:\\\\LV_AUTOTEST\\\\x.aixml.xml\", ...}" --timeout 300
+  python mcp_call.py --server ... batch --plan plan.json --out transcript.json
+
+Batch mode (round 21): the plan file is a JSON array of steps, or an object
+{"label": ..., "steps": [...]}. Each step is {"name": <tool>, "args": {...},
+"timeout": seconds (optional, --timeout wins as default)}. Steps run IN ORDER over
+one server session - one handshake, N calls - which is what makes a whole round
+reproducible from one JSON file: "a round = a plan + one run". Every step is
+recorded verbatim into the merged transcript; a failing step does NOT stop the run
+(the real failure shape of the follow-ups is evidence too).
 
 Exit codes: 0 ok, 2 transport/handshake error, 3 tool returned isError, 4 timeout.
+Batch: exit 3 if ANY step failed (exception or isError).
 """
 import argparse
 import json
@@ -121,13 +131,41 @@ class McpClient:
             self.proc.kill()
 
 
+def run_batch(client, plan, default_timeout):
+    """Execute plan steps in order; never stop on a failing step (record instead)."""
+    steps = plan["steps"] if isinstance(plan, dict) else plan
+    if isinstance(steps, dict):
+        steps = [steps]
+    transcript = []
+    for i, step in enumerate(steps, 1):
+        name = step["name"]
+        arguments = step.get("args", {})
+        timeout = step.get("timeout", default_timeout)
+        entry = {"step": i, "name": name, "args": arguments,
+                 "ok": False, "result": None, "error": None}
+        t0 = time.perf_counter()
+        try:
+            result = client.call(name, arguments, timeout=timeout)
+            entry["result"] = result
+            entry["isError"] = bool(isinstance(result, dict) and result.get("isError"))
+            entry["ok"] = not entry["isError"]
+        except Exception as exc:  # TimeoutError / RuntimeError / OSError - record, continue
+            entry["error"] = "%s: %s" % (type(exc).__name__, exc)
+        entry["elapsedMs"] = int((time.perf_counter() - t0) * 1000)
+        transcript.append(entry)
+        LOG("[step %d/%d] %s -> %s (%d ms)", i, len(steps), name,
+            "ok" if entry["ok"] else "FAILED", entry["elapsedMs"])
+    return transcript
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--server", required=True, help="path to LabVIEWMCP.exe")
-    ap.add_argument("mode", choices=["list", "call"])
+    ap.add_argument("mode", choices=["list", "call", "batch"])
     ap.add_argument("tool", nargs="?", help="tool name (mode=call)")
     ap.add_argument("--args", default="{}", help="tool arguments as JSON")
     ap.add_argument("--args-file", help="read tool arguments JSON from this file (wins over --args)")
+    ap.add_argument("--plan", help="batch mode: JSON plan file (array of steps or {label, steps})")
     ap.add_argument("--timeout", type=int, default=120)
     ap.add_argument("--out", help="write raw result JSON here instead of stdout")
     args = ap.parse_args()
@@ -137,6 +175,32 @@ def main():
         client.start()
         if args.mode == "list":
             result = client.list_tools()
+            text = json.dumps(result, ensure_ascii=False, indent=1)
+        elif args.mode == "batch":
+            if not args.plan:
+                ap.error("mode=batch requires --plan")
+            with open(args.plan, "r", encoding="utf-8") as fh:
+                plan = json.load(fh)
+            steps = run_batch(client, plan, args.timeout)
+            failed = [e for e in steps if not e["ok"]]
+            result = {
+                "label": plan.get("label") if isinstance(plan, dict) else None,
+                "planFile": args.plan,
+                "server": args.server,
+                "stepsRun": len(steps),
+                "failed": len(failed),
+                "allOk": not failed,
+                "steps": steps,
+            }
+            text = json.dumps(result, ensure_ascii=False, indent=1)
+            LOG("[batch done] %d steps, %d failed", len(steps), len(failed))
+            if args.out:
+                with open(args.out, "w", encoding="utf-8") as fh:
+                    fh.write(text)
+                LOG("[written] %s (%d bytes)", args.out, len(text))
+            else:
+                print(text)
+            return 3 if failed else 0
         else:
             if not args.tool:
                 ap.error("mode=call requires a tool name")
@@ -149,7 +213,7 @@ def main():
             except json.JSONDecodeError as exc:
                 ap.error("tool arguments are not valid JSON: %s" % exc)
             result = client.call(args.tool, arguments, timeout=args.timeout)
-        text = json.dumps(result, ensure_ascii=False, indent=1)
+            text = json.dumps(result, ensure_ascii=False, indent=1)
         if args.out:
             with open(args.out, "w", encoding="utf-8") as fh:
                 fh.write(text)

@@ -1,0 +1,56 @@
+{
+  "comment": "Round 21 evidence - the three lvai_convert_aixml_to_vi calls (backend=pylabview), verbatim composer reports from transcript.json steps 2-4 (second run of the same plan: first run passed identically, values and Call lines unchanged; the plan is idempotent and re-runnable). All three errorCode 0, execState 1, executable=true. THE NEW LINE THIS ROUND: 'Call Double It.vi' composed INSIDE the While Loop (step 3), and the callee Double It.vi had itself been written by step 2 of the SAME batch - the callee-first order is the whole recipe.",
+  "converts": [
+    {
+      "vi": "Double It.vi",
+      "layer": "grandchild (depth 2)",
+      "viBytes": 4625,
+      "elapsedMs": 599,
+      "openVINote": "Not opened: the pylabview backend writes the file and has no road into the IDE. Open it with lvai_open_file.",
+      "composerReport": [
+        "Control 'x' <- pclean.xml",
+        "Indicator 'Doubled' <- pclean.xml",
+        "Constant 'Two' <- pclean.xml",
+        "Node 'Multiply' = primResID 1052 <- <labview>\\examples\\Controls and Indicators\\Numeric\\Numeric with Units.vi",
+        "wires routed: 3, left generic: 0"
+      ]
+    },
+    {
+      "vi": "Sum Of Doubles.vi",
+      "layer": "child (depth 1): While Loop + 2 SR + a Call INSIDE the loop",
+      "viBytes": 6518,
+      "elapsedMs": 982,
+      "composerReport": [
+        "Structure 'While Loop' <- buip.xml",
+        "Control 'N' <- pclean.xml",
+        "Indicator 'Sum' <- pclean.xml",
+        "Indicator 'Count' <- pclean.xml",
+        "Constant 'Zero' <- pclean.xml",
+        "Constant 'One' <- pclean.xml",
+        "Tunnel In1 (in)",
+        "Tunnel In2 (in)",
+        "ShiftReg 4230 <- GetID.xml",
+        "ShiftReg 4233 <- GetID.xml",
+        "Node 'Add' = primResID 1050 <- GetID.xml",
+        "Call 'Double It.vi' <- <Element 'TypeDesc' at 0x0000028209833F10> (pane 4833, 16 slots)",
+        "Node 'Greater Or Equal?' = primResID 1103 <- <labview>\\examples\\File IO\\Spreadsheet\\Tab-Delimited Data\\Buffered Stream to Tab-Delimited Text File.vi",
+        "Node 'Add' = primResID 1050 <- GetID.xml",
+        "wires routed: 13, left generic: 0"
+      ],
+      "note": "THE KEY REPORT LINE: the Call resolved against the callee's connector pane (pane 4833, 16 slots) read from the .vi FILE Double It.vi written by the PREVIOUS STEP of the same batch. A Call inside a While Loop composes like a plain node - no special dialect, same round-6 form (output net id 4253 independent of the Call's uid 4252)."
+    },
+    {
+      "vi": "Nested Chain Demo.vi",
+      "layer": "top: one Call to the child",
+      "viBytes": 5125,
+      "elapsedMs": 950,
+      "composerReport": [
+        "Control 'N' <- pclean.xml",
+        "Indicator 'Sum' <- pclean.xml",
+        "Indicator 'Count' <- pclean.xml",
+        "Call 'Sum Of Doubles.vi' <- <Element 'TypeDesc' at 0x0000021CFCCF5850> (pane 4833, 16 slots)",
+        "wires routed: 3, left generic: 0"
+      ]
+    }
+  ]
+}

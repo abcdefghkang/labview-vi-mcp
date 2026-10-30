@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 20（2026-10-30）。
+> 最近更新：Round 21（2026-10-30）。
 
 ---
 
@@ -62,6 +62,7 @@
 | 18 | 10-28 | 是 | **HTML→VI 前面板移植 + 深度换肤** | 4 个 HTML 主界面移植为纯前面板 VI；bundle XML 换肤配方（坐标/颜色/字体/mojibake 中文管线）全钉死；**两条死路**（装饰件注入不渲染、克隆控件拒载）做实验排除；**绘图区黑底不在 XML 里**——自研 `helper_graph_style.vi` 运行时写 `Plot Area:Colors:BG Color` 解决；NI 校验器失效改走 pylabview 后端合成 | `39bc34d` |
 | 19 | 10-28 | 是 | 单基座迭代法：图形控件内部几何 / `howGrow` / 验证工具的假象 | 控件写绝对坐标、零件写相对坐标；`howGrow`="加载时是否重算"；**自研打印助手导出 PNG 非 1:1**（量像素改用 PrintWindow 截真窗）；`scaleRect` 是轴位置的唯一杠杆 | `c9bf141` |
 | 20 | 10-30 | 是 | **多 VI 编排（P6 关闭）+ 冷机无人值守闭环** | 顶层 Call ×2（迭代子 VI + 汇总子 VI）N=5/3 两点验证逐位吻合；**pylabview 对 Call 查磁盘不查 IDE 内存**（R6 的 `openVI:true` 前提属 gRPC 路线）；`ensure_labview` 自己拉起 LabVIEW；`scripts/mcp_call.py` 无 IDE 直驱（本轮 9 次调用全经它） | 本轮 |
+| 21 | 10-30 | 是 | **三层嵌套多 VI 链 + batch 直驱定型** | 孙→子→顶（Call 在 While Loop 内，深度 2）N=3/4 两点逐位吻合（12/3、20/4），R20 配方原样适用**无新方言**；`mcp_call.py` batch 模式：一轮=一份 JSON 计划+一次运行，幂等可重放（复跑 5 s）；G0 `net-unconsumed` 首次实战命中 | 本轮 |
 
 **四次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
@@ -98,6 +99,7 @@
 | **HTML→VI 前面板移植 + bundle 深度换肤**：4 个 HTML 主界面 → 纯前面板 VI；绘图区底色等引擎默认经 VI Server 属性运行时改写（渲染 PNG 像素级验证） | `examples/hmi-html-port/`（4 .vi）+ `artifacts/round18/`（换肤脚本、helper_fp_print、helper_graph_style + AIXML 源、渲染图），R18 |
 | **多 VI 编排（顶层 Call ×2，P6）**：N 进 → 迭代子 VI（While Loop + 双 SR）→ 汇总子 VI（Divide）→ Sum/Count/Mean 出；int→DBL 提升穿越子 VI 边界与顶层窗格；N=5/3 两点与手算逐位吻合 | `examples/multi-vi-demo/`（3 AIXML + 3 .vi），R20 |
 | **冷机无人值守闭环**：`lvai_ensure_labview` 自起 LabVIEW 2026（gRPC 仍死照跑）→ convert(pylabview) ×3 → run(pylabview) ×2 出值 | `artifacts/round20/`，R20 |
+| **三层嵌套多 VI 链（Call in loop，深度 2）**：顶层 → 子（While Loop 内 Call 孙 VI 累加）→ 孙（纯乘法）；Sum 值共穿越 4 道窗格；N=3/4 两点与手算逐位吻合；R6/R20 配方原样适用，无新方言 | `examples/nested-multi-vi-demo/`（3 AIXML + 3 .vi），R21 |
 
 ### B. 有条件可用（有坑，按配方走才行）
 
@@ -145,6 +147,7 @@
 | p16 继承扫描（per-tree） | 4 类 / 3 有父 / 父全为接口 / 0 未解析 | `artifacts/round16/p16-parent-scan.json` |
 | 多 VI 编排实跑（R20） | Sum/Count/Mean 在 N=5（15/5/3.0）与 N=3（6/3/2.0）与手算逐位吻合；run 3 ms | `examples/multi-vi-demo/` |
 | 冷启动→出值（R20） | ensure 45 s + convert 3.1 s（3 份）+ run 3 ms；全程无 IDE、无 Nigel | `29-*.md` |
+| 嵌套链 batch 直驱（R21） | 2 计划 / 8 调用幂等可重放（首轮约 20 s、复跑约 5 s）；convert 0.6–1.0 s；run 2–3 ms；首轮 0E/1W → 补 Count 后 0E/0W | `artifacts/round21/` |
 
 ---
 
@@ -174,7 +177,7 @@
 | **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；上游已到 **v2.3.1（2026-10-28，114 工具）**（R20 网络调研），升级窗口成熟 |
 | **P4** | `lvai_layout_diagram` 首测 | **本机 v2.0.1 工具面无此工具**；**上游 v2.2.x 已交付**（自研布局引擎，2026-10-16 起内置于所有写入流程）——升级后即测，补 AI 产物"人看不懂"的最后一块 |
 | **P5** | `lvai_error_list` 回诊 Round6/8 那些 `execState 0` 的档案 | **同上，v2.0.1 无此工具**；R17 改用"编译+运行真机验证"替代其部分意图（循环样本已验） |
-| **P6** ~~已关闭（R20）~~ | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | **R20 关闭**：`examples/multi-vi-demo/` 两点验证逐位吻合；R6 配方在 pylabview 路线细化为"**查磁盘、按顺序**"（`openVI:true` 属 gRPC 路线） |
+| **P6** ~~已关闭（R20）~~ | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | **R20 关闭**：`examples/multi-vi-demo/` 两点验证逐位吻合；R6 配方在 pylabview 路线细化为"**查磁盘、按顺序**"（`openVI:true` 属 gRPC 路线）。**R21 纵深**：嵌套 Call 链（Call 在 While Loop 内、被调方自身含 Call，深度 2）同配方照通，见 `examples/nested-multi-vi-demo/` |
 | **P7** | 测试层判据脚本（读 JUnit `.xml`，`Broken ≠ Failed` 即 fail-fast） | Caraya 的 `source` 字段会指向通过的套件，不能看状态码 |
 | **P8** | 覆盖空白：字符串/路径节点、Network Streams、XControls | 后者 v2.2.0 + pylabview 才支持 |
 | **P9** | 给上游报版本警告的误判（2018 经 VI Server 不拒开 2026 戳产物） | 我们改不了上游代码，但文档里的这句话正在把用户吓退 |

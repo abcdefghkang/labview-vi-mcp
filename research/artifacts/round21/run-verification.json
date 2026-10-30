@@ -1,0 +1,32 @@
+{
+  "comment": "Round 21 evidence - lvai_run_vi_and_read_values(backend=pylabview) on the TOP-level VI Nested Chain Demo.vi, verbatim value blocks from transcript.json steps 5-6 (second run of the same plan; the first run passed with identical values). Two-point verification of the THREE-LEVEL chain against hand-computed values (Sum = 2+4+...+2N = N*(N+1), Count = N); both passed bit-for-bit. via=ActiveX, runMs 3 and 2.",
+  "runs": [
+    {
+      "inputs": { "N": "3" },
+      "ran": true,
+      "finished": true,
+      "aborted": false,
+      "runMs": 3,
+      "values": {
+        "Sum":   { "type": "I32", "value": "12", "literal": "12", "problem": null },
+        "Count": { "type": "I32", "value": "3",  "literal": "3",  "problem": null }
+      },
+      "expected": { "Sum": 12, "Count": 3 },
+      "verdict": "PASS - bit-for-bit (2+4+6=12, 3 iterations)"
+    },
+    {
+      "inputs": { "N": "4" },
+      "ran": true,
+      "finished": true,
+      "aborted": false,
+      "runMs": 2,
+      "values": {
+        "Sum":   { "type": "I32", "value": "20", "literal": "20", "problem": null },
+        "Count": { "type": "I32", "value": "4",  "literal": "4",  "problem": null }
+      },
+      "expected": { "Sum": 20, "Count": 4 },
+      "verdict": "PASS - bit-for-bit (2+4+6+8=20, 4 iterations)"
+    }
+  ],
+  "whyThisProvesTheNESTEDCallIsWired": "The Sum value crosses FOUR boundaries before it is read: Double It's pane (x in, Doubled out, N times), Sum Of Doubles' pane (Sum out), and the top pane (Sum out). If the in-loop Call were silently empty (the LV014 trap), every iteration would add 0 and Sum would read 0 for both inputs while Count still reads N - Sum=12/20 with Count=3/4 couples BOTH Call hops to the live data path. Two different inputs give two different hand-computed sums; a constant or a default would fail at least one point."
+}

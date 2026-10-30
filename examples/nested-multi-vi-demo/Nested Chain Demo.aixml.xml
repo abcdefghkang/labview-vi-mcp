@@ -1,0 +1,6 @@
+<VI _name="Nested Chain Demo.vi" description="Round21 nested-chain top: calls Sum Of Doubles.vi, which itself calls Double It.vi - a three-level Call chain (nested Calls, depth 2 under the top). Expected outputs, hand-computed: Sum = 2+4+...+2N = N*(N+1), Count = N; N=3 gives Sum 12 / Count 3, N=4 gives Sum 20 / Count 4. Panel: N in (conIdx0, required), Sum out (conIdx1, recommended), Count out (conIdx2, recommended). Call output net ids are their own numbers (4310/4311, not the Call's uid 4200), per the round-6 recipe.">
+  <Control _name="N" conIdx="0" connection="required" outputs="value:4300.value" type="int32" uid="4300" uid_parent="root" value="3"/>
+  <Call target="Sum Of Doubles.vi" inputs="N:4300.value" outputs="Sum:4310.sum,Count:4311.count" uid="4200" uid_parent="root"/>
+  <Indicator _name="Sum" conIdx="1" connection="recommended" inputs="value:4310.sum" type="int32" uid="4301" uid_parent="root" value="0"/>
+  <Indicator _name="Count" conIdx="2" connection="recommended" inputs="value:4311.count" type="int32" uid="4302" uid_parent="root" value="0"/>
+</VI>

@@ -1,0 +1,142 @@
+{
+ "label": "round21 nested multi-VI chain: grandchild Double It -> child Sum Of Doubles (Call inside While Loop) -> top Nested Chain Demo; convert in callee-first order (hard constraint), then two-point run N=3 -> Sum 12 / Count 3, N=4 -> Sum 20 / Count 4",
+ "planFile": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\research\\artifacts\\round21\\plan.json",
+ "server": "C:\\Users\\heiyashi\\labview-mcp\\bin\\LabVIEWMCP.exe",
+ "stepsRun": 6,
+ "failed": 0,
+ "allOk": true,
+ "steps": [
+  {
+   "step": 1,
+   "name": "lvai_ensure_labview",
+   "args": {
+    "waitSeconds": 45
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"state\": \"ready\",\r\n  \"startedByThisCall\": false,\r\n  \"launched\": null,\r\n  \"launchMethod\": null,\r\n  \"autoSaveCleared\": null,\r\n  \"port\": 11557,\r\n  \"discoveredVia\": \"LabVIEW.exe listener\",\r\n  \"applicationLanguage\": \"Chinese\",\r\n  \"waitedMs\": 207\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 264
+  },
+  {
+   "step": 2,
+   "name": "lvai_convert_aixml_to_vi",
+   "args": {
+    "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Double It.aixml.xml",
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Double It.vi",
+    "openVI": true,
+    "backend": "pylabview",
+    "timeoutSeconds": 240
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"errorCode\": 0,\r\n  \"errorMessage\": \"No Error\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\",\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Double It.vi\",\r\n  \"viExisted\": true,\r\n  \"viExistsNow\": true,\r\n  \"viBytes\": 4625,\r\n  \"sourceOnly\": true,\r\n  \"execState\": 1,\r\n  \"executable\": true,\r\n  \"ok\": true,\r\n  \"openError\": null,\r\n  \"executableNote\": null,\r\n  \"warning\": null,\r\n  \"openVINote\": \"Not opened: the pylabview backend writes the file and has no road into the IDE. Open it with lvai_open_file.\",\r\n  \"memoryNote\": \"A VI already at this path was overwritten ON DISK. If LabVIEW has it loaded it keeps serving its in-memory copy - NI\\u0027s converter refuses that case with Error 1357, the composer cannot see it. Close the project (lvai_close_active_project) before trusting a run.\",\r\n  \"preCheck\": null,\r\n  \"composerReport\": [\r\n    \"Control \\u0027x\\u0027 \\u003C- pclean.xml\",\r\n    \"Indicator \\u0027Doubled\\u0027 \\u003C- pclean.xml\",\r\n    \"Constant \\u0027Two\\u0027 \\u003C- pclean.xml\",\r\n    \"Node \\u0027Multiply\\u0027 = primResID 1052 \\u003C- \\u003Clabview\\u003E\\\\examples\\\\Controls and Indicators\\\\Numeric\\\\Numeric with Units.vi\",\r\n    \"wires routed: 3, left generic: 0\"\r\n  ],\r\n  \"elapsedMs\": 599\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 734
+  },
+  {
+   "step": 3,
+   "name": "lvai_convert_aixml_to_vi",
+   "args": {
+    "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.aixml.xml",
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.vi",
+    "openVI": true,
+    "backend": "pylabview",
+    "timeoutSeconds": 240
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"errorCode\": 0,\r\n  \"errorMessage\": \"No Error\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\",\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Sum Of Doubles.vi\",\r\n  \"viExisted\": true,\r\n  \"viExistsNow\": true,\r\n  \"viBytes\": 6518,\r\n  \"sourceOnly\": true,\r\n  \"execState\": 1,\r\n  \"executable\": true,\r\n  \"ok\": true,\r\n  \"openError\": null,\r\n  \"executableNote\": null,\r\n  \"warning\": null,\r\n  \"openVINote\": \"Not opened: the pylabview backend writes the file and has no road into the IDE. Open it with lvai_open_file.\",\r\n  \"memoryNote\": \"A VI already at this path was overwritten ON DISK. If LabVIEW has it loaded it keeps serving its in-memory copy - NI\\u0027s converter refuses that case with Error 1357, the composer cannot see it. Close the project (lvai_close_active_project) before trusting a run.\",\r\n  \"preCheck\": null,\r\n  \"composerReport\": [\r\n    \"Structure \\u0027While Loop\\u0027 \\u003C- buip.xml\",\r\n    \"Control \\u0027N\\u0027 \\u003C- pclean.xml\",\r\n    \"Indicator \\u0027Sum\\u0027 \\u003C- pclean.xml\",\r\n    \"Indicator \\u0027Count\\u0027 \\u003C- pclean.xml\",\r\n    \"Constant \\u0027Zero\\u0027 \\u003C- pclean.xml\",\r\n    \"Constant \\u0027One\\u0027 \\u003C- pclean.xml\",\r\n    \"Tunnel In1 (in)\",\r\n    \"Tunnel In2 (in)\",\r\n    \"ShiftReg 4230 \\u003C- GetID.xml\",\r\n    \"ShiftReg 4233 \\u003C- GetID.xml\",\r\n    \"Node \\u0027Add\\u0027 = primResID 1050 \\u003C- GetID.xml\",\r\n    \"Call \\u0027Double It.vi\\u0027 \\u003C- \\u003CElement \\u0027TypeDesc\\u0027 at 0x0000028209833F10\\u003E (pane 4833, 16 slots)\",\r\n    \"Node \\u0027Greater Or Equal?\\u0027 = primResID 1103 \\u003C- \\u003Clabview\\u003E\\\\examples\\\\File IO\\\\Spreadsheet\\\\Tab-Delimited Data\\\\Buffered Stream to Tab-Delimited Text File.vi\",\r\n    \"Node \\u0027Add\\u0027 = primResID 1050 \\u003C- GetID.xml\",\r\n    \"wires routed: 13, left generic: 0\"\r\n  ],\r\n  \"elapsedMs\": 982\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 1084
+  },
+  {
+   "step": 4,
+   "name": "lvai_convert_aixml_to_vi",
+   "args": {
+    "aiXmlFilePath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.aixml.xml",
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+    "openVI": true,
+    "backend": "pylabview",
+    "timeoutSeconds": 240
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"errorCode\": 0,\r\n  \"errorMessage\": \"No Error\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\",\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi\",\r\n  \"viExisted\": true,\r\n  \"viExistsNow\": true,\r\n  \"viBytes\": 5125,\r\n  \"sourceOnly\": true,\r\n  \"execState\": 1,\r\n  \"executable\": true,\r\n  \"ok\": true,\r\n  \"openError\": null,\r\n  \"executableNote\": null,\r\n  \"warning\": null,\r\n  \"openVINote\": \"Not opened: the pylabview backend writes the file and has no road into the IDE. Open it with lvai_open_file.\",\r\n  \"memoryNote\": \"A VI already at this path was overwritten ON DISK. If LabVIEW has it loaded it keeps serving its in-memory copy - NI\\u0027s converter refuses that case with Error 1357, the composer cannot see it. Close the project (lvai_close_active_project) before trusting a run.\",\r\n  \"preCheck\": null,\r\n  \"composerReport\": [\r\n    \"Control \\u0027N\\u0027 \\u003C- pclean.xml\",\r\n    \"Indicator \\u0027Sum\\u0027 \\u003C- pclean.xml\",\r\n    \"Indicator \\u0027Count\\u0027 \\u003C- pclean.xml\",\r\n    \"Call \\u0027Sum Of Doubles.vi\\u0027 \\u003C- \\u003CElement \\u0027TypeDesc\\u0027 at 0x0000021CFCCF5850\\u003E (pane 4833, 16 slots)\",\r\n    \"wires routed: 3, left generic: 0\"\r\n  ],\r\n  \"elapsedMs\": 950\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 1028
+  },
+  {
+   "step": 5,
+   "name": "lvai_run_vi_and_read_values",
+   "args": {
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+    "inputsJson": "{\"N\": \"3\"}",
+    "backend": "pylabview",
+    "timeoutSeconds": 300
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi\",\r\n  \"via\": \"ActiveX\",\r\n  \"ran\": true,\r\n  \"finished\": true,\r\n  \"aborted\": false,\r\n  \"runMs\": 3,\r\n  \"values\": {\r\n    \"Sum\": {\r\n      \"type\": \"I32\",\r\n      \"value\": \"12\",\r\n      \"xml\": \"\\u003CI32\\u003E\\r\\n  \\u003CName\\u003ESum\\u003C/Name\\u003E\\r\\n  \\u003CVal\\u003E12\\u003C/Val\\u003E\\r\\n\\u003C/I32\\u003E\",\r\n      \"literal\": \"12\",\r\n      \"problem\": null\r\n    },\r\n    \"Count\": {\r\n      \"type\": \"I32\",\r\n      \"value\": \"3\",\r\n      \"xml\": \"\\u003CI32\\u003E\\r\\n  \\u003CName\\u003ECount\\u003C/Name\\u003E\\r\\n  \\u003CVal\\u003E3\\u003C/Val\\u003E\\r\\n\\u003C/I32\\u003E\",\r\n      \"literal\": \"3\",\r\n      \"problem\": null\r\n    }\r\n  },\r\n  \"note\": \"Ran to the end over ActiveX. Values are AIXML literals: a cluster or array is written [a,b,...], and \\u0060xml\\u0060 is always null on this route.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 501
+  },
+  {
+   "step": 6,
+   "name": "lvai_run_vi_and_read_values",
+   "args": {
+    "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+    "inputsJson": "{\"N\": \"4\"}",
+    "backend": "pylabview",
+    "timeoutSeconds": 300
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"viPath\": \"C:\\\\LV_AUTOTEST\\\\gen\\\\p7\\\\Nested Chain Demo.vi\",\r\n  \"via\": \"ActiveX\",\r\n  \"ran\": true,\r\n  \"finished\": true,\r\n  \"aborted\": false,\r\n  \"runMs\": 2,\r\n  \"values\": {\r\n    \"Sum\": {\r\n      \"type\": \"I32\",\r\n      \"value\": \"20\",\r\n      \"xml\": \"\\u003CI32\\u003E\\r\\n  \\u003CName\\u003ESum\\u003C/Name\\u003E\\r\\n  \\u003CVal\\u003E20\\u003C/Val\\u003E\\r\\n\\u003C/I32\\u003E\",\r\n      \"literal\": \"20\",\r\n      \"problem\": null\r\n    },\r\n    \"Count\": {\r\n      \"type\": \"I32\",\r\n      \"value\": \"4\",\r\n      \"xml\": \"\\u003CI32\\u003E\\r\\n  \\u003CName\\u003ECount\\u003C/Name\\u003E\\r\\n  \\u003CVal\\u003E4\\u003C/Val\\u003E\\r\\n\\u003C/I32\\u003E\",\r\n      \"literal\": \"4\",\r\n      \"problem\": null\r\n    }\r\n  },\r\n  \"note\": \"Ran to the end over ActiveX. Values are AIXML literals: a cluster or array is written [a,b,...], and \\u0060xml\\u0060 is always null on this route.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 467
+  }
+ ]
+}

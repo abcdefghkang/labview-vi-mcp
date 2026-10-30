@@ -1,0 +1,21 @@
+{
+  "label": "round21 G4 file-side evidence: extract the written .vi files back to XML (needs no LabVIEW) to prove the nested Call links live on disk",
+  "steps": [
+    {
+      "name": "pylv_extract",
+      "timeout": 90,
+      "args": {
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Nested Chain Demo.vi",
+        "outDirectory": "C:\\LV_AUTOTEST\\gen\\p7\\extract-top"
+      }
+    },
+    {
+      "name": "pylv_extract",
+      "timeout": 90,
+      "args": {
+        "viPath": "C:\\LV_AUTOTEST\\gen\\p7\\Sum Of Doubles.vi",
+        "outDirectory": "C:\\LV_AUTOTEST\\gen\\p7\\extract-child"
+      }
+    }
+  ]
+}
