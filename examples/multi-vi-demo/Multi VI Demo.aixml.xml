@@ -1,0 +1,8 @@
+<VI _name="Multi VI Demo.vi" description="Round20 P6 flagship: a top-level VI orchestrating two subVIs through Call nodes - Accumulate N.vi (While Loop + 2 shift registers, Sum/Count) and Mean Of Pair.vi (Divide). Data crosses connector panes twice: N in, Sum/Count/Mean out. Expected outputs, hand-computed: N=5 gives Sum=15, Count=5, Mean=3.0; N=3 gives Sum=6, Count=3, Mean=2.0. The int-to-DBL promotion happens inside Mean Of Pair and crosses the caller's pane as DBL. Call output net ids are their own numbers (not the Call node's uid), per the round-6 recipe.">
+  <Control _name="N" conIdx="0" connection="required" outputs="value:4300.value" type="int32" uid="4300" uid_parent="root" value="5"/>
+  <Call inputs="N:4300.value" outputs="Sum:4210.sum,Count:4211.count" target="Accumulate N.vi" uid="4200" uid_parent="root"/>
+  <Call inputs="x:4210.sum,y:4211.count" outputs="Mean:4213.mean" target="Mean Of Pair.vi" uid="4212" uid_parent="root"/>
+  <Indicator _name="Sum" conIdx="1" connection="recommended" inputs="value:4210.sum" type="int32" uid="4301" uid_parent="root" value="0"/>
+  <Indicator _name="Count" conIdx="2" connection="recommended" inputs="value:4211.count" type="int32" uid="4302" uid_parent="root" value="0"/>
+  <Indicator _name="Mean" conIdx="3" connection="recommended" inputs="value:4213.mean" type="double" uid="4303" uid_parent="root" value="0"/>
+</VI>

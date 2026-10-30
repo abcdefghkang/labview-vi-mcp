@@ -1,0 +1,6 @@
+<VI _name="Mean Of Pair.vi" description="Round20 multi-VI demo subVI (P6): plain arithmetic - Divide x by y. Panel: x in (conIdx0, required), y in (conIdx1, required), Mean out (conIdx2, recommended). Type note measured in this round: int32/int32 through Divide yields DBL, so Mean is double - the caller wires that DBL across its own connector pane, making the int-to-DBL promotion part of the test.">
+  <Control _name="x" conIdx="0" connection="required" outputs="value:4300.x" type="int32" uid="4300" uid_parent="root" value="0"/>
+  <Control _name="y" conIdx="1" connection="required" outputs="value:4301.y" type="int32" uid="4301" uid_parent="root" value="0"/>
+  <Node _name="Divide" inputs="x:4300.x,y:4301.y" outputs="x/y:4200.mean" uid="4200" uid_parent="root"/>
+  <Indicator _name="Mean" conIdx="2" connection="recommended" inputs="value:4200.mean" type="double" uid="4302" uid_parent="root" value="0"/>
+</VI>

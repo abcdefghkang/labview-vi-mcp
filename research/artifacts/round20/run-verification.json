@@ -1,0 +1,34 @@
+{
+  "comment": "Round 20 evidence - lvai_run_vi_and_read_values(backend=pylabview) on the top-level VI, verbatim value blocks. Two-point verification against hand-computed values; both passed bit-for-bit. via=ActiveX, runMs=3 both times.",
+  "runs": [
+    {
+      "inputs": { "N": "5" },
+      "ran": true,
+      "finished": true,
+      "aborted": false,
+      "runMs": 3,
+      "values": {
+        "Sum":   { "type": "I32", "value": "15", "literal": "15", "problem": null },
+        "Count": { "type": "I32", "value": "5",  "literal": "5",  "problem": null },
+        "Mean":  { "type": "DBL", "value": "3.00000000000000", "literal": "3", "problem": null }
+      },
+      "expected": { "Sum": 15, "Count": 5, "Mean": 3.0 },
+      "verdict": "PASS - all three bit-for-bit"
+    },
+    {
+      "inputs": { "N": "3" },
+      "ran": true,
+      "finished": true,
+      "aborted": false,
+      "runMs": 3,
+      "values": {
+        "Sum":   { "type": "I32", "value": "6", "literal": "6", "problem": null },
+        "Count": { "type": "I32", "value": "3", "literal": "3", "problem": null },
+        "Mean":  { "type": "DBL", "value": "2.00000000000000", "literal": "2", "problem": null }
+      },
+      "expected": { "Sum": 6, "Count": 3, "Mean": 2.0 },
+      "verdict": "PASS - all three bit-for-bit"
+    }
+  ],
+  "whyThisProvesTheCallsAreWired": "If a Call were silently empty (the LV014 trap) Sum/Count would read their indicator defaults (0) for both inputs, and Mean would be 0/0. Two DIFFERENT inputs producing two different hand-computed outputs couples N in through the pane AND Sum/Count/Mean back out - both Call directions measured live."
+}

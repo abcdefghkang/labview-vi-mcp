@@ -1,0 +1,7 @@
+{
+  "comment": "Round 20 evidence - lvai_status on a cold machine, before any action (2026-10-30). Full error text condensed to the essential lines; verbatim transcript in transcript-status.md.",
+  "ok": false,
+  "errorKind": "InvalidOperationException",
+  "error": "Could not find a port serving lvai.LVAI. Tried 11 candidate(s).",
+  "interpretation": "gRPC/Nigel service not running (same as R17/R19). The pylabview-only closure does not need it."
+}

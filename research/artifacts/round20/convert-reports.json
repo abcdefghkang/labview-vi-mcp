@@ -1,0 +1,54 @@
+{
+  "comment": "Round 20 evidence - the three lvai_convert_aixml_to_vi calls (backend=pylabview), verbatim composer reports. All three errorCode 0, execState 1, executable=true.",
+  "converts": [
+    {
+      "vi": "Accumulate N.vi",
+      "viBytes": 5748,
+      "elapsedMs": 786,
+      "openVINote": "Not opened: the pylabview backend writes the file and has no road into the IDE. Open it with lvai_open_file.",
+      "composerReport": [
+        "Structure 'While Loop' <- buip.xml",
+        "Control 'N' <- pclean.xml",
+        "Indicator 'Sum' <- pclean.xml",
+        "Indicator 'Count' <- pclean.xml",
+        "Constant 'Zero' <- pclean.xml",
+        "Constant 'One' <- pclean.xml",
+        "Tunnel In1 (in)",
+        "Tunnel In2 (in)",
+        "ShiftReg 4230 <- GetID.xml",
+        "ShiftReg 4233 <- GetID.xml",
+        "Node 'Add' = primResID 1050 <- GetID.xml",
+        "Node 'Add' = primResID 1050 <- GetID.xml",
+        "Node 'Greater Or Equal?' = primResID 1103 <- <labview>\\examples\\File IO\\Spreadsheet\\Tab-Delimited Data\\Buffered Stream to Tab-Delimited Text File.vi",
+        "wires routed: 12, left generic: 0"
+      ]
+    },
+    {
+      "vi": "Mean Of Pair.vi",
+      "viBytes": 4624,
+      "elapsedMs": 698,
+      "composerReport": [
+        "Control 'x' <- pclean.xml",
+        "Control 'y' <- pclean.xml",
+        "Indicator 'Mean' <- pclean.xml",
+        "Node 'Divide' = primResID 1053 <- <labview>\\examples\\Controls and Indicators\\Graphs and Charts\\Math Plots - 3D\\3D Comet Graph.vi",
+        "wires routed: 3, left generic: 0"
+      ]
+    },
+    {
+      "vi": "Multi VI Demo.vi",
+      "viBytes": 5717,
+      "elapsedMs": 1588,
+      "composerReport": [
+        "Control 'N' <- pclean.xml",
+        "Indicator 'Sum' <- pclean.xml",
+        "Indicator 'Count' <- pclean.xml",
+        "Indicator 'Mean' <- pclean.xml",
+        "Call 'Accumulate N.vi' <- <Element 'TypeDesc'> (pane 4833, 16 slots)",
+        "Call 'Mean Of Pair.vi' <- <Element 'TypeDesc'> (pane 4833, 16 slots)",
+        "wires routed: 4, left generic: 0"
+      ],
+      "note": "THE KEY REPORT LINES: the two Calls resolved against the callee CONNECTOR PANES (pane 4833, 16 slots) while neither callee was open in the IDE - the pylabview composer resolves Call targets from the callee .vi FILES on disk (same directory), not from LabVIEW memory. The R6 openVI:true requirement belongs to the gRPC/NI route."
+    }
+  ]
+}

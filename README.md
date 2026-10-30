@@ -14,7 +14,8 @@ A reusable agent skill for building and editing **LabVIEW VI front panels** thro
 | `scripts/deliver.py` | Copy master VI + newest render → deliverable + preview PNG |
 | `scripts/compare_deliver.py` | Pixel-diff quantification + before/after comparison image |
 | `scripts/render_verify.py` | Find newest render / crop & zoom / sample pixel colors |
-| `research/` | 滚动研究看板（`00-status.md`）+ 单轮实证文档（`20-26-*.md`）：AI 借 MCP 开发 LabVIEW 的完整经验、铁律、闸门与复现入口，Round 1–17 |
+| `scripts/mcp_call.py` | Minimal MCP stdio driver for LabVIEWMCP.exe — reproduce rounds from a bare shell / CI box without an MCP-capable IDE (pure stdlib) |
+| `research/` | 滚动研究看板（`00-status.md`）+ 单轮实证文档：AI 借 MCP 开发 LabVIEW 的完整经验、铁律、闸门与复现入口，Round 1–20 |
 
 ## Requirements
 
@@ -53,7 +54,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 
 | Doc | Content |
 |---|---|
-| `research/00-status.md` | **Board** (Round 17): the 5 research lines, rounds 1–17 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
+| `research/00-status.md` | **Board** (Round 20): the 5 research lines, rounds 1–20 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
 | `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
 | `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
@@ -103,6 +104,8 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `research/artifacts/` | Generated VIs + AIXML sources per round |
 | `research/examples/` | Copy-ready AIXML snippets and a debug playbook |
 | `examples/complex-demo/` | **Flagship runnable example** — `Accumulator.aixml.xml` (AI-authored) + compiled `Accumulator.vi` + `README.md`: a While Loop with 4 shift registers accumulating Sum/SumSq/Product over N iterations; verified at N=3 and N=5; rebuild + run recipe for the pylabview backend (no gRPC/Nigel needed) |
+| `research/29-multi-vi-orchestration-pylabview.md` | Round-20: **multi-VI orchestration closed (P6) + unattended cold-start closure**. Top-level VI Calls two subVIs (While-Loop iterator + Divide aggregator), two-point run verification bit-for-bit (N=5 → 15/5/3.0, N=3 → 6/3/2.0); **the pylabview composer resolves Call targets from the callee FILE on disk, not IDE memory** (round-6's `openVI:true` belongs to the gRPC route; ordering is the rule); `lvai_ensure_labview` cold-starts LabVIEW itself; upstream survey: v2.3.1 shipped `lvai_layout_diagram`/`lvai_error_list` (114 tools), class-specifier constants still absent (Chinese) |
+| `examples/multi-vi-demo/` | **Multi-VI program** — top-level `Multi VI Demo.vi` orchestrating `Accumulate N.vi` (While Loop + 2 shift registers) and `Mean Of Pair.vi` (Divide, int→DBL promotion across the pane); 3 AIXML + 3 compiled `.vi` + README with the rebuild-and-run recipe; evidence in `research/artifacts/round20/` |
 
 ## Notes
 

@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 19（2026-10-28）。
+> 最近更新：Round 20（2026-10-30）。
 
 ---
 
@@ -38,7 +38,7 @@
 
 ---
 
-## 2. 进度总表（Round 1–18）
+## 2. 进度总表（Round 1–20）
 
 | 轮 | 日期 | 在线 | 主题 | 一句话结论 | 提交 |
 |---|---|---|---|---|---|
@@ -59,7 +59,9 @@
 | 15 | 10-26 | 是 | **2018 工位**：无 Nigel 的一天 | composer 写的 2026 戳 VI 被 2018 打开并跑对（versionWarning 被推翻）；类调用方端到端；**派发绑定在编辑期**，P15 钉死 | `3e1825a` |
 | 16 | 10-26 | 是 | **gRPC 路线恢复**：2026-capable 工位 | 全链路 author→compile(grpc)→run(pylabview) 跑通（y=42）；三处新规则 LV017/018/019；遗留 p16 LVOOP 树验证为合法 2026 中文工程 | `0a5be93` |
 | 17 | 10-27 | 是 | **gRPC 掉线也能跑**：pylabview-only 闭环 + 循环方言 | gRPC/Nigel 本会话未起，整条 AI→AIXML→compile(pylabview)→run(pylabview) 闭环照通；**LV020 循环边界规则落成**；首个真机跑通的"复杂程序"旗舰样例 `examples/complex-demo/Accumulator.vi`（四 shift register 累计 Sum/SumSq/Product，N=3/5 数值逐位吻合） | `b515485` |
-| 18 | 10-28 | 是 | **HTML→VI 前面板移植 + 深度换肤** | 4 个 HTML 主界面移植为纯前面板 VI；bundle XML 换肤配方（坐标/颜色/字体/mojibake 中文管线）全钉死；**两条死路**（装饰件注入不渲染、克隆控件拒载）做实验排除；**绘图区黑底不在 XML 里**——自研 `helper_graph_style.vi` 运行时写 `Plot Area:Colors:BG Color` 解决；NI 校验器失效改走 pylabview 后端合成 | 本轮 |
+| 18 | 10-28 | 是 | **HTML→VI 前面板移植 + 深度换肤** | 4 个 HTML 主界面移植为纯前面板 VI；bundle XML 换肤配方（坐标/颜色/字体/mojibake 中文管线）全钉死；**两条死路**（装饰件注入不渲染、克隆控件拒载）做实验排除；**绘图区黑底不在 XML 里**——自研 `helper_graph_style.vi` 运行时写 `Plot Area:Colors:BG Color` 解决；NI 校验器失效改走 pylabview 后端合成 | `39bc34d` |
+| 19 | 10-28 | 是 | 单基座迭代法：图形控件内部几何 / `howGrow` / 验证工具的假象 | 控件写绝对坐标、零件写相对坐标；`howGrow`="加载时是否重算"；**自研打印助手导出 PNG 非 1:1**（量像素改用 PrintWindow 截真窗）；`scaleRect` 是轴位置的唯一杠杆 | `c9bf141` |
+| 20 | 10-30 | 是 | **多 VI 编排（P6 关闭）+ 冷机无人值守闭环** | 顶层 Call ×2（迭代子 VI + 汇总子 VI）N=5/3 两点验证逐位吻合；**pylabview 对 Call 查磁盘不查 IDE 内存**（R6 的 `openVI:true` 前提属 gRPC 路线）；`ensure_labview` 自己拉起 LabVIEW；`scripts/mcp_call.py` 无 IDE 直驱（本轮 9 次调用全经它） | 本轮 |
 
 **四次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
@@ -94,6 +96,8 @@
 | **全链路 pylabview-only 闭环（gRPC 掉线也能跑）**：`convert_aixml_to_vi(backend:"pylabview")` 写 .vi + `run_vi_and_read_values(backend:"pylabview")` 实跑；不依赖 NI 的 gRPC 服务 | `examples/complex-demo/Accumulator.vi` + `Accumulator.aixml.xml`，R17 |
 | **复杂算法 VI（While Loop + 四 shift register + 条件终止）**：AI 写 AIXML 实跑出值 | `examples/complex-demo/`：N=3→Sum6/SumSq14/Product6；N=5→Sum15/SumSq55/Product120；循环方言 LV020 钉死 |
 | **HTML→VI 前面板移植 + bundle 深度换肤**：4 个 HTML 主界面 → 纯前面板 VI；绘图区底色等引擎默认经 VI Server 属性运行时改写（渲染 PNG 像素级验证） | `examples/hmi-html-port/`（4 .vi）+ `artifacts/round18/`（换肤脚本、helper_fp_print、helper_graph_style + AIXML 源、渲染图），R18 |
+| **多 VI 编排（顶层 Call ×2，P6）**：N 进 → 迭代子 VI（While Loop + 双 SR）→ 汇总子 VI（Divide）→ Sum/Count/Mean 出；int→DBL 提升穿越子 VI 边界与顶层窗格；N=5/3 两点与手算逐位吻合 | `examples/multi-vi-demo/`（3 AIXML + 3 .vi），R20 |
+| **冷机无人值守闭环**：`lvai_ensure_labview` 自起 LabVIEW 2026（gRPC 仍死照跑）→ convert(pylabview) ×3 → run(pylabview) ×2 出值 | `artifacts/round20/`，R20 |
 
 ### B. 有条件可用（有坑，按配方走才行）
 
@@ -139,6 +143,8 @@
 | 类父链接离线解析 | 468 个类，13 个"父类"其实是接口 | `artifacts/round11/lvclass-parents.json` |
 | gRPC 权威接口面（dump_schema） | **23 RPC**（proto3，package lvai） | `artifacts/round16/dump_schema_summary.txt` |
 | p16 继承扫描（per-tree） | 4 类 / 3 有父 / 父全为接口 / 0 未解析 | `artifacts/round16/p16-parent-scan.json` |
+| 多 VI 编排实跑（R20） | Sum/Count/Mean 在 N=5（15/5/3.0）与 N=3（6/3/2.0）与手算逐位吻合；run 3 ms | `examples/multi-vi-demo/` |
+| 冷启动→出值（R20） | ensure 45 s + convert 3.1 s（3 份）+ run 3 ms；全程无 IDE、无 Nigel | `29-*.md` |
 
 ---
 
@@ -165,14 +171,14 @@
 |---|---|---|
 | **P1** | IDE 手搭一个"父类型窗格端子"调用方给人/AI 读 | R15 钉死了边界：运行时派发需要"父类型线+子类型值"，而类值只能来自常量（编辑期绑定）。一个手工样本就能让 AI 照着 graft/改写 |
 | **P2** | 装 Caraya（VIPM，需联网）→ 再跑 `generate_test(pylabview)` | 测试层三级卡在最后一级；顺带观察 `lvai_typedef_tree.vi` 的 `fpsane.cpp(1140)` 崩溃是否复现 |
-| **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；v2.2.0 可能补类说明符常量语法（直接关系 P1） |
-| **P4** | `lvai_layout_diagram` 首测 | **本机 v2.0.1 工具面无此工具**（ToolSearch 只命中 6 个 `lvai_*`：status/dump_schema/convert_vi_to_aixml/run_vi_and_read_values/ensure_labview/graft_diagram）；等升级或换版本再测 |
+| **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；上游已到 **v2.3.1（2026-10-28，114 工具）**（R20 网络调研），升级窗口成熟 |
+| **P4** | `lvai_layout_diagram` 首测 | **本机 v2.0.1 工具面无此工具**；**上游 v2.2.x 已交付**（自研布局引擎，2026-10-16 起内置于所有写入流程）——升级后即测，补 AI 产物"人看不懂"的最后一块 |
 | **P5** | `lvai_error_list` 回诊 Round6/8 那些 `execState 0` 的档案 | **同上，v2.0.1 无此工具**；R17 改用"编译+运行真机验证"替代其部分意图（循环样本已验） |
-| **P6** | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | R17 的 `Accumulator` 是单 VI 版；下一步补上"复杂程序 = 多 VI 协作"那一块（Call 机制 round5/6 已验） |
+| **P6** ~~已关闭（R20）~~ | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | **R20 关闭**：`examples/multi-vi-demo/` 两点验证逐位吻合；R6 配方在 pylabview 路线细化为"**查磁盘、按顺序**"（`openVI:true` 属 gRPC 路线） |
 | **P7** | 测试层判据脚本（读 JUnit `.xml`，`Broken ≠ Failed` 即 fail-fast） | Caraya 的 `source` 字段会指向通过的套件，不能看状态码 |
 | **P8** | 覆盖空白：字符串/路径节点、Network Streams、XControls | 后者 v2.2.0 + pylabview 才支持 |
 | **P9** | 给上游报版本警告的误判（2018 经 VI Server 不拒开 2026 戳产物） | 我们改不了上游代码，但文档里的这句话正在把用户吓退 |
-| **P10** | P1 的父类型调用方 / 运行时动态派发 | 仍受 AIXML 写不出类端子 + run 无类实例字面量限制；等上游补类说明符常量语法 |
+| **P10** | P1 的父类型调用方 / 运行时动态派发 | R20 网络调研：**上游 v2.3.1 仍无类端子语法**（类身份不编码进 AIXML 类型串，动态端子仅 `connection:"dynamic"` 标注）；等上游补类说明符常量语法 |
 
 ---
 
@@ -182,7 +188,7 @@
 |---|---|
 | LabVIEW | **2026-capable（装 2015–2025 + 2026；pylabview 经 resolve.py 补丁认最高版本 = 2026）；2018 32-bit 也装着**；`LabVIEW.exe` 进程在跑、`LabVIEWMCP.exe` ×2 在跑 |
 | MCP server | `LabVIEWMCP.exe` 2.0.1（`77eb0b22`），UI 开关已恢复（`disabled:true` 已除） |
-| gRPC 服务 | **本会话未启动**（R17：`lvai_status` 报 "Could not find a port serving lvai.LVAI"，50 候选端口全 Unavailable/DeadlineExceeded）。**但闭环不依赖它**——`convert_aixml_to_vi(backend:"pylabview")` + `run_vi_and_read_values(backend:"pylabview")` 照常通（R17 实证） |
+| gRPC 服务 | R20 冷机起步：`lvai_status` 十一候选端口全不可用；`ensure_labview` 只把 IDE 拉起（服务随 Nigel 起，需人手动开）。**闭环不依赖它**——convert+run 走 `backend:"pylabview"` 照常通（R17/R20 双实证） |
 | pylabview 安装解析 | **需本机补丁** `bin/scripts/aixml-pylabview/resolve.py`（两个 base 取最高版本），`resolve.py.orig-round14` 为备份 |
 | 已知缺件 | Caraya / `Test.lvclass`（VIPM 只有 `.spec` 缓存，`HTTP Transport error ... jkisoft.com`） |
 | 已知坏件 | 4 个 helper AIXML 被中文版拒收；`signalsJson` 在 pylabview 路线仍被拒；**gRPC run helper 在中文 2026 损坏**（LV019，run 走 pylabview 即可）；gRPC 路径须反斜杠（LV017）；pylabview 读侧中文乱码（LV018）；pylabview `versionWarning` 误报"2018 在跑"（cosmetic bug，忽略） |
@@ -229,6 +235,27 @@ lvai_convert_aixml_to_vi(backend:"pylabview",           # pylabview 自带 compo
 lvai_run_vi_and_read_values(backend:"pylabview",         # 经 LabVIEW ActiveX 实跑，只需 LabVIEW.exe 在跑
     viPath:"<repo>/examples/complex-demo/Accumulator.vi", inputsJson:'{"N":"5"}')
 #   → Sum=15, SumSq=55, Product=120, Done=true（循环方言见 LV020）
+```
+
+# 7) 多 VI 编排（Round20 配方，P6 已关闭；冷机无人值守）
+
+```bash
+# 0) 冷机起步：LabVIEW.exe 不在跑？先拉起（gRPC 不来也无妨，run 走 ActiveX）
+lvai_ensure_labview(waitSeconds:45)     # startedByThisCall:true → LabVIEW 2026 起来了
+
+# 1) 子 VI 先、调用方后——顺序是硬约束；openVI:true 在 pylabview 路线被接受且被忽略
+#    （composer 对 Call 查磁盘不查 IDE 内存，R6 的 openVI 前提属 gRPC/NI 路线）
+lvai_convert_aixml_to_vi(backend:"pylabview", aiXmlFilePath:"<repo>/examples/multi-vi-demo/Accumulate N.aixml.xml", viPath:"<repo>/examples/multi-vi-demo/Accumulate N.vi")
+lvai_convert_aixml_to_vi(backend:"pylabview", aiXmlFilePath:"<repo>/examples/multi-vi-demo/Mean Of Pair.aixml.xml",  viPath:"<repo>/examples/multi-vi-demo/Mean Of Pair.vi")
+lvai_convert_aixml_to_vi(backend:"pylabview", aiXmlFilePath:"<repo>/examples/multi-vi-demo/Multi VI Demo.aixml.xml", viPath:"<repo>/examples/multi-vi-demo/Multi VI Demo.vi")
+
+# 2) 两点实跑验证
+lvai_run_vi_and_read_values(backend:"pylabview", viPath:"<repo>/examples/multi-vi-demo/Multi VI Demo.vi", inputsJson:'{"N":"5"}')   # → Sum=15, Count=5, Mean=3.00000000000000
+lvai_run_vi_and_read_values(backend:"pylabview", viPath:"<repo>/examples/multi-vi-demo/Multi VI Demo.vi", inputsJson:'{"N":"3"}')   # → Sum=6,  Count=3, Mean=2.00000000000000
+
+# 3) 本会话 IDE 没挂载 lvai_* 工具？用 scripts/mcp_call.py 直驱（stdio JSON-RPC，纯标准库）：
+python scripts/mcp_call.py --server "C:\path\LabVIEWMCP.exe" call lvai_status
+python scripts/mcp_call.py --server "C:\path\LabVIEWMCP.exe" list --out tools.json
 ```
 
 ---

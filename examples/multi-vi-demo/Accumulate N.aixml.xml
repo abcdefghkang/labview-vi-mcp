@@ -1,0 +1,23 @@
+<VI _name="Accumulate N.vi" description="Round20 multi-VI demo subVI (P6): a While Loop with two shift registers accumulating Sum = 1+2+...+N and Count = N over N iterations (element = iteration index + 1). Panel: N in (conIdx0, required), Sum out (conIdx1, recommended), Count out (conIdx2, recommended). Same loop dialect as the proven Accumulator (LV020): SR seeds stay on the root diagram, loop-internal constants enter via tunnels, stop condition is Greater Or Equal? feeding the Condition terminal.">
+  <Control _name="N" conIdx="0" connection="required" outputs="value:4300.value" type="int32" uid="4300" uid_parent="root" value="5"/>
+  <Constant _name="Zero" outputs="value:4202.zero" type="int32" uid="4202" uid_parent="root" value="0"/>
+  <Constant _name="One" outputs="value:4203.one" type="int32" uid="4203" uid_parent="root" value="1"/>
+  <Structure _name="While Loop" count="" uid="4200" uid_parent="root">
+    <Tunnel _id="In1" inputs="value:4300.value" outputs="value:4211.max" uid="4211" uid_parent="4200"/>
+    <Tunnel _id="In2" inputs="value:4203.one" outputs="value:4213.one" uid="4213" uid_parent="4200"/>
+    <ShiftReg uid="4230" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4234.iter" uid="4234" uid_parent="4230"/>
+      <Right inputs="value:4251.iter1" outputs="value:4291.final_iter" uid="4291" uid_parent="4230"/>
+    </ShiftReg>
+    <ShiftReg uid="4233" uid_parent="4200">
+      <Left inputs="value:4202.zero" outputs="value:4235.s" uid="4235" uid_parent="4233"/>
+      <Right inputs="value:4252.sn" outputs="value:4292.final_sum" uid="4292" uid_parent="4233"/>
+    </ShiftReg>
+    <Node _name="Add" inputs="x:4234.iter,y:4213.one" outputs="x+y:4251.iter1" uid="4251" uid_parent="4200"/>
+    <Node _name="Add" inputs="x:4235.s,y:4251.iter1" outputs="x+y:4252.sn" uid="4252" uid_parent="4200"/>
+    <Node _name="Greater Or Equal?" inputs="x:4251.iter1,y:4211.max" outputs="x >= y?:4256.stop" uid="4256" uid_parent="4200"/>
+    <Condition inputs="value:4256.stop" uid="4201" uid_parent="4200" value="stop"/>
+  </Structure>
+  <Indicator _name="Sum" conIdx="1" connection="recommended" inputs="value:4292.final_sum" type="int32" uid="4301" uid_parent="root" value="0"/>
+  <Indicator _name="Count" conIdx="2" connection="recommended" inputs="value:4291.final_iter" type="int32" uid="4302" uid_parent="root" value="0"/>
+</VI>

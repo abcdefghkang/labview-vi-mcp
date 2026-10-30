@@ -1,0 +1,13 @@
+{
+  "comment": "Round 20 evidence - lvai_ensure_labview from a machine with NO LabVIEW.exe running. It started LabVIEW 2026 (64-bit) itself (startedByThisCall=true, launchMethod=explorer, autoSaveCleared). The gRPC service still did not answer (needs Nigel); the wait burned the full 45 s budget - that is the documented cold-start answer, not a fault. LabVIEW.exe (PID 29144, Responding=True) was up afterwards and served the whole round over ActiveX.",
+  "ok": false,
+  "state": "starting",
+  "startedByThisCall": true,
+  "launched": "LabVIEW 2026 (64-bit)",
+  "launchMethod": "explorer",
+  "autoSaveCleared": "auto-save store already empty",
+  "runningProcesses": 1,
+  "waitedMs": 45059,
+  "waitSecondsUsed": 45,
+  "lastError": "Could not find a port serving lvai.LVAI ... LabVIEW.exe listener: Unavailable (IDE up, service not started)"
+}
