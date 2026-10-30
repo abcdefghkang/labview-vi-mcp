@@ -11,6 +11,7 @@ A reusable agent skill for building and editing **LabVIEW VI front panels** thro
 | `references/02-capability-matrix.md` | Verified style names, writable-property matrix, 12 silently-ignored pitfalls, color palette (Chinese) |
 | `references/03-workflows-and-verification.md` | Four workflows + copy-paste code templates + troubleshooting table (Chinese) |
 | `references/04-case-study-hmi-panel.md` | Photo → HMI panel restoration, full record (Chinese) |
+| `references/05-team-sharing-cold-start-and-stdio-drive.md` | Team sharing deck: unattended LabVIEW authoring — cold-start closure (`lvai_ensure_labview`) + no-IDE stdio JSON-RPC drive (`scripts/mcp_call.py`), measured numbers, pitfall list, onboarding checklist (Chinese) |
 | `scripts/deliver.py` | Copy master VI + newest render → deliverable + preview PNG |
 | `scripts/compare_deliver.py` | Pixel-diff quantification + before/after comparison image |
 | `scripts/render_verify.py` | Find newest render / crop & zoom / sample pixel colors |
