@@ -1,0 +1,19 @@
+{
+  "label": "round23 - post-upgrade regression: pylv_status + caraya suite replay",
+  "steps": [
+    {
+      "name": "pylv_status",
+      "args": {},
+      "timeout": 60
+    },
+    {
+      "name": "lvai_run_caraya_tests",
+      "args": {
+        "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+        "backend": "pylabview",
+        "timeoutSeconds": 300
+      },
+      "timeout": 420
+    }
+  ]
+}

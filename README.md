@@ -55,7 +55,7 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 
 | Doc | Content |
 |---|---|
-| `research/00-status.md` | **Board** (Round 22): the 5 research lines, rounds 1–22 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
+| `research/00-status.md` | **Board** (Round 23): the 5 research lines, rounds 1–23 table with verdict + commit, capability map in three tiers (deliverable / conditional / impossible), headline metrics, gates G0–G5, priorities P1–P10, current environment and liveness check (Chinese) |
 | `research/05-aixml-vi-generation.md` | AIXML format, generation pipeline, dual-backend switching (Chinese) |
 | `research/06-best-practices.md` | Reusable methodology: workflow, prompt engineering, review checklist (Chinese) |
 | `research/07-measured-session.md` | Round-2 measured session record (Chinese) |
@@ -111,6 +111,8 @@ Ongoing measured research on **AI generating LabVIEW code from scratch** (Zuehlk
 | `examples/nested-multi-vi-demo/` | **Three-level nested chain** — `Nested Chain Demo.vi` → `Sum Of Doubles.vi` (While Loop + 2 SR + in-loop Call) → `Double It.vi`; 3 AIXML + 3 compiled `.vi` + README; evidence in `research/artifacts/round21/` (plan + transcript pair is the recorded, re-runnable round) |
 | `research/31-caraya-testing-layer.md` | Round-22: **Caraya installed by hand, the test layer's last link closed (P2/P7)**. The "missing piece" verdict is corrected — the three Caraya tools were always in the 99-tool surface, only the runtime was absent. `.vip` = zip, installed from `vipm-io/caraya` 2.0.0 (728 files, one nesting-detour on the way); full loop `generate_test` → `generate_caraya_test_runner` → `run_caraya_tests` on pylabview; positive 3/0, negative control (one `lvai_set_constant` edit) failures=1 **naming the exact case**, restore to green — verdicts all read off the on-disk JUnit report (Chinese) |
 | `examples/caraya-demo/` | **AI-written, AI-judged Caraya suite** — `Test Double It.vi` + `run-tests.vi` (both tool-generated) + `TestReport.xml`; evidence in `research/artifacts/round22/` (2 batch plans + transcripts + install notes) |
+| `research/32-mcp-upgrade-v2.3.1.md` | Round-23: **labview-mcp upgraded v2.0.1 → v2.3.1 with zero migration (P3)**. Release zip is the install layout (stop exe → rename old dir → extract); the upstream **still ships the `labview_root()` first-hit bug** R14 found (208→657-line rewrite didn't fix it) — patch re-applied by hand, diff archived; 114 tools confirmed, R22 Caraya suite replays green (Chinese) |
+| `research/artifacts/round23/` | Upgrade evidence: full 114-tool surface JSON (475 KB), the re-applied `resolve.py` patch as `.diff`, upgrade notes, post-upgrade regression plan + transcript |
 
 ## Notes
 

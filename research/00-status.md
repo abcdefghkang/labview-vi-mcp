@@ -2,7 +2,7 @@
 
 > 本文件是**滚动看板**，只回答三个问题：方向在哪、走到哪了、现在能/不能做什么。
 > 每轮研究结束更新本文件与 `06-best-practices.md`，详细论证仍在 `20~24-*.md` 等单轮文档里。
-> 最近更新：Round 22（2026-10-30）。
+> 最近更新：Round 23（2026-10-30）。
 
 ---
 
@@ -38,7 +38,7 @@
 
 ---
 
-## 2. 进度总表（Round 1–22）
+## 2. 进度总表（Round 1–23）
 
 | 轮 | 日期 | 在线 | 主题 | 一句话结论 | 提交 |
 |---|---|---|---|---|---|
@@ -64,6 +64,7 @@
 | 20 | 10-30 | 是 | **多 VI 编排（P6 关闭）+ 冷机无人值守闭环** | 顶层 Call ×2（迭代子 VI + 汇总子 VI）N=5/3 两点验证逐位吻合；**pylabview 对 Call 查磁盘不查 IDE 内存**（R6 的 `openVI:true` 前提属 gRPC 路线）；`ensure_labview` 自己拉起 LabVIEW；`scripts/mcp_call.py` 无 IDE 直驱（本轮 9 次调用全经它） | 本轮 |
 | 21 | 10-30 | 是 | **三层嵌套多 VI 链 + batch 直驱定型** | 孙→子→顶（Call 在 While Loop 内，深度 2）N=3/4 两点逐位吻合（12/3、20/4），R20 配方原样适用**无新方言**；`mcp_call.py` batch 模式：一轮=一份 JSON 计划+一次运行，幂等可重放（复跑 5 s）；G0 `net-unconsumed` 首次实战命中 | 本轮 |
 | 22 | 10-30 | 是 | **Caraya 装包 + 测试层全链打通（D 方向关闭）** | "缺件"被修正：MCP 侧工具齐全，缺的只是 Caraya 运行时；.vip 即 zip 手工装（`vipm-io/caraya` 2.0.0，728 文件，含一次路径返工）；正对照 tests=3 failures=0、负对照 failures=1 **指名被改用例**、恢复归零；判据全部来自磁盘 JUnit 报告 | 本轮 |
+| 23 | 10-30 | 是 | **升级 labview-mcp v2.0.1→v2.3.1（P3 主体关闭）** | 零迁移升级：release zip 与安装布局同构，停进程→旧目录改名备份→解压→重打 resolve.py 补丁；**上游 v2.3.1 仍带 `labview_root()` first-hit bug**（208→657 行大改未修，P9 扩容）；114 工具面确认（layout_diagram(s)/error_list/dump_schema 在位）；R22 Caraya 套件重放全绿 | 本轮 |
 
 **七次"环境/工具假象"结案**，这是最值得记住的部分——因为它们看起来都像工具缺功能：
 
@@ -134,7 +135,7 @@
 
 | 指标 | 值 | 出处 |
 |---|---|---|
-| 真实工具面 | **99**（94 `lvai_*` + 5 `pylv_*`）over **23** RPC | `artifacts/round11` |
+| 真实工具面 | **114**（109 `lvai_*` + 5 `pylv_*`，v2.3.1，R23 升级后；升级前 v2.0.1 为 99/23 RPC） | `artifacts/round23/tool-surface-v231-114.json` |
 | 上游冷构建语料 | 25 篇 / 4409 行 / 57 类 / 193 VI / 112 测试 | `artifacts/round10` |
 | 语料里的测试失败 | 3 个，**全部是故意负对照**；23/25 跑了负对照 | `19-*.md` |
 | 类阶段成本占比 | **49%**（且是失败集中的那一半）；typedef 仅 10% 且一次过 | `19-*.md` |
@@ -178,7 +179,7 @@
 |---|---|---|
 | **P1** | IDE 手搭一个"父类型窗格端子"调用方给人/AI 读 | R15 钉死了边界：运行时派发需要"父类型线+子类型值"，而类值只能来自常量（编辑期绑定）。一个手工样本就能让 AI 照着 graft/改写 |
 | **P2** ~~已关闭（R22）~~ | 装 Caraya → 再跑 `generate_test(pylabview)` | **R22 关闭**：.vip 即 zip 手工装（`vipm-io/caraya` 2.0.0，VIPM 不需要）；三级全通，正/负对照齐备，见 `examples/caraya-demo/` 与 `research/31-*.md`。`lvai_typedef_tree` 的 `fpsane.cpp(1140)` 崩溃本轮未触发，保持开放 |
-| **P3** | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | 老名字有 12 个已失效；**升级会覆盖 `resolve.py` 补丁，必须重打**；上游已到 **v2.3.1（2026-10-28，114 工具）**（R20 网络调研），升级窗口成熟 |
+| **P3** ~~已关闭（R23）~~ | 升级 labview-mcp ≥ v2.2.0 → `lvai_dump_schema` 逐条 diff | **R23 关闭升级主体**：v2.0.1→v2.3.1 零迁移完成，`resolve.py` 补丁已重打（上游仍带 first-hit bug，见 `research/32-*.md` §2）；**遗留**：`lvai_dump_schema` 名字级 diff 与 P4/P5 新工具首测推 Round 24 |
 | **P4** | `lvai_layout_diagram` 首测 | **本机 v2.0.1 工具面无此工具**；**上游 v2.2.x 已交付**（自研布局引擎，2026-10-16 起内置于所有写入流程）——升级后即测，补 AI 产物"人看不懂"的最后一块 |
 | **P5** | `lvai_error_list` 回诊 Round6/8 那些 `execState 0` 的档案 | **同上，v2.0.1 无此工具**；R17 改用"编译+运行真机验证"替代其部分意图（循环样本已验） |
 | **P6** ~~已关闭（R20）~~ | 多 VI 版复杂程序：顶层 VI Call 一个迭代子 VI + 一个汇总子 VI | **R20 关闭**：`examples/multi-vi-demo/` 两点验证逐位吻合；R6 配方在 pylabview 路线细化为"**查磁盘、按顺序**"（`openVI:true` 属 gRPC 路线）。**R21 纵深**：嵌套 Call 链（Call 在 While Loop 内、被调方自身含 Call，深度 2）同配方照通，见 `examples/nested-multi-vi-demo/` |
@@ -193,10 +194,10 @@
 
 | 项 | 值 |
 |---|---|
-| LabVIEW | **2026-capable（装 2015–2025 + 2026；pylabview 经 resolve.py 补丁认最高版本 = 2026）；2018 32-bit 也装着**；`LabVIEW.exe` 进程在跑、`LabVIEWMCP.exe` ×2 在跑 |
-| MCP server | `LabVIEWMCP.exe` 2.0.1（`77eb0b22`），UI 开关已恢复（`disabled:true` 已除） |
+| LabVIEW | **2026-capable（装 2015–2025 + 2026；pylabview 经 resolve.py 补丁认最高版本 = 2026）；2018 32-bit 也装着**；`LabVIEW.exe` 进程在跑（升级后 MCP 进程需 IDE 重连或由客户端拉起） |
+| MCP server | **`LabVIEWMCP.exe` v2.3.1（`5c9afb35`，114 工具，R23 升级）**；旧 v2.0.1 整目录备份在 `labview-mcp.v2.0.1-bak\`（回滚=改名回来）；`resolve.py` R14 补丁已重打（`labview_root()` 取最高版本安装） |
 | gRPC 服务 | R20 冷机起步：`lvai_status` 十一候选端口全不可用；`ensure_labview` 只把 IDE 拉起（服务随 Nigel 起，需人手动开）。**闭环不依赖它**——convert+run 走 `backend:"pylabview"` 照常通（R17/R20 双实证） |
-| pylabview 安装解析 | **需本机补丁** `bin/scripts/aixml-pylabview/resolve.py`（两个 base 取最高版本），`resolve.py.orig-round14` 为备份 |
+| pylabview 安装解析 | **需本机补丁** `bin/scripts/aixml-pylabview/resolve.py`（两个 base 取最高版本；R23 在 v2.3.1 上重打，diff 存 `artifacts/round23/resolve-patch-r14.diff`），`resolve.py.orig-round14` 为上游原版备份 |
 | 已知缺件 | ~~Caraya~~（**R22 已手工装通**：`vipm-io/caraya` 2.0.0，728 文件铺入 LabVIEW 2026 目录；配方见 `research/31-*.md` §1）。仍缺：`jki_rsc_toolkits_palette`（仅调色板图标，跑测试不需要） |
 | 已知坏件 | 4 个 helper AIXML 被中文版拒收；`signalsJson` 在 pylabview 路线仍被拒；**gRPC run helper 在中文 2026 损坏**（LV019，run 走 pylabview 即可）；gRPC 路径须反斜杠（LV017）；pylabview 读侧中文乱码（LV018）；pylabview `versionWarning` 误报"2018 在跑"（cosmetic bug，忽略） |
 | 死条目 | `mcp.json` 里 `labview-cli` 指向已删除的 `Desktop\新建文件夹 (3)\...`，建议在 UI 删除 |

@@ -1,0 +1,35 @@
+{
+  "round": 23,
+  "date": "2026-10-30",
+  "what": "labview-mcp upgraded v2.0.1 -> v2.3.1 (P3), resolve.py patch re-applied, regression green",
+  "upgrade": {
+    "from": {"version": "2.0.1", "commit": "77eb0b22", "built": "2026-10-13", "tools": 99},
+    "to": {"version": "2.3.1", "commit": "5c9afb35", "built": "2026-10-28", "tools": 114},
+    "source": "https://github.com/Zuehlke/labview-mcp/releases/download/v2.3.1/labview-mcp.zip",
+    "sha256": "34cffee146e3452dc391cbf6b2c3c2d2c079e3a63e72796c4770c39217cc3224",
+    "downloadNotes": "GitHub REST API rate-limited (anonymous proxy IP shared); asset list scraped from releases/expanded_assets HTML instead. First download truncated at 47.7 MB (curl exit 56), resumed with -C - and --retry 3.",
+    "procedure": [
+      "backed up resolve.py + .orig-round14 to %TEMP%\\r23\\patch-backup",
+      "stopped LabVIEWMCP.exe (PID 20108); LabVIEW.exe left running",
+      "renamed install dir to labview-mcp.v2.0.1-bak (rollback path)",
+      "extracted 5426 files from the release zip",
+      "re-applied the round-14 labview_root() patch by hand (upstream v2.3.1 still ships the first-hit version-walk bug)",
+      "verified: py_compile OK, labview_root() -> LabVIEW 2026",
+      "list -> 114 tools (109 lvai_* + 5 pylv_*); layout_diagram(s)/error_list/dump_schema all present"
+    ]
+  },
+  "patch": {
+    "what": "labview_root(): take the HIGHEST LabVIEW version across both Program Files bases instead of the first hit (x86 walked first, so a 2018-32bit + 2026-64bit machine answered 2018)",
+    "reappliedBecause": "upstream v2.3.1 resolve.py grew 208 -> 657 lines and still contains the old first-hit walk at the top of labview_root()",
+    "upstreamStatus": "bug still present in v2.3.1 (P9 material)",
+    "verified": "labview_root() -> C:\\Program Files\\National Instruments\\LabVIEW 2026"
+  },
+  "regression": {
+    "plan": "planA-post-upgrade-regression.json",
+    "transcript": "transcriptA-post-upgrade-regression.json",
+    "steps": ["pylv_status ok (93 ms, Python 3.12 bundle carried by the new release)", "lvai_run_caraya_tests replay: tests=3 failures=0 errors=0 ok=true reportFresh=true (6.5 s)"],
+    "conclusion": "round-22 Caraya install and the whole pylabview loop survive the upgrade; no config migration needed (install layout unchanged: .mcp.json / VERSION.txt / agents / bin / hooks)"
+  },
+  "notNewToolsChecked": ["lvai_layout_diagram", "lvai_layout_diagrams", "lvai_error_list", "lvai_dump_schema"],
+  "next": "P3 tail: lvai_dump_schema diff (114 tools / RPC face); P4 first test of lvai_layout_diagram; P5 lvai_error_list on the round-6/8 execState-0 archives"
+}

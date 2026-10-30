@@ -1,0 +1,48 @@
+{
+ "label": "round23 - post-upgrade regression: pylv_status + caraya suite replay",
+ "planFile": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\research\\artifacts\\round23\\planA-post-upgrade-regression.json",
+ "server": "C:\\Users\\heiyashi\\labview-mcp\\bin\\LabVIEWMCP.exe",
+ "stepsRun": 2,
+ "failed": 0,
+ "allOk": true,
+ "steps": [
+  {
+   "step": 1,
+   "name": "pylv_status",
+   "args": {},
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"ok\": true,\r\n  \"serverVersion\": \"2.3.1 (5c9afb35)\",\r\n  \"serverCommit\": \"5c9afb35d0156869b4bf1ec72816d07ef47bf10e\",\r\n  \"directory\": \"C:\\\\Users\\\\heiyashi\\\\labview-mcp\\\\bin\\\\pylabview\",\r\n  \"pythonVersion\": \"3.12\",\r\n  \"pythonArch\": \"x64\",\r\n  \"pylabviewCommit\": \"69768647c18d2d792a259b69884b2433761c3a4f\",\r\n  \"provisionedUtc\": \"2026-10-28 07:28:34Z\",\r\n  \"primitiveNamesTable\": \"C:\\\\Users\\\\heiyashi\\\\labview-mcp\\\\bin\\\\pylabview\\\\app\\\\primitive-names.tsv\",\r\n  \"terminalNamesTable\": \"C:\\\\Users\\\\heiyashi\\\\labview-mcp\\\\bin\\\\pylabview\\\\app\\\\terminal-names.tsv\",\r\n  \"canAnnotate\": true,\r\n  \"aixmlBackend\": {\r\n    \"serverDefault\": \"grpc\",\r\n    \"serverDefaultSource\": \"default\",\r\n    \"settingsFile\": \"C:\\\\Users\\\\heiyashi\\\\.labviewmcp\\\\settings.json\",\r\n    \"settingsFileExists\": true,\r\n    \"settingsAixmlBackend\": \"auto\",\r\n    \"pylabviewAvailable\": true,\r\n    \"composerDirectory\": \"C:\\\\Users\\\\heiyashi\\\\labview-mcp\\\\bin\\\\scripts\\\\aixml-pylabview\",\r\n    \"partsDirectory\": \"C:\\\\Users\\\\heiyashi\\\\labview-mcp\\\\bin\\\\scripts\\\\aixml-pylabview\\\\parts\",\r\n    \"labviewInUse\": 2026,\r\n    \"partsRelease\": 2026,\r\n    \"missing\": null,\r\n    \"pythonWorkers\": true,\r\n    \"pythonWorkersStarted\": 1\r\n  }\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 93
+  },
+  {
+   "step": 2,
+   "name": "lvai_run_caraya_tests",
+   "args": {
+    "runnerViPath": "c:\\Users\\heiyashi\\Desktop\\新建文件夹\\labview-vi-mcp\\examples\\caraya-demo\\run-tests.vi",
+    "backend": "pylabview",
+    "timeoutSeconds": 300
+   },
+   "ok": true,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\r\n  \"runnerViPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\run-tests.vi\",\r\n  \"elapsedMs\": 6490,\r\n  \"reportPath\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\TestReport.xml\",\r\n  \"reportFresh\": true,\r\n  \"tests\": 3,\r\n  \"failures\": 0,\r\n  \"errors\": 0,\r\n  \"suites\": [\r\n    {\r\n      \"suite\": \"Test Double It\",\r\n      \"testVi\": \"c:\\\\Users\\\\heiyashi\\\\Desktop\\\\\\u65B0\\u5EFA\\u6587\\u4EF6\\u5939\\\\labview-vi-mcp\\\\examples\\\\caraya-demo\\\\Test Double It.vi\",\r\n      \"tests\": 3,\r\n      \"failures\": 0,\r\n      \"errors\": 0,\r\n      \"timestamp\": \"2026-10-30T14:49:40.476\"\r\n    }\r\n  ],\r\n  \"failing\": [],\r\n  \"runnerErrorOut\": {\r\n    \"status\": false,\r\n    \"code\": 0,\r\n    \"source\": \"\",\r\n    \"sourceNamesAFailingSuite\": null\r\n  },\r\n  \"ok\": true,\r\n  \"note\": \"All 3 test(s) passed.\",\r\n  \"backend\": \"pylabview\",\r\n  \"backendSource\": \"call\"\r\n}"
+     }
+    ]
+   },
+   "error": null,
+   "isError": false,
+   "elapsedMs": 6512
+  }
+ ]
+}

@@ -1,0 +1,35 @@
+--- orig
++++ patched
+@@ -36,12 +36,28 @@
+ 
+ def labview_root():
++    """The installation whose vi.lib / user.lib / resource this resolver maps onto.
++
++    ROUND-14 FIX. This used to return the FIRST hit, walking the x86 base before the
++    64-bit one - so on a machine holding LabVIEW 2018 (32-bit) *and* LabVIEW 2026
++    (64-bit) it always answered 2018, and every provider library that only exists in a
++    newer installation (Add Class.lvlib, Add Interface.lvlib, Message Maker.lvlib) then
++    read as "no X in the installation or near the caller" with the installation right
++    there. Measured here: 2018 has no resource/Framework/Providers/AddClass and no
++    AddInterface at all. Take the HIGHEST version number over both bases; LABVIEW_ROOT
++    still overrides.
++    """
+     env = os.environ.get("LABVIEW_ROOT")
+     if env and os.path.isdir(env):
+         return env
++    best, best_key = None, None
+     for base in (r"C:\Program Files (x86)\National Instruments", r"C:\Program Files\National Instruments"):
+-        for d in sorted(glob.glob(os.path.join(base, "LabVIEW 20*")), reverse=True):
+-            if os.path.exists(os.path.join(d, "LabVIEW.exe")):
+-                return d
+-    return None
++        for d in glob.glob(os.path.join(base, "LabVIEW 20*")):
++            if not os.path.exists(os.path.join(d, "LabVIEW.exe")):
++                continue
++            digits = "".join(c for c in os.path.basename(d) if c.isdigit())
++            key = int(digits) if digits else 0
++            if best_key is None or key > best_key:
++                best, best_key = d, key
++    return best
+ 
+ 
